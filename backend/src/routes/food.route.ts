@@ -7,12 +7,12 @@ import {
   deleteFood,
 } from "../controllers/food.controller.js";
 
-const foodsRouter = express.Router();
+const foodsRoutes = express.Router();
 
-foodsRouter.get("/", getAllFoods);
-foodsRouter.post("/", createFood);
-foodsRouter.patch("/:foodId", updateFood);
-foodsRouter.delete("/:foodId", deleteFood);
-foodsRouter.get("/:foodId", getFoodByid);
+foodsRoutes.get("/", getAllFoods);
+foodsRoutes.post("/", createFood);
+foodsRoutes.patch("/:foodId", updateFood);
+foodsRoutes.delete("/:foodId", deleteFood);
+foodsRoutes.get("/:foodId", getFoodByid);
 
-export default foodsRouter;
+export default foodsRoutes;
