@@ -37,9 +37,12 @@ export const createCategory = async (request: Request, response: Response) => {
 
 export const updateCategory = async (request: Request, response: Response) => {
   try {
-    const { categoryName } = request.params;
+    const { categoryId } = request.params;
     const updateData = request.body;
-    const updatedCategory = await Category.find(); // do sth
+    const updatedCategory = await Category.findByIdAndUpdate(
+      categoryId,
+      updateData
+    );
 
     if (!updatedCategory) {
       return response.status(404).json({
@@ -63,7 +66,7 @@ export const updateCategory = async (request: Request, response: Response) => {
 export const deleteCategory = async (request: Request, response: Response) => {
   try {
     const { categoryId } = request.params;
-    const deletedCategory = await Category.findById(categoryId);
+    const deletedCategory = await Category.findByIdAndDelete(categoryId);
 
     if (!deletedCategory) {
       return response.status(404).json({

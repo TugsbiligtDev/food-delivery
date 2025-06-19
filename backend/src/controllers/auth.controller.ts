@@ -6,8 +6,8 @@ export const refreshToken = async (request: Request, response: Response) => {
 
 export const signIn = async (request: Request, response: Response) => {
   try {
-    const { email, password } = request.body;
-    const user = await Auth.find({ email, password });
+    const { email } = request.params;
+    const user = await Auth.find({ email });
 
     if (!user) {
       return response.status(401).json({
