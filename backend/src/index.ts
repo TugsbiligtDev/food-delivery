@@ -1,6 +1,6 @@
 import express from "express";
 
-import foodRoutes from "./routes/food.route";
+import foodRoutes from "./routes/food.route.js";
 import authRoutes from "./routes/auth.route.js";
 import categoryRoutes from "./routes/category.route.js";
 import orderRoutes from "./routes/order.route.js";
