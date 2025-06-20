@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Auth } from "../models/index.js";
+import { User } from "../models/index.js";
 export const refreshToken = async (request: Request, response: Response) => {
   response.send("auth/refresh Get huselt irlee");
 };
@@ -7,7 +7,7 @@ export const refreshToken = async (request: Request, response: Response) => {
 export const signIn = async (request: Request, response: Response) => {
   try {
     const { email } = request.params;
-    const user = await Auth.find({ email });
+    const user = await User.find({ email });
 
     if (!user) {
       return response.status(401).json({
@@ -31,7 +31,7 @@ export const signIn = async (request: Request, response: Response) => {
 export const signUp = async (request: Request, response: Response) => {
   try {
     const user = request.body;
-    const createdUser = await Auth.create(user);
+    const createdUser = await User.create(user);
     response.json({
       success: true,
       data: createdUser,

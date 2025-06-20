@@ -1,15 +1,24 @@
 import mongoose from "mongoose";
-import { UserRole } from "./enums/foodOrderStatus.js";
 const { Schema, model } = mongoose;
 
-const auth = new Schema({
-  email: String,
-  password: String,
+const user = new Schema({
+  email: {
+    type: String,
+    required: [true, "Please add an email"],
+  },
+  password: {
+    type: String,
+    required: [true, "Please add a password"],
+  },
   phoneNumber: String,
   address: String,
-  role: UserRole,
+  role: {
+    type: String,
+    enum: ["ADMIN", "USER"],
+    default: "USER",
+  },
   isVerified: Boolean,
   createedAt: Date,
   updatedAt: Date,
 });
-export const Auth = model("Auth", auth);
+export const User = model("User", user);
