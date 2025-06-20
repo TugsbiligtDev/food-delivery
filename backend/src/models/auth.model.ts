@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { UserRole } from "./enums/foodOrderStatus.js";
 const { Schema, model } = mongoose;
 
 const auth = new Schema({
@@ -6,7 +7,7 @@ const auth = new Schema({
   password: String,
   phoneNumber: String,
   address: String,
-  role: String, //UserRoleEnum
+  role: UserRole,
   isVerified: Boolean,
   createedAt: Date,
   updatedAt: Date,

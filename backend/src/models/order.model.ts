@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
+import { FoodOrderStatus } from "./enums/userRole.js";
 const { Schema, model } = mongoose;
 
 const order = new Schema({
   user: String, //objectId
   totalPrice: Number,
   foodOrderItems: String, //foodOrderItem[]
-  status: String, //FoodOrderStatusEnum
+  status: FoodOrderStatus, //FoodOrderStatusEnum
   createedAt: Date,
   updatedAt: Date,
 });
