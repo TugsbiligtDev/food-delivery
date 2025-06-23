@@ -13,7 +13,7 @@ mongoose.connect(
 
 const app = express();
 app.use(express.json());
-const PORT = "1111";
+const PORT = "3000";
 
 app.use("/auth", authRoutes);
 app.use("/food", foodRoutes);

@@ -4,7 +4,9 @@ import { Order } from "../models/index.js";
 export const createOrder = async (request: Request, response: Response) => {
   try {
     const orderData = request.body;
-    const createdOrder = await Order.create(orderData);
+    const createdOrder = await (
+      await (await Order.create(orderData)).populate("foodOrderItems")
+    ).populate("user");
 
     response.json({
       success: true,
@@ -20,7 +22,10 @@ export const createOrder = async (request: Request, response: Response) => {
 export const getAllOrders = async (request: Request, response: Response) => {
   try {
     const foods = await Order.find()
-      .populate("foodOrderItems")
+      .populate({
+        path: "foodOrderItems",
+        populate: { path: "food", populate: { path: "category" } },
+      })
       .populate("user");
 
     response.json({
