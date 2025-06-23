@@ -21,13 +21,6 @@ export const getFoodByid = async (request: Request, response: Response) => {
     const { foodId } = request.params;
     const food = await Food.findById(foodId);
 
-    if (!food) {
-      return response.status(404).json({
-        success: false,
-        error: "Food not found",
-      });
-    }
-
     response.json({
       success: true,
       data: food,
@@ -65,13 +58,6 @@ export const updateFood = async (request: Request, response: Response) => {
       new: true,
     });
 
-    if (!updatedFood) {
-      return response.status(404).json({
-        success: false,
-        error: "Food not found",
-      });
-    }
-
     response.json({
       success: true,
       data: updatedFood,
@@ -88,13 +74,6 @@ export const deleteFood = async (request: Request, response: Response) => {
   try {
     const { foodId } = request.params;
     const deletedFood = await Food.findByIdAndDelete(foodId);
-
-    if (!deletedFood) {
-      return response.status(404).json({
-        success: false,
-        error: "Food not found",
-      });
-    }
 
     response.json({
       success: true,

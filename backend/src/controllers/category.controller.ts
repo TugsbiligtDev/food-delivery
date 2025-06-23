@@ -41,15 +41,9 @@ export const updateCategory = async (request: Request, response: Response) => {
     const updateData = request.body;
     const updatedCategory = await Category.findByIdAndUpdate(
       categoryId,
-      updateData
+      updateData,
+      { new: true }
     );
-
-    if (!updatedCategory) {
-      return response.status(404).json({
-        success: false,
-        error: "Category not found",
-      });
-    }
 
     response.json({
       success: true,
@@ -67,13 +61,6 @@ export const deleteCategory = async (request: Request, response: Response) => {
   try {
     const { categoryId } = request.params;
     const deletedCategory = await Category.findByIdAndDelete(categoryId);
-
-    if (!deletedCategory) {
-      return response.status(404).json({
-        success: false,
-        error: "Category not found",
-      });
-    }
 
     response.json({
       success: true,

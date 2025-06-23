@@ -6,15 +6,8 @@ export const refreshToken = async (request: Request, response: Response) => {
 
 export const signIn = async (request: Request, response: Response) => {
   try {
-    const { email } = request.params;
-    const user = await User.find({ email });
-
-    if (!user) {
-      return response.status(401).json({
-        success: false,
-        error: "Invalid email or password",
-      });
-    }
+    const { email } = request.body;
+    const user = await User.findOne({ email });
 
     response.json({
       success: true,

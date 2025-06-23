@@ -3,12 +3,12 @@ import { Order } from "../models/index.js";
 
 export const createOrder = async (request: Request, response: Response) => {
   try {
-    const food = request.body;
-    const createdFood = await Order.create(food);
+    const orderData = request.body;
+    const createdOrder = await Order.create(orderData);
 
     response.json({
       success: true,
-      data: createdFood,
+      data: createdOrder,
     });
   } catch (error) {
     response.status(400).json({
@@ -39,7 +39,22 @@ export const getOrdersByUserId = async (
   request: Request,
   response: Response
 ) => {
-  response.send("GET request");
+  try {
+    const { userId } = request.params;
+    const orders = await Order.find({ user: userId })
+      .populate("foodOrderItems.food")
+      .populate("user");
+
+    response.json({
+      success: true,
+      data: orders,
+    });
+  } catch (error) {
+    response.status(400).json({
+      success: false,
+      error: error,
+    });
+  }
 };
 
 export const updateOrder = async (request: Request, response: Response) => {
@@ -50,13 +65,6 @@ export const updateOrder = async (request: Request, response: Response) => {
     const updatedOrder = await Order.findByIdAndUpdate(orderId, updateData, {
       new: true,
     });
-
-    if (!updatedOrder) {
-      return response.status(404).json({
-        success: false,
-        error: "Food not found",
-      });
-    }
 
     response.json({
       success: true,
@@ -73,13 +81,6 @@ export const deleteOrder = async (request: Request, response: Response) => {
   try {
     const { orderId } = request.params;
     const deletedOrder = await Order.findByIdAndDelete(orderId);
-
-    if (!deletedOrder) {
-      return response.status(404).json({
-        success: false,
-        error: "Food not found",
-      });
-    }
 
     response.json({
       success: true,
