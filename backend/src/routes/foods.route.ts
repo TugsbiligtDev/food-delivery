@@ -1,7 +1,7 @@
 import express from "express";
 import {
   getAllFoods,
-  getFoodByid,
+  getFoodById,
   createFood,
   updateFood,
   deleteFood,
@@ -10,7 +10,7 @@ import {
 const foodsRoutes = express.Router();
 
 foodsRoutes.get("/", getAllFoods);
-foodsRoutes.get("/:foodId", getFoodByid);
+foodsRoutes.get("/:foodId", getFoodById);
 foodsRoutes.post("/", createFood);
 foodsRoutes.patch("/:foodId", updateFood);
 foodsRoutes.delete("/:foodId", deleteFood);

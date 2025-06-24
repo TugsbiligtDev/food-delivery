@@ -7,13 +7,11 @@ import orderRoutes from "./routes/order.route.js";
 
 import mongoose from "mongoose";
 
-mongoose.connect(
-  "mongodb+srv://Tugs:KXYhSg2Srp2M6lhW@cluster0.t01lldi.mongodb.net/food-delivery"
-);
+mongoose.connect(process.env.MONGODB_URI!);
 
 const app = express();
 app.use(express.json());
-const PORT = "1111";
+const PORT = process.env.PORT;
 
 app.use("/auth", authRoutes);
 app.use("/food", foodRoutes);

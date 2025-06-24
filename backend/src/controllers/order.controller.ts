@@ -20,7 +20,7 @@ export const createOrder = async (request: Request, response: Response) => {
 export const getAllOrders = async (request: Request, response: Response) => {
   try {
     const foods = await Order.find()
-      .populate("foodOrderItems")
+      .populate("foodOrderItems.food")
       .populate("user");
 
     response.json({
