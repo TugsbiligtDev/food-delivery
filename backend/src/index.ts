@@ -7,11 +7,13 @@ import orderRoutes from "./routes/order.route.js";
 
 import mongoose from "mongoose";
 
-mongoose.connect(process.env.MONGODB_URI!);
+mongoose.connect(
+  "mongodb+srv://Tugs:KXYhSg2Srp2M6lhW@cluster0.t01lldi.mongodb.net/food-delivery"
+);
 
 const app = express();
 app.use(express.json());
-const PORT = process.env.PORT;
+const PORT = 8000;
 
 app.use("/auth", authRoutes);
 app.use("/food", foodRoutes);
@@ -26,4 +28,3 @@ app.get("/", (_req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
-//KXYhSg2Srp2M6lhW password

@@ -3,7 +3,7 @@ import { Food } from "../models/index.js";
 
 export const getAllFoods = async (request: Request, response: Response) => {
   try {
-    const foods = await Food.find();
+    const foods = await Food.find().populate("category");
     response.json({
       success: true,
       data: foods,
@@ -16,10 +16,10 @@ export const getAllFoods = async (request: Request, response: Response) => {
   }
 };
 
-export const getFoodByid = async (request: Request, response: Response) => {
+export const getFoodById = async (request: Request, response: Response) => {
   try {
     const { foodId } = request.params;
-    const food = await Food.findById(foodId);
+    const food = await Food.findById(foodId).populate("category"); // Add this
 
     response.json({
       success: true,
