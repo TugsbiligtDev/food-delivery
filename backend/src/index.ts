@@ -1,5 +1,4 @@
 import express from "express";
-
 import foodRoutes from "./routes/foods.route.js";
 import authRoutes from "./routes/auth.route.js";
 import categoryRoutes from "./routes/category.route.js";
@@ -13,7 +12,7 @@ mongoose.connect(
 
 const app = express();
 app.use(express.json());
-const PORT = 8000;
+const PORT = 8888;
 
 app.use("/auth", authRoutes);
 app.use("/food", foodRoutes);

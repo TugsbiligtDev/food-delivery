@@ -14,7 +14,7 @@ const user = new Schema(
       required: [true, "Please add a password"],
     },
     phoneNumber: {
-      type: String,
+      type: Number,
       required: [true, "Please add a phone number"],
     },
     address: {
