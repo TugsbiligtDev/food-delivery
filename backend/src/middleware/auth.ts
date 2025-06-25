@@ -19,13 +19,6 @@ export const authenticateToken = async (
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
 
-    if (!user) {
-      return response.status(401).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
     request.userId = decoded.userId;
     next();
   } catch (error) {
