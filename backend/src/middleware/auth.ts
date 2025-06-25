@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET = "secret";
 
 export const authenticateToken = async (
-  request: Request,
+  request: any,
   response: Response,
   next: NextFunction
 ) => {
