@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
+
 import foodRoutes from "./routes/foods.route.js";
 import authRoutes from "./routes/auth.route.js";
 import categoryRoutes from "./routes/category.route.js";
@@ -20,7 +21,7 @@ app.use("/categories", categoryRoutes);
 app.use("/orders", orderRoutes);
 
 app.get("/", (_req, res) => {
-  res.send("It's working");
+  res.send("Where is the WORD");
   console.log("Response sent");
 });
 
