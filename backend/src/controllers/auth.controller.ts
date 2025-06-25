@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { User } from "../models/index.js";
+
+const JWT_SECRET = "secret";
+const JWT_EXPIRES_IN = "24h";
 
 export const refreshToken = async (request: Request, response: Response) => {
   response.send("auth/refresh Get huselt irlee");
@@ -8,84 +12,72 @@ export const refreshToken = async (request: Request, response: Response) => {
 
 export const signIn = async (request: Request, response: Response) => {
   try {
-    const { name, password } = request.body;
-    const user = await User.findOne({ name });
+    const { email, password } = request.body;
 
-    bcrypt.compare(password, user.password, (error, result) => {
-      if (result) {
-        response.status(200).json({
-          success: true,
-          message: "Authenticated",
-        });
-      } else {
-        response.status(200).json({
-          success: false,
-          message: "not authenticated",
-        });
-      }
-    });
+    const user = await User.findOne({ email });
 
-    response.json({
+    if (!email || !password) {
+      response.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      response.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        email: user.email,
+      },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+
+    response.status(200).json({
       success: true,
-      data: user,
+      message: "Authentication successful",
+      token: token,
     });
   } catch (error) {
-    response.status(400).json({
+    response.status(500).json({
       success: false,
+      message: "Internal server error",
       error: error,
     });
   }
 };
 
-// export const signUp = async (request: Request, response: Response) => {
-//   const { name, password } = request.body;
-
-//   try {
-//     const saltRounds = 10;
-//     const salt = await bcrypt.genSalt(saltRounds);
-
-//     const hashedPassword = await bcrypt.hash(password, salt);
-
-//     const createdUser = await User.create({
-//       name,
-//       password: hashedPassword,
-//     });
-
-//     response.status(200).json({
-//       success: true,
-//       data: createdUser,
-//     });
-//   } catch (error) {
-//     response.status(400).json({
-//       success: false,
-//       error: error,
-//     });
-//   }
-// };
-
 export const signUp = async (request: Request, response: Response) => {
-  const { email, password, address, phoneNumber } = request.body;
-
   try {
-    const saltRounds = 10;
-    const salt = await bcrypt.genSalt(saltRounds);
+    const { email, password, address, phoneNumber } = request.body;
 
-    bcrypt.hash(password, salt, async (err, hash) => {
-      const createdUser = await User.create({
-        email: email,
-        password: hash,
-        phoneNumber: phoneNumber,
-        address: address,
-      });
+    const saltRounds = 12;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-      response.status(200).json({
-        success: true,
-        data: createdUser,
-      });
+    const createdUser = await User.create({
+      email,
+      password: hashedPassword,
+      phoneNumber,
+      address,
+    });
+
+    response.status(201).json({
+      success: true,
+      message: "User created successfully",
+      data: createdUser,
     });
   } catch (error) {
-    response.status(444).json({
+    response.status(500).json({
       success: false,
+      message: "Internal server error",
       error: error,
     });
   }
