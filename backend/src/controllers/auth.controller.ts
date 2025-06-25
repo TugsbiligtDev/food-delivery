@@ -7,7 +7,7 @@ export const refreshToken = async (request: Request, response: Response) => {
   response.send("auth/refresh Get huselt irlee");
 };
 
-export const authSignIn = async (req: Request, res: Response) => {
+export const signIn = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
@@ -38,7 +38,7 @@ export const authSignIn = async (req: Request, res: Response) => {
     });
   }
 };
-export const authSignUp = async (req: Request, res: Response) => {
+export const signUp = async (req: Request, res: Response) => {
   const { email, password, phoneNumber, address } = req.body;
   try {
     const saltRound = 10;
