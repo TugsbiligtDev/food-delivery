@@ -1,87 +1,69 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { User } from "../models/index.js";
-
-const JWT_SECRET = "secret";
-const JWT_EXPIRES_IN = "24h";
-
+import jwt from "jsonwebtoken";
 export const refreshToken = async (request: Request, response: Response) => {
   response.send("auth/refresh Get huselt irlee");
 };
 
-export const signIn = async (request: Request, response: Response) => {
+export const authSignIn = async (req: Request, res: Response) => {
   try {
-    const { email, password } = request.body;
+    const { email, password } = req.body;
 
     const user = await User.findOne({ email });
 
-    if (!email || !password) {
-      response.status(400).json({
+    const comparedPassword = bcrypt.compare(password, user?.password || "");
+    const token = jwt.sign({ userId: user?._id }, "tima1021", {
+      expiresIn: "1h",
+    });
+
+    if (!comparedPassword) {
+      res.status(200).json({
         success: false,
-        message: "Email and password are required",
+        message: " not Authenticated",
       });
     }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      response.status(401).json({
-        success: false,
-        message: "Invalid credentials",
-      });
-    }
-
-    const token = jwt.sign(
-      {
-        userId: user._id,
-        email: user.email,
-      },
-      JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN }
-    );
-
-    response.status(200).json({
+    res.status(200).json({
       success: true,
-      message: "Authentication successful",
+      message: "Authenticated",
       token: token,
     });
   } catch (error) {
-    response.status(500).json({
+    console.log(error);
+
+    res.status(444).json({
       success: false,
-      message: "Internal server error",
       error: error,
     });
   }
 };
-
-export const signUp = async (request: Request, response: Response) => {
+export const authSignUp = async (req: Request, res: Response) => {
+  const { email, password, phoneNumber, address } = req.body;
   try {
-    const { email, password, address, phoneNumber } = request.body;
+    const saltRound = 10;
+    const salt = await bcrypt.genSalt(saltRound);
 
-    const saltRounds = 12;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword = bcrypt.hash(password, salt);
 
     const createdUser = await User.create({
-      email,
+      email: email,
       password: hashedPassword,
-      phoneNumber,
-      address,
+      phoneNumber: phoneNumber,
+      address: address,
     });
-
-    response.status(201).json({
+    res.status(200).json({
       success: true,
-      message: "User created successfully",
       data: createdUser,
     });
   } catch (error) {
-    response.status(500).json({
-      success: false,
-      message: "Internal server error",
+    res.status(404).json({
+      succes: false,
       error: error,
     });
   }
 };
+
 export const resetPasswordRequest = (request: Request, response: Response) => {
   response.send("auth/reset-password-request Post huselt irlee");
 };
