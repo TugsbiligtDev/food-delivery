@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { User } from "../models/index.js";
 import jwt from "jsonwebtoken";
-export const refreshToken = async (request: Request, response: Response) => {
+export const refresh = async (request: Request, response: Response) => {
   response.send("auth/refresh Get huselt irlee");
 };
 

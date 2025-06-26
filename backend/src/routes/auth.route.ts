@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  refreshToken,
+  refresh,
   signIn,
   signUp,
   resetPasswordRequest,
@@ -11,7 +11,7 @@ import verifyToken from "../middleware/auth.js";
 
 const authRoutes = express.Router();
 
-authRoutes.get("/refresh", verifyToken as any, refreshToken);
+authRoutes.get("/refresh", verifyToken as any, refresh);
 authRoutes.post("/sign-in", signIn);
 authRoutes.post("/sign-up", signUp);
 authRoutes.post("/reset-password-request", resetPasswordRequest);
