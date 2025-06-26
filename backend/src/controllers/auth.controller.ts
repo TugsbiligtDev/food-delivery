@@ -3,10 +3,6 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { User } from "../models/index.js";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-dotenv.config();
-
-const JWT_SECRET = process.env.JWT_SECRET;
 export const refreshToken = async (request: Request, response: Response) => {
   response.send("auth/refresh Get huselt irlee");
 };
@@ -29,14 +25,14 @@ export const signIn = async (req: Request, res: Response) => {
       });
     }
 
-    const accessToken = jwt.sign({ userId: user?._id }, JWT_SECRET as string, {
+    const token = jwt.sign({ userId: user?._id }, "Ultra_s3cr3t", {
       expiresIn: "15m",
     });
 
     res.status(200).json({
       success: true,
       message: "Authentication successful",
-      accessToken,
+      token: token,
       user: {
         id: user?._id,
         email: user?.email,
@@ -86,7 +82,6 @@ export const signUp = async (req: Request, res: Response) => {
     });
   }
 };
-
 export const resetPasswordRequest = (request: Request, response: Response) => {
   response.send("auth/reset-password-request Post huselt irlee");
 };

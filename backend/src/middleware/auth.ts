@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = "secret";
+const JWT_SECRET = "Ultra_s3cr3t";
 
 const verifyToken = async (
   request: any,
