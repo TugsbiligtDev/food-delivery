@@ -6,7 +6,7 @@ export const getAllCategories = async (
   response: Response
 ) => {
   try {
-    const categories = await Category.find().populate("category");
+    const categories = await Category.find();
     response.json({
       success: true,
       data: categories,
