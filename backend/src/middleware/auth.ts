@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 const JWT_SECRET = "secret";
 
-export const authenticateToken = async (
+const authenticateToken = async (
   request: any,
   response: Response,
   next: NextFunction
@@ -30,3 +30,4 @@ export const authenticateToken = async (
     }
   }
 };
+export default authenticateToken;
