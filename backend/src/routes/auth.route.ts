@@ -7,7 +7,8 @@ import {
   verifyResetPasswordRequest,
   resetPassword,
 } from "../controllers/auth.controller.js";
-import { authenticateToken } from "../middleware/auth.js";
+
+import authenticateToken from "../middleware/auth.js";
 
 const authRoutes = express.Router();
 

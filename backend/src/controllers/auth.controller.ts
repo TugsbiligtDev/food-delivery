@@ -23,7 +23,7 @@ export const signIn = async (req: Request, res: Response) => {
     );
 
     if (!isPasswordValid) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: "Invalid credentials",
       });
@@ -56,13 +56,6 @@ export const signIn = async (req: Request, res: Response) => {
 export const signUp = async (req: Request, res: Response) => {
   try {
     const { email, password, phoneNumber, address } = req.body;
-
-    if (!email || !password || !phoneNumber) {
-      return res.status(400).json({
-        success: false,
-        message: "Email, password, and phone number are required",
-      });
-    }
 
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
