@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 const JWT_SECRET = "secret";
 
-const authenticateToken = async (
+const verifyToken = async (
   request: any,
   response: Response,
   next: NextFunction
@@ -30,4 +30,4 @@ const authenticateToken = async (
     }
   }
 };
-export default authenticateToken;
+export default verifyToken;
