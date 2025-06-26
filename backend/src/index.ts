@@ -21,7 +21,7 @@ app.use("/categories", categoryRoutes);
 app.use("/orders", orderRoutes);
 
 app.get("/", (_req, res) => {
-  res.send("Where is the WORD");
+  res.send("Be your best");
   console.log("Response sent");
 });
 

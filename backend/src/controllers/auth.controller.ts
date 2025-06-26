@@ -3,6 +3,10 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { User } from "../models/index.js";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
+
+const JWT_SECRET = process.env.JWT_SECRET;
 export const refreshToken = async (request: Request, response: Response) => {
   response.send("auth/refresh Get huselt irlee");
 };
@@ -13,53 +17,79 @@ export const signIn = async (req: Request, res: Response) => {
 
     const user = await User.findOne({ email });
 
-    const comparedPassword = bcrypt.compare(password, user?.password || "");
-    const token = jwt.sign({ userId: user?._id }, "tima1021", {
-      expiresIn: "1h",
-    });
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      user?.password || ""
+    );
 
-    if (!comparedPassword) {
-      res.status(200).json({
+    if (!isPasswordValid) {
+      return res.status(401).json({
         success: false,
-        message: " not Authenticated",
+        message: "Invalid credentials",
       });
     }
+
+    const accessToken = jwt.sign({ userId: user?._id }, JWT_SECRET as string, {
+      expiresIn: "15m",
+    });
+
     res.status(200).json({
       success: true,
-      message: "Authenticated",
-      token: token,
+      message: "Authentication successful",
+      accessToken,
+      user: {
+        id: user?._id,
+        email: user?.email,
+        role: user?.role,
+        isVerified: user?.isVerified,
+      },
     });
   } catch (error) {
-    console.log(error);
-
-    res.status(444).json({
+    console.error("Sign in error:", error);
+    res.status(500).json({
       success: false,
-      error: error,
+      message: "Internal server error",
     });
   }
 };
-export const signUp = async (req: Request, res: Response) => {
-  const { email, password, phoneNumber, address } = req.body;
-  try {
-    const saltRound = 10;
-    const salt = await bcrypt.genSalt(saltRound);
 
-    const hashedPassword = bcrypt.hash(password, salt);
+export const signUp = async (req: Request, res: Response) => {
+  try {
+    const { email, password, phoneNumber, address } = req.body;
+
+    if (!email || !password || !phoneNumber) {
+      return res.status(400).json({
+        success: false,
+        message: "Email, password, and phone number are required",
+      });
+    }
+
+    const saltRounds = 12;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const createdUser = await User.create({
-      email: email,
+      email,
       password: hashedPassword,
-      phoneNumber: phoneNumber,
-      address: address,
+      phoneNumber,
+      address,
     });
-    res.status(200).json({
+
+    res.status(201).json({
       success: true,
-      data: createdUser,
+      message: "User created successfully",
+      user: {
+        id: createdUser._id,
+        email: createdUser.email,
+        role: createdUser.role,
+        isVerified: createdUser.isVerified,
+      },
     });
   } catch (error) {
-    res.status(404).json({
-      succes: false,
-      error: error,
+    console.error("Sign up error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
     });
   }
 };
