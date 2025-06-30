@@ -1,5 +1,11 @@
+import PasswordReset from "@/components/auth/PasswordReset";
+
 const page = () => {
-  return <div>page</div>;
+  return (
+    <div>
+      <PasswordReset />
+    </div>
+  );
 };
 
 export default page;

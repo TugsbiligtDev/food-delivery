@@ -19,7 +19,7 @@ export const getAllFoods = async (request: Request, response: Response) => {
 export const getFoodById = async (request: Request, response: Response) => {
   try {
     const { foodId } = request.params;
-    const food = await Food.findById(foodId).populate("category"); 
+    const food = await Food.findById(foodId).populate("category");
 
     response.json({
       success: true,
