@@ -2,38 +2,27 @@
 @import "tw-animate-css";
 
 .form-container {
-  width: 416px;
+  @apply w-full max-w-sm space-y-6
+  /* width: 416px;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.25rem; */;
 }
 .heading {
-  font-weight: 600;
-  font-size: 1.5rem;
-  line-height: 2rem;
-  color: #09090b;
+  @apply font-medium text-2xl leading-8 text-[#09090b];
 }
 .paragraph {
-  font-weight: 400;
-  font-size: 1rem;
-  line-height: 1.5rem;
-  color: #71717a;
+  @apply font-normal text-base text-[#71717a];
 }
 .long-button {
-  width: 100%;
-  color: #fafafa;
-  background-color: #18181b;
-  cursor: pointer;
+  @apply w-full text-[#fafafa] bg-[#18181b] cursor-pointer;
 }
 .accent {
-  color: #2563eb;
-  text-align: center;
+  @apply text-[#2563eb] text-center;
 }
 .bottom-container {
-  display: flex;
-  justify-content: center;
-  gap: 6px;
+  @apply flex items-center justify-center gap-1 text-sm;
 }
 .pointer {
-  cursor: pointer;
+  @apply cursor-pointer;
 }
