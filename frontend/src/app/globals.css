@@ -2,11 +2,7 @@
 @import "tw-animate-css";
 
 .form-container {
-  @apply w-full max-w-sm space-y-6
-  /* width: 416px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem; */;
+  @apply w-full max-w-md space-y-5;
 }
 .heading {
   @apply font-medium text-2xl leading-8 text-[#09090b];
@@ -25,4 +21,10 @@
 }
 .pointer {
   @apply cursor-pointer;
+}
+.error {
+  @apply font-normal text-sm leading-5 text-[#EF4444] mt-2;
+}
+.button {
+  @apply rounded-full font-medium cursor-pointer;
 }

@@ -17,8 +17,12 @@ const PasswordCreate = () => {
             Create a strong password with letters, numbers.
           </p>
         </div>
-        <Input placeholder="Password" type="text" />
-        <Input placeholder="Confirm" type="text" />
+        <div>
+          <Input placeholder="Password" type="text" />
+          <Input placeholder="Confirm" type="text" />
+          <p className="error">Those password did’t match, Try again</p>
+          <p className="error">Those password did’t match, Try again</p>
+        </div>
         <div className="flex gap-2">
           <Checkbox />
           <Label className="font-normal text-sm leading-3.5 text-[#71717A]">

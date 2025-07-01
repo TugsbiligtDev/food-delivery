@@ -1,12 +1,13 @@
-import AuthLayout from "@/components/auth/AuthImage";
-import EmailVerification from "@/components/auth/EmailVerification";
-import Login from "@/components/auth/Login";
-import PasswordCreate from "@/components/auth/ForgetPassword";
-import PasswordReset from "@/components/auth/PasswordReset";
-import SignUp from "@/components/auth/SignUp";
+import Header from "@/components/layouts/Header";
+import Hero from "@/components/layouts/Hero";
 
 const page = () => {
-  return <div></div>;
+  return (
+    <div>
+      <Header />
+      <Hero />
+    </div>
+  );
 };
 
 export default page;

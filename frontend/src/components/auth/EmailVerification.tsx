@@ -10,7 +10,7 @@ const EmailVerification = () => {
       <div>
         <h3 className="heading">Please verify Your Email</h3>
         <p className="paragraph">
-          We just sent an email to{" "}
+          We just sent an email to
           <span className="text-[#18181B]">test@gmail.com.</span>Click the link
           in the email to verify your account.
         </p>

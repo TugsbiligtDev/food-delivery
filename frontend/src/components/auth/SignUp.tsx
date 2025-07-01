@@ -12,7 +12,12 @@ const SignUp = () => {
         <h3 className="heading">Create your account</h3>
         <p className="paragraph">Sign up to explore your favorite dishes.</p>
       </div>
-      <Input placeholder="Enter your email address" type="text" />
+      <div>
+        <Input placeholder="Enter your email address" type="text" />
+        <p className="error">
+          Invalid email. Use a format like example@email.com
+        </p>
+      </div>
       <Button className="long-button">Let's Go</Button>
       <div className="bottom-container">
         <p className="paragraph">Already have an account?</p>

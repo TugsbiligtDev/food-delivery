@@ -13,11 +13,19 @@ const Login = () => {
         <h3 className="heading">Log in</h3>
         <p className="paragraph">Log in to enjoy your favorite dishes.</p>
       </div>
-      <Input placeholder="Enter your email address" type="text" />
-      <Input placeholder="Enter your password" type="text" />
+      <div>
+        <Input placeholder="Enter your email address" type="text" />
+        <p className="error">
+          Invalid email. Use a format like example@email.com.
+        </p>
+      </div>
+      <div>
+        <Input placeholder="Enter your password" type="text" />
+        <p className="error">Incorrect password. Please try again.</p>
+      </div>
       <Link
         href="/auth/reset-password"
-        className="font-normal text-sm leading-5 text-[#18181B] underline"
+        className="font-normal text-sm leading-5 text-[#18181B] underline mb-2"
       >
         Forgot password ?
       </Link>
