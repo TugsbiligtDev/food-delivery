@@ -2,7 +2,7 @@
 @import "tw-animate-css";
 
 .form-container {
-  @apply w-full max-w-md space-y-5;
+  @apply w-full max-w-md space-y-6;
 }
 .heading {
   @apply font-medium text-2xl leading-8 text-[#09090b];
@@ -11,7 +11,7 @@
   @apply font-normal text-base text-[#71717a];
 }
 .long-button {
-  @apply w-full text-[#fafafa] bg-[#18181b] cursor-pointer;
+  @apply w-full text-[#fafafa] bg-[#18181b] cursor-pointer mt-6;
 }
 .accent {
   @apply text-[#2563eb] text-center;
