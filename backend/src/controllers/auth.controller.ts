@@ -33,12 +33,7 @@ export const signIn = async (req: Request, res: Response) => {
       success: true,
       message: "Authentication successful",
       token: token,
-      user: {
-        id: user?._id,
-        email: user?.email,
-        role: user?.role,
-        isVerified: user?.isVerified,
-      },
+      user: user,
     });
   } catch (error) {
     console.error("Sign in error:", error);
@@ -66,12 +61,7 @@ export const signUp = async (req: Request, res: Response) => {
     res.status(201).json({
       success: true,
       message: "User created successfully",
-      user: {
-        id: createdUser._id,
-        email: createdUser.email,
-        role: createdUser.role,
-        isVerified: createdUser.isVerified,
-      },
+      user: createdUser,
     });
   } catch (error) {
     console.error("Sign up error:", error);

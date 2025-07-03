@@ -71,6 +71,7 @@ const PasswordCreate = ({ prev }: Props) => {
             placeholder="Confirm"
             type={show ? "text" : "password"}
             {...register("confirm")}
+            onChange={() => {}}
           />
           {errors.confirm && (
             <ValidationMsg message={errors.confirm.message || ""} />
