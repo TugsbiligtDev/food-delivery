@@ -27,6 +27,7 @@ const page = () => {
 
   const onSubmit = (data: FormData) => {
     console.log("Logging in with:", data);
+    //todo connect to backend
   };
   return (
     <AuthLayout>
@@ -71,7 +72,7 @@ const page = () => {
         </form>
         <div className="bottom-container">
           <p className="paragraph">Don’t have an account?</p>
-          <Link href="/auth/forget-password" className="accent">
+          <Link href="/auth/signup" className="accent">
             Sign up
           </Link>
         </div>
@@ -82,5 +83,4 @@ const page = () => {
 
 export default page;
 
-//todo Adjust Link's position
 //todo connect to backend

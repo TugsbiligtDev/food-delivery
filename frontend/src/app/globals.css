@@ -14,7 +14,7 @@
   @apply w-full text-[#fafafa] bg-[#18181b] cursor-pointer mt-6;
 }
 .accent {
-  @apply text-[#2563eb] text-center;
+  @apply text-[#2563eb] text-center font-normal text-base;
 }
 .bottom-container {
   @apply flex items-center justify-center gap-1 text-sm;

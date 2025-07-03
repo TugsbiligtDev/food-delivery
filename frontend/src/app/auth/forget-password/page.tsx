@@ -5,7 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import AuthLayout from "../AuthLayout";
 import authNavigation from "@/lib/authNavigation";
-const page = () => {
+const Page = () => {
   const { handleNavigate } = authNavigation();
   return (
     <AuthLayout>
@@ -41,4 +41,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

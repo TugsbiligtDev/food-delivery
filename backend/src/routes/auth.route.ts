@@ -14,8 +14,8 @@ const authRoutes = express.Router();
 authRoutes.get("/refresh", verifyToken as any, refresh);
 authRoutes.post("/sign-in", signIn);
 authRoutes.post("/sign-up", signUp);
-authRoutes.post("/reset-password-request", resetPasswordRequest);
-authRoutes.get("/verify-reset-password-request", verifyResetPasswordRequest);
-authRoutes.post("/reset-password", resetPassword);
+authRoutes.post("/login/forget-password", resetPasswordRequest);
+authRoutes.get("/login/forget-password/verify", verifyResetPasswordRequest);
+authRoutes.post("/login/forget-password/reset", resetPassword);
 
 export default authRoutes;

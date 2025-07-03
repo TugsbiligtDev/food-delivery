@@ -1,9 +1,8 @@
 "use client";
 import AuthLayout from "../../AuthLayout";
 import PasswordCreate from "@/components/auth/PasswordCreate";
-import { useRouter } from "next/navigation";
 import authNavigation from "@/lib/authNavigation";
-const page = () => {
+const Page = () => {
   const { handleNavigate } = authNavigation();
   return (
     <AuthLayout>
@@ -12,6 +11,6 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
 
 //* Send this pages link through User's gmail account

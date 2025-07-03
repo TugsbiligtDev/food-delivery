@@ -10,6 +10,7 @@ import { ChevronLeft } from "lucide-react";
 import { Label } from "../ui/label";
 import Link from "next/link";
 import ValidationMsg from "./ValidationMsg";
+import { useState } from "react";
 type Props = {
   prev: () => void;
 };
@@ -38,7 +39,11 @@ const PasswordCreate = ({ prev }: Props) => {
 
   const onSubmit = (data: FormData) => {
     console.log("Password is valid:", data.password);
+    //todo connect to backend
   };
+
+  const [show, setShow] = useState(false);
+
   return (
     <div className="form-container">
       <Button variant="secondary" className="size-9 pointer" onClick={prev}>
@@ -52,18 +57,26 @@ const PasswordCreate = ({ prev }: Props) => {
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-5">
-          <Input placeholder="Password" type="text" {...register("password")} />
+          <Input
+            placeholder="Password"
+            type={show ? "text" : "password"}
+            {...register("password")}
+          />
           {errors.password && (
             <ValidationMsg message={errors.password.message || ""} />
           )}
         </div>
         <div className="mb-3">
-          <Input placeholder="Confirm" type="text" {...register("confirm")} />
+          <Input
+            placeholder="Confirm"
+            type={show ? "text" : "password"}
+            {...register("confirm")}
+          />
           {errors.confirm && (
             <ValidationMsg message={errors.confirm.message || ""} />
           )}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2" onClick={() => setShow(!show)}>
           <Checkbox />
           <Label className="font-normal text-sm leading-3.5 text-[#71717A]">
             Show password
@@ -84,7 +97,3 @@ const PasswordCreate = ({ prev }: Props) => {
 };
 
 export default PasswordCreate;
-
-//todo show % hide password
-//todo link style
-//todo connect to backend

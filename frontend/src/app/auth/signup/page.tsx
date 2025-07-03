@@ -79,8 +79,4 @@ const Page = () => {
 
 export default Page;
 
-//todo Make a Validation
 //todo Connect to Backend
-//todo Fix span text size
-//todo Update Input's css
-//? Decide whether I need form and label etc

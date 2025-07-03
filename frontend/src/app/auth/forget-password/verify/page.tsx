@@ -4,7 +4,7 @@ import { ChevronLeft } from "lucide-react";
 import authNavigation from "@/lib/authNavigation";
 import AuthLayout from "../../AuthLayout";
 
-const page = () => {
+const Page = () => {
   const { handleNavigate } = authNavigation();
   return (
     <AuthLayout>
@@ -20,8 +20,8 @@ const page = () => {
           <h3 className="heading">Please verify Your Email</h3>
           <p className="paragraph">
             We just sent an email to
-            <span className="text-[#18181B]">test@gmail.com.</span> Click the
-            link in the email to verify your account.
+            <span className="text-[#18181B] px-1">test@gmail.com</span> Click
+            the link in the email to verify your account.
           </p>
         </div>
         <Button className="long-button">Send link</Button>
@@ -30,8 +30,7 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
 
-//todo get space in span
 //? If a user click Resend, what will happen
 //* In my opinion, Page will reload and nothing will happen. Only send email again.
