@@ -41,22 +41,24 @@ const Page = () => {
     setLoginError(null);
 
     try {
-      const result = await axios.post("http://localhost:3001/auth/login", {
-        email,
-        password,
-      });
+      const result = await axios.post(
+        " https://food-delivery-9lk5.onrender.com/auth/login",
+        {
+          email,
+          password,
+        }
+      );
 
       console.log("Login successful:", result);
 
       if (result.status === 200 && result.data) {
-        // You might want to store the token or user data here
+        //?token save or not
         // localStorage.setItem('token', result.data.token); // if you get a token
         handleNavigate("/");
       }
     } catch (error) {
       console.error("Login error:", error);
 
-      // Handle different types of errors
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
           setLoginError("Invalid email or password");
@@ -118,7 +120,7 @@ const Page = () => {
 
           <Link
             href="/auth/forget-password"
-            className="font-normal text-sm leading-5 text-[#18181B] underline mb-2 block"
+            className="font-normal text-sm leading-5 text-black-20 underline mb-2 block"
           >
             Forgot password ?
           </Link>

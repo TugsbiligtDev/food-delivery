@@ -3,6 +3,7 @@
 
 @theme {
   --color-red: #ef4444;
+  --color-black-20: #18181b;
 }
 .form-container {
   @apply w-full max-w-md space-y-6;

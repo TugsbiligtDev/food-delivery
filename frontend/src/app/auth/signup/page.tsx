@@ -61,12 +61,15 @@ const Page = () => {
     if (current === 2) {
       setIsLoading(true);
       try {
-        const result = await axios.post("http://localhost:3001/auth/signup", {
-          email: data.email,
-          password: data.password,
-        });
+        const result = await axios.post(
+          " https://food-delivery-9lk5.onrender.com/auth/signup",
+          {
+            email: data.email,
+            password: data.password,
+          }
+        );
         console.log("Success:", result);
-        handleNavigate("/login");
+        handleNavigate("/auth/login");
       } catch (error) {
         console.error("Error:", error);
       } finally {
