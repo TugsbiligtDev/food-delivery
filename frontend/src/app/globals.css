@@ -1,9 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
+body {
+  width: 100dvw;
+  background-color: #404040;
+  font-family: "Inter", sans-serif;
+  color: white;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+section {
+  width: 100dvw;
+}
+
 @theme {
-  --color-red: #ef4444;
-  --color-black-20: #18181b;
+  --color-destructive: #ef4444;
+  --color-primary: #18181b;
+  --color-foreground: #09090b;
+  --color-muted: #71717a;
+  --color-secondary-foreground: #18181b;
+  --color-accent: #2563eb;
+  --color-primary-foreground: #fafafa;
+  --color-secondary: #f4f4f5;
 }
 .form-container {
   @apply w-full max-w-md space-y-6;
