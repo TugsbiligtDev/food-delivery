@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@theme {
+  --color-red: #ef4444;
+}
 .form-container {
   @apply w-full max-w-md space-y-6;
 }
@@ -27,4 +30,10 @@
 }
 .button {
   @apply rounded-full font-medium cursor-pointer;
+}
+.footer-header {
+  @apply font-medium text-base text-[#71717A];
+}
+.footer-text {
+  @apply font-normal text-base text-[#FAFAFA];
 }

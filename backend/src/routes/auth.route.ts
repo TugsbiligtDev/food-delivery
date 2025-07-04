@@ -12,7 +12,7 @@ import verifyToken from "../middleware/auth.js";
 const authRoutes = express.Router();
 
 authRoutes.get("/refresh", verifyToken as any, refresh);
-authRoutes.post("/signin", signIn);
+authRoutes.post("/login", signIn);
 authRoutes.post("/signup", signUp);
 authRoutes.post("/login/forget-password", resetPasswordRequest);
 authRoutes.get("/login/forget-password/verify", verifyResetPasswordRequest);

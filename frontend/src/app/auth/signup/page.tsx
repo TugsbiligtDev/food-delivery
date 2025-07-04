@@ -14,6 +14,7 @@ import Link from "next/link";
 import ValidationMsg from "@/components/auth/ValidationMsg";
 import AuthLayout from "../AuthLayout";
 import authNavigation from "@/lib/authNavigation";
+
 const schema = z
   .object({
     email: z
@@ -35,29 +36,45 @@ type FormData = z.infer<typeof schema>;
 
 const Page = () => {
   const { handleNavigate } = authNavigation();
+  const [current, setCurrent] = useState(1);
+  const [show, setShow] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
+    trigger,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data: FormData) => {
-    axios
-      .post("http://localhost:3001/auth/signup", { email, password })
-      .then((result) => console.log(result))
-      .catch((error) => console.log(error));
-
-    console.log("Email:", data.email);
-    console.log("Password is valid:", data.password);
-    handleNavigate("signup/password");
+  const handleStep1Submit = async () => {
+    const isEmailValid = await trigger("email");
+    if (isEmailValid) {
+      setCurrent(2);
+    }
   };
-  const [current, setCurrent] = useState(1);
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [show, setShow] = useState(false);
+
+  const onSubmit = async (data: FormData) => {
+    if (current === 2) {
+      setIsLoading(true);
+      try {
+        const result = await axios.post("http://localhost:3001/auth/signup", {
+          email: data.email,
+          password: data.password,
+        });
+        console.log("Success:", result);
+        handleNavigate("/login");
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
   return (
     <AuthLayout>
       {current === 1 && (
@@ -76,28 +93,28 @@ const Page = () => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleStep1Submit();
+            }}
+          >
             <div>
+              {/* Email input */}
               <Input
                 placeholder="Enter your email address"
-                type="text"
+                type="email"
                 {...register("email")}
-                onChange={(e) => setEmail(e.target.value)}
               />
               {errors.email && (
                 <ValidationMsg message={errors.email.message || ""} />
               )}
             </div>
-
-            <Button
-              className="long-button"
-              type="submit"
-              onClick={() => setCurrent(2)}
-            >
+            {/* Move to password page button */}
+            <Button className="long-button" type="submit">
               Let's Go
             </Button>
           </form>
-
           {/* Navigate to Login */}
           <div className="bottom-container">
             <p className="paragraph">Already have an account?</p>
@@ -107,8 +124,10 @@ const Page = () => {
           </div>
         </div>
       )}
+      {/* Create password section */}
       {current === 2 && (
         <div className="form-container">
+          {/* Back button */}
           <Button
             variant="secondary"
             className="size-9 pointer"
@@ -116,14 +135,17 @@ const Page = () => {
           >
             <ChevronLeft />
           </Button>
+          {/* Title */}
           <div>
             <h3 className="heading">Create a strong password</h3>
             <p className="paragraph">
               Create a strong password with letters, numbers.
             </p>
           </div>
+
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-5">
+              {/* First password input */}
               <Input
                 placeholder="Password"
                 type={show ? "text" : "password"}
@@ -133,27 +155,34 @@ const Page = () => {
                 <ValidationMsg message={errors.password.message || ""} />
               )}
             </div>
+
             <div className="mb-3">
+              {/* Second password input */}
               <Input
                 placeholder="Confirm"
                 type={show ? "text" : "password"}
                 {...register("confirm")}
-                onChange={(e) => setPassword(e.target.value)}
               />
               {errors.confirm && (
                 <ValidationMsg message={errors.confirm.message || ""} />
               )}
             </div>
-            <div className="flex gap-2" onClick={() => setShow(!show)}>
+            {/* Show & Hide password */}
+            <div
+              className="flex gap-2 items-center cursor-pointer"
+              onClick={() => setShow(!show)}
+            >
               <Checkbox />
-              <Label className="font-normal text-sm leading-3.5 text-[#71717A]">
+              <Label className="font-normal text-sm leading-3.5 text-[#71717A] cursor-pointer">
                 Show password
               </Label>
             </div>
-            <Button className="long-button" type="submit">
-              Let's Go
+
+            <Button className="long-button" type="submit" disabled={isLoading}>
+              {isLoading ? "Creating Account..." : "Let's Go"}
             </Button>
           </form>
+
           <div className="bottom-container">
             <p className="paragraph">Already have an account?</p>
             <Link href="/auth/login" className="accent">
@@ -167,6 +196,3 @@ const Page = () => {
 };
 
 export default Page;
-
-//todo Connect to Backend
-//todo checkbox change
