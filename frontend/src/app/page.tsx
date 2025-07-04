@@ -1,14 +1,13 @@
 import Footer from "@/components/layouts/Footer";
 import Header from "@/components/layouts/Header";
 import Hero from "@/components/layouts/Hero";
+import MenuGrid from "@/components/menu/MenuGrid";
 
 const page = () => {
   return (
-    <>
-      <Header />
-      <Hero />
-      <Footer />
-    </>
+    <div className="w-[90%] mx-auto flex justify-center">
+      <MenuGrid />
+    </div>
   );
 };
 

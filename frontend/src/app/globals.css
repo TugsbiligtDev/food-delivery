@@ -55,5 +55,5 @@ section {
   @apply font-medium text-base text-[#71717A];
 }
 .footer-text {
-  @apply font-normal text-base text-[#FAFAFA];
+  @apply font-normal text-base text-[#FAFAFA] mt-3;
 }
