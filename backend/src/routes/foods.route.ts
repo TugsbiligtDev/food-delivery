@@ -6,13 +6,14 @@ import {
   updateFood,
   deleteFood,
 } from "../controllers/foods.controller.js";
+import verifyToken from "../middleware/auth.js";
 
-const foodsRoutes = express.Router();
+const router = express.Router();
 
-foodsRoutes.get("/", getAllFoods);
-foodsRoutes.get("/:foodId", getFoodById);
-foodsRoutes.post("/", createFood);
-foodsRoutes.patch("/:foodId", updateFood);
-foodsRoutes.delete("/:foodId", deleteFood);
+router.get("/", getAllFoods as any);
+router.get("/:foodId", getFoodById as any);
 
-export default foodsRoutes;
+router.post("/", verifyToken as any, createFood as any);
+router.patch("/:foodId", verifyToken as any, updateFood as any);
+router.delete("/:foodId", verifyToken as any, deleteFood as any);
+export default router;

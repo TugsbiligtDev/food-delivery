@@ -89,7 +89,7 @@ const Page = () => {
 
         <form onSubmit={handleSubmit(onSubmit)}>
           {loginError && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+            <div className="p-3 mb-4 text-sm text-red-700 border border-red-200 rounded bg-red-50">
               {loginError}
             </div>
           )}
@@ -120,7 +120,7 @@ const Page = () => {
 
           <Link
             href="/auth/forget-password"
-            className="font-normal text-sm leading-5 text-black-20 underline mb-2 block"
+            className="block mb-2 text-sm font-normal underline leading-5 text-black-20"
           >
             Forgot password ?
           </Link>

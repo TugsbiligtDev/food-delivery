@@ -1,27 +1,33 @@
 import mongoose from "mongoose";
-const { Schema, model } = mongoose;
-
-const user = new Schema(
+const { Schema, Types, model } = mongoose;
+const userSchema = new Schema(
   {
     email: {
       type: String,
-      required: [true, "Please add an email"],
+      required: [true, "Email is required"],
       unique: true,
       lowercase: true,
+      trim: true,
     },
     password: {
       type: String,
-      required: [true, "Please add a password"],
+      required: [true, "Password is required"],
+      minlength: [6, "Password must be at least 6 characters long"],
     },
     phoneNumber: {
-      type: Number,
+      type: String,
+      trim: true,
     },
     address: {
       type: String,
+      trim: true,
     },
     role: {
       type: String,
-      enum: ["ADMIN", "USER"],
+      enum: {
+        values: ["ADMIN", "USER"],
+        message: "Role must be ADMIN or USER",
+      },
       default: "USER",
     },
     isVerified: {
@@ -29,8 +35,7 @@ const user = new Schema(
       default: false,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
-export const User = model("User", user);
+
+export const User = model("User", userSchema);

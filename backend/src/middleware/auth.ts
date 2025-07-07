@@ -1,33 +1,46 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { User } from "../models/index.js";
 
-const JWT_SECRET = "Ultra_s3cr3t";
+interface AuthRequest extends Request {
+  userId?: string;
+  user?: any;
+}
+
+const JWT_SECRET = process.env.JWT_SECRET || "Ultra_s3cr3t";
 
 const verifyToken = async (
-  request: any,
-  response: Response,
+  req: AuthRequest,
+  res: Response,
   next: NextFunction
 ) => {
-  const token = request.header("Authorization");
+  const auth = req.header("Authorization");
+  const token = auth?.startsWith("Bearer ") ? auth.slice(7) : auth;
 
-  if (!token) {
-    return response.status(401).json({
-      success: false,
-      message: "Access token required",
-    });
-  }
+  if (!token)
+    return res.status(401).json({ success: false, message: "Token required" });
+
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+    const { userId } = jwt.verify(token, JWT_SECRET) as { userId: string };
+    const user = await User.findById(userId).select("-password");
 
-    request.userId = decoded.userId;
+    if (!user)
+      return res
+        .status(401)
+        .json({ success: false, message: "User not found" });
+
+    req.userId = userId;
+    req.user = user;
     next();
-  } catch (error) {
-    if (error instanceof jwt.JsonWebTokenError) {
-      return response.status(401).json({
-        success: false,
-        message: "Invalid token",
-      });
-    }
+  } catch (err: any) {
+    if (err instanceof jwt.TokenExpiredError)
+      return res.status(401).json({ success: false, message: "Token expired" });
+
+    if (err instanceof jwt.JsonWebTokenError)
+      return res.status(401).json({ success: false, message: "Invalid token" });
+
+    return res.status(500).json({ success: false, message: "Auth failed" });
   }
 };
+
 export default verifyToken;

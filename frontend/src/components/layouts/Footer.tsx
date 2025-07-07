@@ -7,8 +7,8 @@ const Footer = () => {
       <div className="h-10"></div>
       <div className="bg-destructive">
         <h2
-          className="font-semibold text-3xl text-primary-foreground
-        leading-9 py-4"
+          className="py-4 text-3xl font-semibold text-primary-foreground
+  leading-9"
         >
           Fresh fast delivered
         </h2>
@@ -19,7 +19,7 @@ const Footer = () => {
           {/* first */}
           <div className="flex flex-col items-center">
             <img src="/logo.png" alt="logo" className="w-[46px]" />
-            <h4 className="font-semibold text-xl text-primary-foreground">
+            <h4 className="text-xl font-semibold text-primary-foreground">
               Nom <span className="text-destructive">Nom</span>
             </h4>
             <p className="text-sm text-secondary">Swift delivery</p>
@@ -34,7 +34,7 @@ const Footer = () => {
           {/* third */}
           <div>
             <h5 className="footer-header">FOLLOW US</h5>
-            <div className="flex text-primary-foreground mt-3 gap-3">
+            <div className="flex mt-3 text-primary-foreground gap-3">
               <Facebook className="size-6" />
               <Instagram className="size-6" />
             </div>
@@ -42,7 +42,7 @@ const Footer = () => {
         </div>
         {/* copyright */}
         <div className="border-t border-t-[#F4F4F566] pb-10">
-          <div className="text-muted flex justify-start gap-10 py-5">
+          <div className="flex justify-start py-5 text-muted gap-10">
             <p>Copy right 2024©Nomnom LLC</p>
             <p>Privacy policy </p>
             <p>Terms and conditoin</p>

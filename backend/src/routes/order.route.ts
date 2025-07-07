@@ -6,13 +6,14 @@ import {
   updateOrder,
   deleteOrder,
 } from "../controllers/order.controller.js";
+import verifyToken from "../middleware/auth.js";
 
-const orderRoutes = express.Router();
+const router = express.Router();
 
-orderRoutes.post("/", createOrder);
-orderRoutes.get("/", getAllOrders);
-orderRoutes.get("/:userId", getOrdersByUserId);
-orderRoutes.patch("/:orderId", updateOrder);
-orderRoutes.delete("/:orderId", deleteOrder);
+router.post("/", verifyToken as any, createOrder as any);
+router.get("/", verifyToken as any, getAllOrders as any);
+router.get("/user/:userId", verifyToken as any, getOrdersByUserId as any);
+router.patch("/:orderId", verifyToken as any, updateOrder as any);
+router.delete("/:orderId", verifyToken as any, deleteOrder as any);
 
-export default orderRoutes;
+export default router;

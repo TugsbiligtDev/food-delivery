@@ -172,7 +172,7 @@ const Page = () => {
             </div>
             {/* Show & Hide password */}
             <div
-              className="flex gap-2 items-center cursor-pointer"
+              className="flex items-center cursor-pointer gap-2"
               onClick={() => setShow(!show)}
             >
               <Checkbox />
