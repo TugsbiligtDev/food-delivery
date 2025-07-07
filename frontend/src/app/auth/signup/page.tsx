@@ -62,14 +62,14 @@ const Page = () => {
       setIsLoading(true);
       try {
         const result = await axios.post(
-          " https://food-delivery-9lk5.onrender.com/auth/signup",
+          "http://localhost:8000/api/auth/signup",
           {
             email: data.email,
             password: data.password,
           }
         );
         console.log("Success:", result);
-        handleNavigate("/auth/login");
+        handleNavigate("/auth/signin");
       } catch (error) {
         console.error("Error:", error);
       } finally {
@@ -108,6 +108,7 @@ const Page = () => {
                 placeholder="Enter your email address"
                 type="email"
                 {...register("email")}
+                className="text-black"
               />
               {errors.email && (
                 <ValidationMsg message={errors.email.message || ""} />
@@ -153,6 +154,7 @@ const Page = () => {
                 placeholder="Password"
                 type={show ? "text" : "password"}
                 {...register("password")}
+                className="text-black"
               />
               {errors.password && (
                 <ValidationMsg message={errors.password.message || ""} />
@@ -165,6 +167,7 @@ const Page = () => {
                 placeholder="Confirm"
                 type={show ? "text" : "password"}
                 {...register("confirm")}
+                className="text-black"
               />
               {errors.confirm && (
                 <ValidationMsg message={errors.confirm.message || ""} />

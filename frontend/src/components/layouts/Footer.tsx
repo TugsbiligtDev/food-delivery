@@ -3,11 +3,11 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <div className="bg-primary">
+    <div className="bg-obsidian">
       <div className="h-10"></div>
-      <div className="bg-destructive">
+      <div className="bg-cherry-red">
         <h2
-          className="py-4 text-3xl font-semibold text-primary-foreground
+          className="py-4 text-3xl font-semibold text-snow-white
   leading-9"
         >
           Fresh fast delivered
@@ -19,10 +19,10 @@ const Footer = () => {
           {/* first */}
           <div className="flex flex-col items-center">
             <img src="/logo.png" alt="logo" className="w-[46px]" />
-            <h4 className="text-xl font-semibold text-primary-foreground">
-              Nom <span className="text-destructive">Nom</span>
+            <h4 className="text-xl font-semibold text-snow-white">
+              Nom <span className="text-cherry-red">Nom</span>
             </h4>
-            <p className="text-sm text-secondary">Swift delivery</p>
+            <p className="text-sm text-cloude-gray">Swift delivery</p>
           </div>
           {/* second */}
           <div>
