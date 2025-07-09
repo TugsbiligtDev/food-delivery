@@ -41,10 +41,13 @@ const Page = () => {
     setLoginError(null);
 
     try {
-      const result = await axios.post("http://localhost:8000/api/auth/signin", {
-        email,
-        password,
-      });
+      const result = await axios.post(
+        "https://food-delivery-9lk5.onrender.com/api/auth/signin",
+        {
+          email,
+          password,
+        }
+      );
 
       console.log("Login successful:", result);
 

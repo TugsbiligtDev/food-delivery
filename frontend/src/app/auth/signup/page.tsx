@@ -62,7 +62,7 @@ const Page = () => {
       setIsLoading(true);
       try {
         const result = await axios.post(
-          "http://localhost:8000/api/auth/signup",
+          "https://food-delivery-9lk5.onrender.com/api/auth/signup",
           {
             email: data.email,
             password: data.password,

@@ -15,7 +15,7 @@ const CartTab = ({ onCheckout }: CartTabProps) => {
     <>
       {/* top card */}
       <Card className="w-full max-w-lg bg-white">
-        <CardContent>
+        {/* <CardContent>
           <h4 className="order-card-title">My cart</h4>
           <OrderInfo />
           <OrderInfo />
@@ -26,7 +26,25 @@ const CartTab = ({ onCheckout }: CartTabProps) => {
           <Payment />
           <div className="border border-dashed w-full border-gray-400" />
           <Payment />
-        </CardFooter>
+        </CardFooter> */}
+        <CardContent>
+          <h4
+            className=" font-semibold text-xl
+          text-midnight-black"
+          >
+            My cart
+          </h4>
+          <div className="w-full bg-cloude-gray flex flex-col items-center justify-center gap-3 px-12 py-8 rounded-xl mt-3">
+            <img src="/logo.png" alt="logo" className="size-16" />
+            <p className="font-bold text-midnight-black text-base">
+              Your cart is empthy
+            </p>
+            <p className="text-xs text-slate-gray text-center">
+              Hungry? 🍔 Add some delicious dishes to your cart and satisfy your
+              cravings!
+            </p>
+          </div>
+        </CardContent>
       </Card>
 
       {/* bottom card */}

@@ -1,5 +1,13 @@
+import AdminHeader from "@/components/admin/AdminHeader";
+import AdminSidebar from "@/components/admin/AdminSidebar";
+
 const Page = () => {
-  return <div>Page</div>;
+  return (
+    <div>
+      <AdminSidebar />
+      {/* <AdminHeader /> */}
+    </div>
+  );
 };
 
 export default Page;
