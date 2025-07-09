@@ -5,14 +5,14 @@ import MenuGrid from "@/components/menu/MenuGrid";
 
 const page = () => {
   return (
-    <div>
+    <>
       <Header />
       <Hero />
       <div className="w-[90%] mx-auto flex justify-center">
         <MenuGrid />
       </div>
       <Footer />
-    </div>
+    </>
   );
 };
 

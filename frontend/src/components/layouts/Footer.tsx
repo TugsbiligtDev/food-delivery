@@ -3,7 +3,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <div className="bg-obsidian">
+    <footer className="bg-obsidian">
       <div className="h-10"></div>
       <div className="bg-cherry-red">
         <h2
@@ -50,7 +50,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </div>
+    </footer>
   );
 };
 
