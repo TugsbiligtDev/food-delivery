@@ -14,6 +14,7 @@ import Link from "next/link";
 import ValidationMsg from "@/components/auth/ValidationMsg";
 import AuthLayout from "../AuthLayout";
 import authNavigation from "@/lib/authNavigation";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 const schema = z
   .object({
@@ -36,9 +37,11 @@ type FormData = z.infer<typeof schema>;
 
 const Page = () => {
   const { handleNavigate } = authNavigation();
+  const { login } = useAuth(); // Add this line
   const [current, setCurrent] = useState(1);
   const [show, setShow] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [signupError, setSignupError] = useState<string | null>(null); // Add error state
 
   const {
     register,
@@ -60,6 +63,8 @@ const Page = () => {
   const onSubmit = async (data: FormData) => {
     if (current === 2) {
       setIsLoading(true);
+      setSignupError(null);
+
       try {
         const result = await axios.post(
           "https://food-delivery-9lk5.onrender.com/api/auth/signup",
@@ -68,10 +73,48 @@ const Page = () => {
             password: data.password,
           }
         );
-        console.log("Success:", result);
-        handleNavigate("/auth/signin");
+
+        console.log("Signup successful:", result);
+
+        if (result.status === 200 || result.status === 201) {
+          // 🔥 AUTO-LOGIN AFTER SUCCESSFUL SIGNUP
+          const userData = {
+            id: result.data.id || result.data.user?.id || "new-user",
+            name: result.data.name || result.data.user?.name || "User",
+            email: result.data.email || data.email,
+          };
+
+          // Update auth context - user is now logged in
+          login(userData);
+
+          // Optional: Save token if provided
+          if (result.data.token) {
+            localStorage.setItem("token", result.data.token);
+          }
+
+          console.log("🎉 User auto-logged in after signup");
+
+          // Redirect to home instead of signin
+          handleNavigate("/");
+        } else {
+          // If signup succeeded but no auto-login, redirect to signin
+          handleNavigate("/auth/signin");
+        }
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Signup error:", error);
+
+        // Better error handling
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 409) {
+            setSignupError("An account with this email already exists");
+          } else if (error.response?.status === 400) {
+            setSignupError("Please check your information and try again");
+          } else {
+            setSignupError("Something went wrong. Please try again.");
+          }
+        } else {
+          setSignupError("Network error. Please check your connection.");
+        }
       } finally {
         setIsLoading(false);
       }
@@ -82,18 +125,23 @@ const Page = () => {
     <AuthLayout>
       {current === 1 && (
         <div className="form-container">
-          {/* Back Button */}
           <Button variant="secondary" className="size-9 pointer">
             <ChevronLeft />
           </Button>
 
-          {/* Title */}
           <div>
             <h3 className="heading">Create your account</h3>
             <p className="paragraph">
               Sign up to explore your favorite dishes.
             </p>
           </div>
+
+          {/* Show error if exists */}
+          {signupError && (
+            <div className="p-3 mb-4 text-sm text-red-700 border border-red-200 rounded bg-red-50">
+              {signupError}
+            </div>
+          )}
 
           {/* Form */}
           <form
@@ -103,7 +151,6 @@ const Page = () => {
             }}
           >
             <div>
-              {/* Email input */}
               <Input
                 placeholder="Enter your email address"
                 type="email"
@@ -114,24 +161,21 @@ const Page = () => {
                 <ValidationMsg message={errors.email.message || ""} />
               )}
             </div>
-            {/* Move to password page button */}
             <Button className="long-button" type="submit">
               Let's Go
             </Button>
           </form>
-          {/* Navigate to Login */}
           <div className="bottom-container">
             <p className="paragraph">Already have an account?</p>
-            <Link href="/auth/login" className="accent">
+            <Link href="/auth/signin" className="accent">
+              {/* Fixed link path */}
               Log in
             </Link>
           </div>
         </div>
       )}
-      {/* Create password section */}
       {current === 2 && (
         <div className="form-container">
-          {/* Back button */}
           <Button
             variant="secondary"
             className="size-9 pointer"
@@ -139,7 +183,6 @@ const Page = () => {
           >
             <ChevronLeft />
           </Button>
-          {/* Title */}
           <div>
             <h3 className="heading">Create a strong password</h3>
             <p className="paragraph">
@@ -147,14 +190,21 @@ const Page = () => {
             </p>
           </div>
 
+          {/* Show error in step 2 as well */}
+          {signupError && (
+            <div className="p-3 mb-4 text-sm text-red-700 border border-red-200 rounded bg-red-50">
+              {signupError}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-5">
-              {/* First password input */}
               <Input
                 placeholder="Password"
                 type={show ? "text" : "password"}
                 {...register("password")}
                 className="text-black"
+                disabled={isLoading}
               />
               {errors.password && (
                 <ValidationMsg message={errors.password.message || ""} />
@@ -162,18 +212,17 @@ const Page = () => {
             </div>
 
             <div className="mb-3">
-              {/* Second password input */}
               <Input
                 placeholder="Confirm"
                 type={show ? "text" : "password"}
                 {...register("confirm")}
                 className="text-black"
+                disabled={isLoading}
               />
               {errors.confirm && (
                 <ValidationMsg message={errors.confirm.message || ""} />
               )}
             </div>
-            {/* Show & Hide password */}
             <div
               className="flex items-center cursor-pointer gap-2"
               onClick={() => setShow(!show)}
@@ -191,7 +240,8 @@ const Page = () => {
 
           <div className="bottom-container">
             <p className="paragraph">Already have an account?</p>
-            <Link href="/auth/login" className="accent">
+            <Link href="/auth/signin" className="accent">
+              {/* Fixed link path */}
               Log in
             </Link>
           </div>

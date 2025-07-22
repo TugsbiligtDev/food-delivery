@@ -1,9 +1,9 @@
-import Footer from "@/components/layouts/Footer";
 import Header from "@/components/layouts/Header";
 import Hero from "@/components/layouts/Hero";
 import MenuGrid from "@/components/menu/MenuGrid";
+import Footer from "@/components/layouts/Footer";
 
-const page = () => {
+export default function HomePage() {
   return (
     <>
       <Header />
@@ -14,9 +14,7 @@ const page = () => {
       <Footer />
     </>
   );
-};
-
-export default page;
+}
 
 //todo understand login and signup
 //todo complete UI of Homepage

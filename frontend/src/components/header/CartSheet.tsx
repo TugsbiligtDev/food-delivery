@@ -23,7 +23,7 @@ const CartSheet = ({ onCheckout }: CartSheetProps) => {
         </Button>
       </SheetTrigger>
 
-      <SheetContent className="bg-[#404040] text-white p-6">
+      <SheetContent className="bg-[#404040] text-white p-6 overflow-x-scroll">
         <div className="flex items-center justify-between text-cloude-gray">
           <div className="flex gap-2">
             <ShoppingCart />

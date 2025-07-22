@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { ChevronLeft } from "lucide-react";
 import AuthLayout from "../AuthLayout";
 import ValidationMsg from "@/components/auth/ValidationMsg";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 const schema = z.object({
   email: z
@@ -25,6 +26,7 @@ const Page = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const { handleNavigate } = authNavigation();
+  const { login } = useAuth(); // Add this line
 
   const {
     register,
@@ -42,7 +44,7 @@ const Page = () => {
 
     try {
       const result = await axios.post(
-        "https://food-delivery-9lk5.onrender.com/api/auth/signin",
+        "https://food-delivery-9lk5.onrender.com/api/auth/signup",
         {
           email,
           password,
@@ -52,8 +54,22 @@ const Page = () => {
       console.log("Login successful:", result);
 
       if (result.status === 200 && result.data) {
-        //?token save or not
-        // localStorage.setItem('token', result.data.token); // if you get a token
+        // 🔥 KEY ADDITION: Update AuthContext with user data
+        const userData = {
+          id: result.data.id || result.data.user?.id || "user-id",
+          name: result.data.name || result.data.user?.name || "User",
+          email: result.data.email || email,
+        };
+
+        // Call login from AuthContext - this updates the global state
+        login(userData);
+
+        // Optional: Save token if you get one
+        if (result.data.token) {
+          localStorage.setItem("token", result.data.token);
+        }
+
+        console.log("🎉 Auth context updated, navigating home...");
         handleNavigate("/");
       }
     } catch (error) {
