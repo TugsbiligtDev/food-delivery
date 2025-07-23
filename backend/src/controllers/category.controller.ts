@@ -1,52 +1,54 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-const { Types } = mongoose;
 import { Category } from "../models/index.js";
+
+const { Types } = mongoose;
 
 interface AuthRequest extends Request {
   userId?: string;
-  user?: any;
+  user?: { role?: string };
 }
-
-const isValidId = (id: string) => Types.ObjectId.isValid(id);
-const isAdmin = (user: any) => user?.role === "ADMIN";
-const error = (res: Response, msg: string, code = 400) =>
-  res.status(code).json({ success: false, message: msg });
-const serverError = (res: Response, err: any, msg: string) => {
-  console.error(`${msg}:`, err);
-  error(res, msg, 500);
-};
-
-const nameRegex = (name: string) => new RegExp(`^${name.trim()}$`, "i");
 
 export const getAllCategories = async (_req: Request, res: Response) => {
   try {
     const categories = await Category.find();
     res.json({ success: true, data: categories });
   } catch (err) {
-    serverError(res, err, "Failed to fetch categories");
+    console.error("Failed to fetch categories:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch categories" });
   }
 };
 
 export const createCategory = async (req: AuthRequest, res: Response) => {
   try {
     const { categoryName } = req.body;
-    if (!categoryName) return error(res, "Category name is required");
-    if (!isAdmin(req.user)) return error(res, "Admin only", 403);
+    if (!categoryName)
+      return res
+        .status(400)
+        .json({ success: false, message: "Category name is required" });
+
+    if (req.user?.role !== "ADMIN")
+      return res.status(403).json({ success: false, message: "Admin only" });
 
     const exists = await Category.findOne({
-      categoryName: { $regex: nameRegex(categoryName) },
+      categoryName: { $regex: new RegExp(`^${categoryName.trim()}$`, "i") },
     });
-    if (exists) return error(res, "Category already exists", 409);
+    if (exists)
+      return res
+        .status(409)
+        .json({ success: false, message: "Category already exists" });
 
-    const created = await Category.create({
-      categoryName: categoryName,
-    });
+    const created = await Category.create({ categoryName });
     res
       .status(201)
       .json({ success: true, message: "Category created", data: created });
   } catch (err) {
-    serverError(res, err, "Failed to create category");
+    console.error("Failed to create category:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to create category" });
   }
 };
 
@@ -55,41 +57,72 @@ export const updateCategory = async (req: AuthRequest, res: Response) => {
     const { categoryId } = req.params;
     const { categoryName } = req.body;
 
-    if (!isValidId(categoryId)) return error(res, "Invalid category ID");
-    if (!categoryName) return error(res, "Category name is required");
-    if (!isAdmin(req.user)) return error(res, "Admin only", 403);
+    if (!Types.ObjectId.isValid(categoryId))
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid category ID" });
+
+    if (!categoryName)
+      return res
+        .status(400)
+        .json({ success: false, message: "Category name is required" });
+
+    if (req.user?.role !== "ADMIN")
+      return res.status(403).json({ success: false, message: "Admin only" });
 
     const exists = await Category.findOne({
-      categoryName: { $regex: nameRegex(categoryName) },
+      categoryName: { $regex: new RegExp(`^${categoryName.trim()}$`, "i") },
       _id: { $ne: categoryId },
     });
     if (exists)
-      return error(res, "Category with this name already exists", 409);
+      return res
+        .status(409)
+        .json({
+          success: false,
+          message: "Category with this name already exists",
+        });
 
     const updated = await Category.findByIdAndUpdate(
       categoryId,
-      { categoryName: categoryName },
+      { categoryName },
       { new: true, runValidators: true }
     );
-    if (!updated) return error(res, "Category not found", 404);
+    if (!updated)
+      return res
+        .status(404)
+        .json({ success: false, message: "Category not found" });
 
     res.json({ success: true, message: "Category updated", data: updated });
   } catch (err) {
-    serverError(res, err, "Failed to update category");
+    console.error("Failed to update category:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to update category" });
   }
 };
 
 export const deleteCategory = async (req: AuthRequest, res: Response) => {
   try {
     const { categoryId } = req.params;
-    if (!isValidId(categoryId)) return error(res, "Invalid category ID");
-    if (!isAdmin(req.user)) return error(res, "Admin only", 403);
+    if (!Types.ObjectId.isValid(categoryId))
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid category ID" });
+
+    if (req.user?.role !== "ADMIN")
+      return res.status(403).json({ success: false, message: "Admin only" });
 
     const deleted = await Category.findByIdAndDelete(categoryId);
-    if (!deleted) return error(res, "Category not found", 404);
+    if (!deleted)
+      return res
+        .status(404)
+        .json({ success: false, message: "Category not found" });
 
     res.json({ success: true, message: "Category deleted", data: deleted });
   } catch (err) {
-    serverError(res, err, "Failed to delete category");
+    console.error("Failed to delete category:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to delete category" });
   }
 };

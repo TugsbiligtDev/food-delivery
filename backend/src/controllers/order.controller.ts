@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { Order } from "../models/index.js";
-
+import { Types } from "mongoose";
 interface AuthRequest extends Request {
   userId?: string;
-  user?: any;
+  user?: { role?: string };
 }
 
 export const createOrder = async (req: AuthRequest, res: Response) => {
@@ -46,7 +46,7 @@ export const getAllOrders = async (req: AuthRequest, res: Response) => {
 export const getOrdersByUserId = async (req: AuthRequest, res: Response) => {
   try {
     const { userId } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(userId))
+    if (!Types.ObjectId.isValid(userId))
       return res
         .status(400)
         .json({ success: false, message: "Invalid user ID" });
@@ -70,7 +70,7 @@ export const getOrdersByUserId = async (req: AuthRequest, res: Response) => {
 export const updateOrder = async (req: AuthRequest, res: Response) => {
   try {
     const { orderId } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(orderId))
+    if (!Types.ObjectId.isValid(orderId))
       return res
         .status(400)
         .json({ success: false, message: "Invalid order ID" });
