@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import CartSheet from "../header/CartSheet";
+import CartSheet from "../card/CartSheet";
 import UserDropdown from "../header/UserDropDown";
-import SuccessDialog from "../header/SuccessDialog";
+import SuccessDialog from "../card/SuccessDialog";
 import AuthButtons from "../header/AuthButtons";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useCart } from "@/app/contexts/UseCart";

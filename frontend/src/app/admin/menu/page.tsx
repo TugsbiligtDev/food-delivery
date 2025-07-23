@@ -1,5 +1,5 @@
-import MenuAdd from "@/components/menu/MenuAdd";
-import MenuHeader from "@/components/menu/MenuHeader";
+import MenuAdd from "@/components/adminMenu/MenuAdd";
+import MenuHeader from "@/components/adminMenu/MenuHeader";
 
 const Page = () => {
   return (

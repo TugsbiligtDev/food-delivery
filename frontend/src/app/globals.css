@@ -21,6 +21,7 @@ section {
   --color-royal-blue: #2563eb;
   --color-snow-white: #fafafa;
   --color-cloude-gray: #f4f4f5;
+  --color-light-gray: #e4e4e7;
 }
 .form-container {
   @apply w-full max-w-md space-y-6;

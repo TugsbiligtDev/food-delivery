@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useState } from "react";
 import { useCart } from "@/app/contexts/UseCart"; // Add this import
-import OrderInfo from "./OrderInfo";
+import OrderInfo from "../order/OrderInfo";
 import Payment from "./Payment";
 
 interface CartTabProps {

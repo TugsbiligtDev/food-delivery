@@ -8,7 +8,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import OrderTabs from "./OrderTabs";
+import OrderTabs from "../order/OrderTabs";
 
 interface CartSheetProps {
   onCheckout: () => void;

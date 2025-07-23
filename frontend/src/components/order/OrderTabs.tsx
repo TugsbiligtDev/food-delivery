@@ -1,8 +1,8 @@
 "use client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
-import CartTab from "./CartTab";
-import OrderTab from "./OrderTab";
+import CartTab from "../card/CartTab";
+import OrderTab from "../order/OrderTab";
 
 interface OrderTabsProps {
   onCheckout: () => void;

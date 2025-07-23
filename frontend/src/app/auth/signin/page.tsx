@@ -4,7 +4,6 @@ import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,19 +11,10 @@ import { ChevronLeft } from "lucide-react";
 import AuthLayout from "../AuthLayout";
 import ValidationMsg from "@/components/auth/ValidationMsg";
 import { useAuth } from "@/app/contexts/AuthContext";
-
-const schema = z.object({
-  email: z
-    .string()
-    .email("Invalid email. Use a format like example@email.com."),
-  password: z.string().min(6, "Password must be at least 6 characters."),
-});
-
-type FormData = z.infer<typeof schema>;
+import { signinSchema, SigninFormData } from "@/lib/schemas/auth";
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null);
   const { handleNavigate } = authNavigation();
   const { login } = useAuth();
 
@@ -32,57 +22,33 @@ const Page = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
+  } = useForm<SigninFormData>({
+    resolver: zodResolver(signinSchema),
   });
 
-  const onSubmit = async (data: FormData) => {
-    const { email, password } = data;
-
+  const onSubmit = async (data: SigninFormData) => {
     setIsLoading(true);
-    setLoginError(null);
 
     try {
       const result = await axios.post(
-        "https://food-delivery-9lk5.onrender.com/api/auth/signup",
+        "https://food-delivery-9lk5.onrender.com/api/auth/signin",
         {
-          email,
-          password,
+          email: data.email,
+          password: data.password,
         }
       );
 
-      console.log("Login successful:", result);
-
-      if (result.status === 200 && result.data) {
-        const userData = {
-          id: result.data.id || result.data.user?.id || "user-id",
-          name: result.data.name || result.data.user?.name || "User",
-          email: result.data.email || email,
-        };
-
-        login(userData);
+      if (result.status === 200) {
+        login(result.data.user);
 
         if (result.data.token) {
           localStorage.setItem("token", result.data.token);
         }
 
-        console.log("🎉 Auth context updated, navigating home...");
         handleNavigate("/");
       }
     } catch (error) {
-      console.error("Login error:", error);
-
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 401) {
-          setLoginError("Invalid email or password");
-        } else if (error.response?.status === 400) {
-          setLoginError("Please check your email and password");
-        } else {
-          setLoginError("Something went wrong. Please try again.");
-        }
-      } else {
-        setLoginError("Network error. Please check your connection.");
-      }
+      console.error("Signin error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -101,12 +67,6 @@ const Page = () => {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          {loginError && (
-            <div className="p-3 mb-4 text-sm text-red-700 border border-red-200 rounded bg-red-50">
-              {loginError}
-            </div>
-          )}
-
           <div className="mb-5">
             <Input
               placeholder="Enter your email address"

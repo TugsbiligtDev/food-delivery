@@ -36,11 +36,15 @@ export const signUp = async (req: Request, res: Response) => {
       password: hashedPassword,
     });
 
+    const token = jwt.sign({ userId: newUser._id }, JWT_SECRET, {
+      expiresIn: "7d",
+    });
     const { password: _, ...userWithoutPassword } = newUser.toObject();
     res.status(201).json({
       success: true,
       message: "User created",
       user: userWithoutPassword,
+      token,
     });
   } catch (err) {
     console.error("Sign up error:", err);
