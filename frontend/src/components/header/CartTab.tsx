@@ -25,7 +25,7 @@ const CartTab = ({ onCheckout }: CartTabProps) => {
     0
   );
   const deliveryFee = hasItems ? 2.99 : 0;
-  const tax = subtotal * 0.08; // 8% tax
+  const tax = subtotal * 0.05;
   const total = subtotal + deliveryFee + tax;
 
   const handleRemoveItem = (itemId: number) => {
@@ -62,7 +62,6 @@ const CartTab = ({ onCheckout }: CartTabProps) => {
 
           {hasItems ? (
             <>
-              {/* Cart Items */}
               <div className="mt-3 space-y-3">
                 {cartItems.map((item) => (
                   <OrderInfo
@@ -143,7 +142,7 @@ const CartTab = ({ onCheckout }: CartTabProps) => {
               ? "Processing..."
               : hasItems
               ? `Checkout • $${total.toFixed(2)}`
-              : "Add items to checkout"}
+              : "Checkout"}
           </Button>
         </CardContent>
       </Card>

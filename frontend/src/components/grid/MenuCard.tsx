@@ -16,10 +16,8 @@ const MenuCard = ({ id, title, price, description, image }: MenuCardProps) => {
 
   const handleAddToCart = () => {
     if (isAdded) {
-      // If already in cart, add another one
       addToCart({ id, name: title, price, image, description });
     } else {
-      // First time adding
       addToCart({ id, name: title, price, image, description });
     }
   };

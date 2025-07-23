@@ -3,6 +3,7 @@
 import { Table as ReactTable } from "@tanstack/react-table";
 
 import { Payment } from "@/lib/data";
+import { Input } from "../ui/input";
 
 interface OrdersTableFiltersProps {
   table: ReactTable<Payment>;
@@ -19,7 +20,6 @@ export default function OrdersTableFilters({ table }: OrdersTableFiltersProps) {
         }
         className="max-w-sm"
       />
-      <Card
     </div>
   );
 }

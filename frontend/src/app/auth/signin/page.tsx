@@ -26,7 +26,7 @@ const Page = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const { handleNavigate } = authNavigation();
-  const { login } = useAuth(); // Add this line
+  const { login } = useAuth();
 
   const {
     register,
@@ -54,17 +54,14 @@ const Page = () => {
       console.log("Login successful:", result);
 
       if (result.status === 200 && result.data) {
-        // 🔥 KEY ADDITION: Update AuthContext with user data
         const userData = {
           id: result.data.id || result.data.user?.id || "user-id",
           name: result.data.name || result.data.user?.name || "User",
           email: result.data.email || email,
         };
 
-        // Call login from AuthContext - this updates the global state
         login(userData);
 
-        // Optional: Save token if you get one
         if (result.data.token) {
           localStorage.setItem("token", result.data.token);
         }

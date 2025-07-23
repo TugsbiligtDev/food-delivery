@@ -37,12 +37,11 @@ type FormData = z.infer<typeof schema>;
 
 const Page = () => {
   const { handleNavigate } = authNavigation();
-  const { login } = useAuth(); // Add this line
+  const { login } = useAuth();
   const [current, setCurrent] = useState(1);
   const [show, setShow] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [signupError, setSignupError] = useState<string | null>(null); // Add error state
-
+  const [signupError, setSignupError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -77,27 +76,22 @@ const Page = () => {
         console.log("Signup successful:", result);
 
         if (result.status === 200 || result.status === 201) {
-          // 🔥 AUTO-LOGIN AFTER SUCCESSFUL SIGNUP
           const userData = {
             id: result.data.id || result.data.user?.id || "new-user",
             name: result.data.name || result.data.user?.name || "User",
             email: result.data.email || data.email,
           };
 
-          // Update auth context - user is now logged in
           login(userData);
 
-          // Optional: Save token if provided
           if (result.data.token) {
             localStorage.setItem("token", result.data.token);
           }
 
           console.log("🎉 User auto-logged in after signup");
 
-          // Redirect to home instead of signin
           handleNavigate("/");
         } else {
-          // If signup succeeded but no auto-login, redirect to signin
           handleNavigate("/auth/signin");
         }
       } catch (error) {

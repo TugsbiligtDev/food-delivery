@@ -39,7 +39,6 @@ const PasswordCreate = ({ prev }: Props) => {
 
   const onSubmit = (data: FormData) => {
     console.log("Password is valid:", data.password);
-    //todo connect to backend
   };
 
   const [show, setShow] = useState(false);
