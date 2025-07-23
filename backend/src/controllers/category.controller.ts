@@ -1,95 +1,127 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
+import { Order } from "../models/index.js";
+
 const { Types } = mongoose;
-import { Category } from "../models/index.js";
 
 interface AuthRequest extends Request {
   userId?: string;
   user?: any;
 }
 
-const isValidId = (id: string) => Types.ObjectId.isValid(id);
-const isAdmin = (user: any) => user?.role === "ADMIN";
-const error = (res: Response, msg: string, code = 400) =>
-  res.status(code).json({ success: false, message: msg });
-const serverError = (res: Response, err: any, msg: string) => {
-  console.error(`${msg}:`, err);
-  error(res, msg, 500);
-};
-
-const nameRegex = (name: string) => new RegExp(`^${name.trim()}$`, "i");
-
-export const getAllCategories = async (_req: Request, res: Response) => {
+export const createOrder = async (req: AuthRequest, res: Response) => {
   try {
-    const categories = await Category.find();
-    res.json({ success: true, data: categories });
-  } catch (err) {
-    serverError(res, err, "Failed to fetch categories");
-  }
-};
-
-export const createCategory = async (req: AuthRequest, res: Response) => {
-  try {
-    const { categoryName } = req.body;
-    if (!categoryName) return error(res, "Category name is required");
-    if (!isAdmin(req.user)) return error(res, "Admin only", 403);
-
-    const exists = await Category.findOne({
-      categoryName: { $regex: nameRegex(categoryName) },
-    });
-    if (exists) return error(res, "Category already exists", 409);
-
-    const created = await Category.create({
-      categoryName: categoryName,
-    });
+    const order = await Order.create({ ...req.body, user: req.userId });
+    const populated = await Order.findById(order._id)
+      .populate("user", "-password")
+      .populate({
+        path: "foodOrderItems.food",
+        populate: { path: "category" },
+      });
     res
       .status(201)
-      .json({ success: true, message: "Category created", data: created });
+      .json({ success: true, message: "Order created", data: populated });
   } catch (err) {
-    serverError(res, err, "Failed to create category");
+    console.error("Create order failed:", err);
+    res.status(500).json({ success: false, message: "Create order failed" });
   }
 };
 
-export const updateCategory = async (req: AuthRequest, res: Response) => {
+export const getAllOrders = async (req: AuthRequest, res: Response) => {
   try {
-    const { categoryId } = req.params;
-    const { categoryName } = req.body;
+    if (req.user?.role !== "ADMIN")
+      return res.status(403).json({ success: false, message: "Admin only" });
 
-    if (!isValidId(categoryId)) return error(res, "Invalid category ID");
-    if (!categoryName) return error(res, "Category name is required");
-    if (!isAdmin(req.user)) return error(res, "Admin only", 403);
-
-    const exists = await Category.findOne({
-      categoryName: { $regex: nameRegex(categoryName) },
-      _id: { $ne: categoryId },
-    });
-    if (exists)
-      return error(res, "Category with this name already exists", 409);
-
-    const updated = await Category.findByIdAndUpdate(
-      categoryId,
-      { categoryName: categoryName },
-      { new: true, runValidators: true }
-    );
-    if (!updated) return error(res, "Category not found", 404);
-
-    res.json({ success: true, message: "Category updated", data: updated });
+    const orders = await Order.find()
+      .populate("user", "-password")
+      .populate({
+        path: "foodOrderItems.food",
+        populate: { path: "category" },
+      });
+    res.json({ success: true, data: orders });
   } catch (err) {
-    serverError(res, err, "Failed to update category");
+    console.error("Get all orders failed:", err);
+    res.status(500).json({ success: false, message: "Get all orders failed" });
   }
 };
 
-export const deleteCategory = async (req: AuthRequest, res: Response) => {
+export const getOrdersByUserId = async (req: AuthRequest, res: Response) => {
   try {
-    const { categoryId } = req.params;
-    if (!isValidId(categoryId)) return error(res, "Invalid category ID");
-    if (!isAdmin(req.user)) return error(res, "Admin only", 403);
+    const { userId } = req.params;
+    if (!Types.ObjectId.isValid(userId))
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid user ID" });
 
-    const deleted = await Category.findByIdAndDelete(categoryId);
-    if (!deleted) return error(res, "Category not found", 404);
+    if (req.userId !== userId && req.user?.role !== "ADMIN")
+      return res.status(403).json({ success: false, message: "Access denied" });
 
-    res.json({ success: true, message: "Category deleted", data: deleted });
+    const orders = await Order.find({ user: userId })
+      .populate("user", "-password")
+      .populate({
+        path: "foodOrderItems.food",
+        populate: { path: "category" },
+      });
+    res.json({ success: true, data: orders });
   } catch (err) {
-    serverError(res, err, "Failed to delete category");
+    console.error("Get user orders failed:", err);
+    res.status(500).json({ success: false, message: "Get user orders failed" });
+  }
+};
+
+export const updateOrder = async (req: AuthRequest, res: Response) => {
+  try {
+    const { orderId } = req.params;
+    if (!Types.ObjectId.isValid(orderId))
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid order ID" });
+
+    const order = await Order.findById(orderId);
+    if (!order)
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+
+    if (order.user.toString() !== req.userId && req.user?.role !== "ADMIN")
+      return res.status(403).json({ success: false, message: "Unauthorized" });
+
+    const updated = await Order.findByIdAndUpdate(orderId, req.body, {
+      new: true,
+      runValidators: true,
+    })
+      .populate("user", "-password")
+      .populate({
+        path: "foodOrderItems.food",
+        populate: { path: "category" },
+      });
+    res.json({ success: true, message: "Order updated", data: updated });
+  } catch (err) {
+    console.error("Update order failed:", err);
+    res.status(500).json({ success: false, message: "Update order failed" });
+  }
+};
+
+export const deleteOrder = async (req: AuthRequest, res: Response) => {
+  try {
+    const { orderId } = req.params;
+    if (!Types.ObjectId.isValid(orderId))
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid order ID" });
+
+    if (req.user?.role !== "ADMIN")
+      return res.status(403).json({ success: false, message: "Admin only" });
+
+    const deleted = await Order.findByIdAndDelete(orderId);
+    if (!deleted)
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+
+    res.json({ success: true, message: "Order deleted", data: deleted });
+  } catch (err) {
+    console.error("Delete order failed:", err);
+    res.status(500).json({ success: false, message: "Delete order failed" });
   }
 };

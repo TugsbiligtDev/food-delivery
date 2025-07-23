@@ -1,4 +1,4 @@
-import express from "express";
+import express, { RequestHandler } from "express";
 import {
   createOrder,
   getAllOrders,
@@ -10,10 +10,22 @@ import verifyToken from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/", verifyToken as any, createOrder as any);
-router.get("/", verifyToken as any, getAllOrders as any);
-router.get("/user/:userId", verifyToken as any, getOrdersByUserId as any);
-router.patch("/:orderId", verifyToken as any, updateOrder as any);
-router.delete("/:orderId", verifyToken as any, deleteOrder as any);
+router.post("/", verifyToken as RequestHandler, createOrder as RequestHandler);
+router.get("/", verifyToken as RequestHandler, getAllOrders as RequestHandler);
+router.get(
+  "/user/:userId",
+  verifyToken as RequestHandler,
+  getOrdersByUserId as RequestHandler
+);
+router.patch(
+  "/:orderId",
+  verifyToken as RequestHandler,
+  updateOrder as RequestHandler
+);
+router.delete(
+  "/:orderId",
+  verifyToken as RequestHandler,
+  deleteOrder as RequestHandler
+);
 
 export default router;

@@ -1,134 +1,137 @@
 import { Request, Response } from "express";
 import { Food } from "../models/index.js";
 import mongoose from "mongoose";
+
 const { Types } = mongoose;
+
 interface AuthRequest extends Request {
   userId?: string;
   user?: any;
 }
 
-const validateObjectId = (id: string): boolean => Types.ObjectId.isValid(id);
-const checkAdminRole = (user: any): boolean => user?.role === "ADMIN";
-const handleError = (res: Response, error: any, message: string) => {
-  console.error(`${message}:`, error);
-  res.status(500).json({ success: false, message });
-};
-
-const sendUnauthorizedResponse = (res: Response) =>
-  res.status(403).json({
-    success: false,
-    message: "Access denied. Admin privileges required.",
-  });
-
-const sendInvalidIdResponse = (res: Response) =>
-  res.status(400).json({
-    success: false,
-    message: "Invalid food ID format",
-  });
-
-export const getAllFoods = async (request: Request, response: Response) => {
+export const getAllFoods = async (req: Request, res: Response) => {
   try {
     const foods = await Food.find().populate("category");
-    response.json({ success: true, data: foods });
-  } catch (error) {
-    handleError(response, error, "Failed to fetch foods");
+    res.json({ success: true, data: foods });
+  } catch (err) {
+    console.error("Failed to fetch foods:", err);
+    res.status(500).json({ success: false, message: "Failed to fetch foods" });
   }
 };
 
-export const getFoodById = async (request: Request, response: Response) => {
+export const getFoodById = async (req: Request, res: Response) => {
   try {
-    const { foodId } = request.params;
-    if (!validateObjectId(foodId)) return sendInvalidIdResponse(response);
+    const { foodId } = req.params;
+    if (!Types.ObjectId.isValid(foodId))
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid food ID format" });
 
     const food = await Food.findById(foodId).populate("category");
-    if (!food) {
-      return response
+    if (!food)
+      return res
         .status(404)
         .json({ success: false, message: "Food not found" });
-    }
-    response.json({ success: true, data: food });
-  } catch (error) {
-    handleError(response, error, "Failed to fetch food");
+
+    res.json({ success: true, data: food });
+  } catch (err) {
+    console.error("Failed to fetch food:", err);
+    res.status(500).json({ success: false, message: "Failed to fetch food" });
   }
 };
 
-export const createFood = async (request: AuthRequest, response: Response) => {
+export const createFood = async (req: AuthRequest, res: Response) => {
   try {
-    const { foodName, price, image, ingredients, category } = request.body;
+    if (req.user?.role !== "ADMIN")
+      return res
+        .status(403)
+        .json({
+          success: false,
+          message: "Access denied. Admin privileges required.",
+        });
 
-    if (!checkAdminRole(request.user))
-      return sendUnauthorizedResponse(response);
-
-    const createdFood = await Food.create({
-      foodName,
-      price,
-      image,
-      ingredients,
-      category,
-    });
+    const createdFood = await Food.create(req.body);
     const populatedFood = await Food.findById(createdFood._id).populate(
       "category"
     );
 
-    response.status(201).json({
+    res.status(201).json({
       success: true,
       message: "Food created successfully",
       data: populatedFood,
     });
-  } catch (error) {
-    handleError(response, error, "Failed to create food");
+  } catch (err) {
+    console.error("Failed to create food:", err);
+    res.status(500).json({ success: false, message: "Failed to create food" });
   }
 };
 
-export const updateFood = async (request: AuthRequest, response: Response) => {
+export const updateFood = async (req: AuthRequest, res: Response) => {
   try {
-    const { foodId } = request.params;
-    const updateData = request.body;
-    if (!validateObjectId(foodId)) return sendInvalidIdResponse(response);
-    if (!checkAdminRole(request.user))
-      return sendUnauthorizedResponse(response);
+    const { foodId } = req.params;
+    if (!Types.ObjectId.isValid(foodId))
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid food ID format" });
 
-    const updatedFood = await Food.findByIdAndUpdate(foodId, updateData, {
+    if (req.user?.role !== "ADMIN")
+      return res
+        .status(403)
+        .json({
+          success: false,
+          message: "Access denied. Admin privileges required.",
+        });
+
+    const updatedFood = await Food.findByIdAndUpdate(foodId, req.body, {
       new: true,
       runValidators: true,
     }).populate("category");
 
-    if (!updatedFood) {
-      return response
+    if (!updatedFood)
+      return res
         .status(404)
         .json({ success: false, message: "Food not found" });
-    }
 
-    response.json({
+    res.json({
       success: true,
       message: "Food updated successfully",
       data: updatedFood,
     });
-  } catch (error) {
-    handleError(response, error, "Failed to update food");
+  } catch (err) {
+    console.error("Failed to update food:", err);
+    res.status(500).json({ success: false, message: "Failed to update food" });
   }
 };
 
-export const deleteFood = async (request: AuthRequest, response: Response) => {
+export const deleteFood = async (req: AuthRequest, res: Response) => {
   try {
-    const { foodId } = request.params;
-    if (!validateObjectId(foodId)) return sendInvalidIdResponse(response);
-    if (!checkAdminRole(request.user))
-      return sendUnauthorizedResponse(response);
+    const { foodId } = req.params;
+    if (!Types.ObjectId.isValid(foodId))
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid food ID format" });
+
+    if (req.user?.role !== "ADMIN")
+      return res
+        .status(403)
+        .json({
+          success: false,
+          message: "Access denied. Admin privileges required.",
+        });
 
     const deletedFood = await Food.findByIdAndDelete(foodId);
-    if (!deletedFood) {
-      return response
+    if (!deletedFood)
+      return res
         .status(404)
         .json({ success: false, message: "Food not found" });
-    }
 
-    response.json({
+    res.json({
       success: true,
       message: "Food deleted successfully",
       data: deletedFood,
     });
-  } catch (error) {
-    handleError(response, error, "Failed to delete food");
+  } catch (err) {
+    console.error("Failed to delete food:", err);
+    res.status(500).json({ success: false, message: "Failed to delete food" });
   }
 };

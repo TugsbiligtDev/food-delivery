@@ -1,8 +1,6 @@
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import helmet from "helmet";
-import rateLimit from "express-rate-limit";
 import mongoose from "mongoose";
 
 dotenv.config();
@@ -22,37 +20,21 @@ const connectDB = async () => {
     console.log("MongoDB connected successfully!");
   } catch (error) {
     console.error("Database connection error:", error);
-    process.exit(1); //* Something went wrong — stop the program!
+    process.exit(1);
   }
 };
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
-  message: { success: false, message: "Too many requests" },
-});
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
-  message: { success: false, message: "Too many authentication attempts" },
-});
-
-app.use(helmet());
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
-app.use(limiter);
-app.use("/auth", authLimiter);
 
 connectDB();
 
-//* separate backend (code) from the frontend (pages)
 app.use("/api/auth", authRoutes);
 app.use("/api/food", foodRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/users", userRoutes);
 
-//*This route is just a ping or checkup.
 app.get("/api/health", (_req: Request, res: Response) => {
   res.json({
     success: true,
@@ -61,7 +43,6 @@ app.get("/api/health", (_req: Request, res: Response) => {
   });
 });
 
-//*To show: “My backend is working
 app.get("/", (_req: Request, res: Response) => {
   res.json({
     success: true,
@@ -69,7 +50,7 @@ app.get("/", (_req: Request, res: Response) => {
     version: "1.0.0",
   });
 });
-//*If someone goes to a wrong URL, show error
+
 app.use((_req: Request, res: Response) => {
   res.status(404).json({
     success: false,
@@ -77,7 +58,7 @@ app.use((_req: Request, res: Response) => {
   });
 });
 
-app.use((err: any, req: Request, res: Response, next: NextFunction): void => {
+app.use((err: any, req: Request, res: Response): void => {
   console.error("Global error:", err);
 
   if (err.name === "ValidationError") {

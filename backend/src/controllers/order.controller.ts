@@ -1,121 +1,125 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { Order } from "../models/index.js";
-const { Types } = mongoose;
+
 interface AuthRequest extends Request {
   userId?: string;
   user?: any;
 }
 
-const isValidId = (id: string) => Types.ObjectId.isValid(id);
-const isAdmin = (user: any) => user?.role === "ADMIN";
-const error = (res: Response, msg: string, code = 400) =>
-  res.status(code).json({ success: false, message: msg });
-const serverError = (res: Response, err: any, msg: string) => {
-  console.error(`${msg}:`, err);
-  error(res, msg, 500);
-};
-const populateOptions = () => ({
-  path: "foodOrderItems.food",
-  populate: { path: "category" },
-});
-const getPopulatedOrder = (id: string) =>
-  Order.findById(id).populate("user", "-password").populate(populateOptions());
-
 export const createOrder = async (req: AuthRequest, res: Response) => {
   try {
-    const { foodOrderItems, totalPrice } = req.body;
-    const userId = req.userId;
-
-    const order = await Order.create({
-      user: userId,
-      foodOrderItems,
-      totalPrice,
-    });
-    const populated = await getPopulatedOrder(order._id.toString());
-
+    const order = await Order.create({ ...req.body, user: req.userId });
+    const populated = await Order.findById(order._id)
+      .populate("user", "-password")
+      .populate({
+        path: "foodOrderItems.food",
+        populate: { path: "category" },
+      });
     res
       .status(201)
       .json({ success: true, message: "Order created", data: populated });
   } catch (err) {
-    serverError(res, err, "Create order failed");
+    res.status(500).json({ success: false, message: "Create order failed" });
+    console.error(err);
   }
 };
 
 export const getAllOrders = async (req: AuthRequest, res: Response) => {
   try {
-    if (!isAdmin(req.user)) return error(res, "Admin only", 403);
+    if (req.user?.role !== "ADMIN")
+      return res.status(403).json({ success: false, message: "Admin only" });
 
     const orders = await Order.find()
       .populate("user", "-password")
-      .populate(populateOptions());
-
+      .populate({
+        path: "foodOrderItems.food",
+        populate: { path: "category" },
+      });
     res.json({ success: true, data: orders });
   } catch (err) {
-    serverError(res, err, "Get all orders failed");
+    res.status(500).json({ success: false, message: "Get all orders failed" });
+    console.error(err);
   }
 };
 
 export const getOrdersByUserId = async (req: AuthRequest, res: Response) => {
   try {
     const { userId } = req.params;
-    const requesterId = req.userId;
+    if (!mongoose.Types.ObjectId.isValid(userId))
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid user ID" });
 
-    if (!isValidId(userId)) return error(res, "Invalid user ID");
-    if (requesterId !== userId && !isAdmin(req.user))
-      return error(res, "Access denied", 403);
+    if (req.userId !== userId && req.user?.role !== "ADMIN")
+      return res.status(403).json({ success: false, message: "Access denied" });
 
     const orders = await Order.find({ user: userId })
-      .populate(populateOptions())
-      .populate("user", "-password");
-
+      .populate("user", "-password")
+      .populate({
+        path: "foodOrderItems.food",
+        populate: { path: "category" },
+      });
     res.json({ success: true, data: orders });
   } catch (err) {
-    serverError(res, err, "Get user orders failed");
+    res.status(500).json({ success: false, message: "Get user orders failed" });
+    console.error(err);
   }
 };
 
 export const updateOrder = async (req: AuthRequest, res: Response) => {
   try {
     const { orderId } = req.params;
-    const updates = req.body;
-    const userId = req.userId;
-
-    if (!isValidId(orderId)) return error(res, "Invalid order ID");
+    if (!mongoose.Types.ObjectId.isValid(orderId))
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid order ID" });
 
     const order = await Order.findById(orderId);
-    if (!order) return error(res, "Order not found", 404);
+    if (!order)
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
 
-    const isOwner = order.user.toString() === userId;
-    const admin = isAdmin(req.user);
+    if (order.user.toString() !== req.userId && req.user?.role !== "ADMIN")
+      return res.status(403).json({ success: false, message: "Unauthorized" });
 
-    if (!isOwner && !admin) return error(res, "Unauthorized", 403);
-
-    const updated = await Order.findByIdAndUpdate(orderId, updates, {
+    const updated = await Order.findByIdAndUpdate(orderId, req.body, {
       new: true,
       runValidators: true,
     })
       .populate("user", "-password")
-      .populate(populateOptions());
-
+      .populate({
+        path: "foodOrderItems.food",
+        populate: { path: "category" },
+      });
     res.json({ success: true, message: "Order updated", data: updated });
   } catch (err) {
-    serverError(res, err, "Update order failed");
+    res.status(500).json({ success: false, message: "Update order failed" });
+    console.error(err);
   }
 };
 
 export const deleteOrder = async (req: AuthRequest, res: Response) => {
   try {
     const { orderId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(orderId))
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid order ID" });
 
-    if (!isValidId(orderId)) return error(res, "Invalid order ID");
-    if (!isAdmin(req.user)) return error(res, "Admin only", 403);
+    if (req.user?.role !== "ADMIN")
+      return res.status(403).json({ success: false, message: "Admin only" });
 
     const deleted = await Order.findByIdAndDelete(orderId);
-    if (!deleted) return error(res, "Order not found", 404);
+    if (!deleted)
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
 
     res.json({ success: true, message: "Order deleted", data: deleted });
   } catch (err) {
-    serverError(res, err, "Delete order failed");
+    res.status(500).json({ success: false, message: "Delete order failed" });
+    console.error(err);
   }
 };

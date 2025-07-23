@@ -1,4 +1,4 @@
-import express from "express";
+import express, { RequestHandler } from "express";
 import {
   getAllCategories,
   createCategory,
@@ -9,10 +9,22 @@ import verifyToken from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", getAllCategories);
+router.get("/", getAllCategories as RequestHandler);
 
-router.post("/", verifyToken as any, createCategory as any);
-router.patch("/:categoryId", verifyToken as any, updateCategory as any);
-router.delete("/:categoryId", verifyToken as any, deleteCategory as any);
+router.post(
+  "/",
+  verifyToken as RequestHandler,
+  createCategory as RequestHandler
+);
+router.patch(
+  "/:categoryId",
+  verifyToken as RequestHandler,
+  updateCategory as RequestHandler
+);
+router.delete(
+  "/:categoryId",
+  verifyToken as RequestHandler,
+  deleteCategory as RequestHandler
+);
 
 export default router;

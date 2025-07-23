@@ -32,7 +32,7 @@ const verifyToken = async (
     req.userId = userId;
     req.user = user;
     next();
-  } catch (err: any) {
+  } catch (err: unknown) {
     if (err instanceof jwt.TokenExpiredError)
       return res.status(401).json({ success: false, message: "Token expired" });
 
@@ -44,3 +44,5 @@ const verifyToken = async (
 };
 
 export default verifyToken;
+
+//!Check line 7 and 10
