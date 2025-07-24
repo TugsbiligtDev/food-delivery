@@ -63,18 +63,24 @@ const CartTab = ({ onCheckout }: CartTabProps) => {
           {hasItems ? (
             <>
               <div className="mt-3 space-y-3">
-                {cartItems.map((item) => (
-                  <OrderInfo
-                    key={item.id}
-                    id={item.id}
-                    name={item.name}
-                    price={item.price}
-                    description={item.description}
-                    image={item.image}
-                    initialQuantity={item.quantity}
-                    onQuantityChange={handleQuantityChange}
-                    onRemove={handleRemoveItem}
-                  />
+                {cartItems.map((item, index) => (
+                  <>
+                    <OrderInfo
+                      key={item.id}
+                      id={item.id}
+                      name={item.name}
+                      price={item.price}
+                      description={item.description}
+                      image={item.image}
+                      initialQuantity={item.quantity}
+                      onQuantityChange={handleQuantityChange}
+                      onRemove={handleRemoveItem}
+                    />
+
+                    {index < cartItems.length - 1 && (
+                      <div className="border-t border-dashed border-gray-300 mt-4" />
+                    )}
+                  </>
                 ))}
               </div>
             </>

@@ -31,9 +31,6 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
   return context;
 };
 
@@ -54,7 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(userData);
         }
       } catch (error) {
-        console.error("❌ Auth check failed:", error);
+        console.error("Auth check failed:", error);
         logout();
       } finally {
         setLoading(false);
@@ -65,7 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = (userData: User) => {
-    console.log("🎉 User logged in:", userData);
+    console.log("User logged in:", userData);
     setIsLoggedIn(true);
     setUser(userData);
 
@@ -74,7 +71,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    console.log("👋 User logged out");
+    console.log("User logged out");
     setIsLoggedIn(false);
     setUser(null);
 

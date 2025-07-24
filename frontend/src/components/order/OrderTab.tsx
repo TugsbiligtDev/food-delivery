@@ -2,6 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Package, Clock } from "lucide-react";
 import OrderItem from "./OrderItem";
+import { Button } from "../ui/button";
 
 //replace with my API
 const orderHistory = [
@@ -54,6 +55,7 @@ const OrderTab = () => {
               {orderHistory.length} orders
             </span>
           )}
+          <Button></Button>
         </div>
 
         {hasOrders ? (
@@ -76,12 +78,12 @@ const OrderTab = () => {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 px-6">
-            <div className="w-16 h-16 bg-cloude-gray rounded-full flex items-center justify-center mb-4">
-              <Clock className="size-8 text-slate-gray" />
+          <div className="flex flex-col items-center justify-center py-8 px-4 bg-cloude-gray rounded-xl">
+            <div className="w-16 h-16 flex items-center justify-center mb-4">
+              <img src="/logo.png" alt="logo" />
             </div>
             <h5 className="text-lg font-semibold text-midnight-black mb-2">
-              No orders yet
+              No Orders Yet?
             </h5>
             <p className="text-sm text-slate-gray text-center">
               When you place your first order, it will appear here with all the

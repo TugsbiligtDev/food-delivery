@@ -4,22 +4,22 @@ import { Minus, Plus, Trash } from "lucide-react";
 import { Button } from "../ui/button";
 
 interface OrderInfoProps {
-  id?: number;
-  name?: string;
-  description?: string;
-  price?: number;
-  image?: string;
-  initialQuantity?: number;
-  onQuantityChange?: (id: number, quantity: number) => void;
-  onRemove?: (id: number) => void;
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  initialQuantity: number;
+  onQuantityChange: (id: number, quantity: number) => void;
+  onRemove: (id: number) => void;
 }
 
 const OrderInfo = ({
   id = 1,
-  name = "Sunshine Stackers",
-  description = "Fluffy pancakes stacked with fruits, cream, syrup, and powdered sugar.",
-  price = 12.99,
-  image = "/cardImage.png",
+  name,
+  description,
+  price,
+  image,
   initialQuantity = 1,
   onQuantityChange,
   onRemove,
@@ -45,12 +45,12 @@ const OrderInfo = ({
   const totalPrice = useMemo(() => price * quantity, [price, quantity]);
 
   return (
-    <div className="w-full flex gap-3 p-3 bg-white rounded-lg border border-gray-100 hover:shadow-sm transition-shadow">
+    <div className="w-full flex gap-3 p-3 bg-white rounded-lg border border-gray-100 ">
       <div className="flex-shrink-0">
         <img
           src={image}
           alt={name}
-          className="size-24 rounded-xl object-cover"
+          className="size-25 rounded-xl object-cover"
         />
       </div>
 
@@ -69,21 +69,19 @@ const OrderInfo = ({
             onClick={handleRemove}
             variant="outline"
             size="sm"
-            className="flex-shrink-0 text-cherry-red border-cherry-red hover:bg-cherry-red hover:text-white size-8 p-0"
-            aria-label={`Remove ${name} from cart`}
+            className="flex-shrink-0 text-cherry-red border-cherry-red size-8 p-0 pointer"
           >
             <Trash size={14} />
           </Button>
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center text-midnight-black">
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
               size="sm"
-              className="size-8 p-0 hover:bg-gray-100"
+              className="size-8 p-0 hover:bg-gray-100 pointer"
               onClick={decrement}
               disabled={quantity <= 1}
-              aria-label="Decrease quantity"
             >
               <Minus size={16} />
             </Button>
@@ -95,7 +93,7 @@ const OrderInfo = ({
             <Button
               variant="ghost"
               size="sm"
-              className="size-8 p-0 hover:bg-gray-100"
+              className="size-8 p-0 hover:bg-gray-100 pointer"
               onClick={increment}
               aria-label="Increase quantity"
             >
