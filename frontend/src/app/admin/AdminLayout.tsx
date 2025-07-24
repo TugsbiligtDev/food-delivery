@@ -1,16 +1,3 @@
-import AdminHeader from "@/components/admin/AdminHeader";
-import AdminSidebar from "@/components/admin/AdminSidebar";
-
-const Page = () => {
-  return (
-    <div>
-      <AdminSidebar />
-      {/* <AdminHeader /> */}
-    </div>
-  );
-};
-
-export default Page;
 //? Decide use shadcn Sidebar or not
 
 //TODO use shadcn Avatar at the right left side

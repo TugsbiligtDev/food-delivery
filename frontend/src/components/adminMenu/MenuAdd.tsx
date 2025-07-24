@@ -1,8 +1,18 @@
 import React from "react";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import AdminAddCard from "./AdminAddCard";
 import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 
 const MenuAdd = () => {
   return (
@@ -12,20 +22,49 @@ const MenuAdd = () => {
       </h4>
       <div className="grid grid-cols-3 gap-4">
         {/* separate */}
-        <div className="bg-white rounded-[20px]  border border-dashed border-cherry-red flex flex-col justify-center items-center">
-          <Button className="rounded-full size-11 bg-cherry-red text-white">
-            <Plus />
-          </Button>
+        <Dialog>
+          <div className="bg-white rounded-[20px] border border-dashed border-cherry-red flex flex-col justify-center items-center">
+            <DialogTrigger>
+              <Button className="rounded-full size-11 bg-cherry-red text-white">
+                <Plus />
+              </Button>
+              <p className="mt-3 text-sm font-medium leading-4 text-midnight-black">
+                Add new Dish to Appetizers
+              </p>
+            </DialogTrigger>
+          </div>
+          <DialogContent className="bg-white text-midnight-black">
+            <DialogHeader>
+              <DialogTitle>Add new Dish to Appetizers</DialogTitle>
+            </DialogHeader>
+            <div className="flex justify-between flex-1">
+              <div>
+                <Label>Food name</Label> <Input />
+              </div>
+              <div>
+                <Label>Food price</Label> <Input />
+              </div>
+            </div>
+            <div>
+              <Label>Ingredients</Label> <Textarea />
+            </div>
+            <div>
+              <Label>Category</Label> <Input />
+            </div>
+            <div>
+              <Label>Food Image</Label>
+              {/* Cloudinary */}
+            
+            </div>
+            <Button className="bg-midnight-black text-snow-white">Add</Button>
+          </DialogContent>
+        </Dialog>
 
-          <p className="mt-3 text-sm font-medium leading-4 text-midnight-black">
-            Add new Dish to Appetizers
-          </p>
-        </div>
+        {/* <AdminAddCard />
         <AdminAddCard />
         <AdminAddCard />
         <AdminAddCard />
-        <AdminAddCard />
-        <AdminAddCard />
+        <AdminAddCard /> */}
       </div>
     </div>
   );

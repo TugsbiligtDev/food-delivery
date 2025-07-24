@@ -125,3 +125,4 @@ export const verifyResetPasswordRequest = (req: Request, res: Response) => {
 export const resetPassword = (req: Request, res: Response) => {
   res.json({ success: true, message: "Token valid" });
 };
+

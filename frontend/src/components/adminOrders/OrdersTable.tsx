@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/table";
 import { paymentsData } from "@/lib/data";
 import { columns } from "./table-columns";
-import OrdersTableFilters from "./OrdersTableFilters.tsx";
+import OrdersTableFilters from "./OrdersTableFilters";
 import OrdersPagination from "./OrdersPagination";
 
 export default function OrdersTable() {
