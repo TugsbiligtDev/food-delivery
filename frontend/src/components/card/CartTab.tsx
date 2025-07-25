@@ -61,29 +61,27 @@ const CartTab = ({ onCheckout }: CartTabProps) => {
           <h4 className="font-semibold text-xl text-midnight-black">My cart</h4>
 
           {hasItems ? (
-            <>
-              <div className="mt-3 space-y-3">
-                {cartItems.map((item, index) => (
-                  <>
-                    <OrderInfo
-                      key={item.id}
-                      id={item.id}
-                      name={item.name}
-                      price={item.price}
-                      description={item.description}
-                      image={item.image}
-                      initialQuantity={item.quantity}
-                      onQuantityChange={handleQuantityChange}
-                      onRemove={handleRemoveItem}
-                    />
+            <div className="mt-3 space-y-3">
+              {cartItems.map((item, index) => (
+                <div>
+                  <OrderInfo
+                    key={item.id}
+                    id={item.id}
+                    name={item.name}
+                    price={item.price}
+                    description={item.description}
+                    image={item.image}
+                    initialQuantity={item.quantity}
+                    onQuantityChange={handleQuantityChange}
+                    onRemove={handleRemoveItem}
+                  />
 
-                    {index < cartItems.length - 1 && (
-                      <div className="border-t border-dashed border-gray-300 mt-4" />
-                    )}
-                  </>
-                ))}
-              </div>
-            </>
+                  {index < cartItems.length - 1 && (
+                    <div className="border-t border-dashed border-gray-300 mt-4" />
+                  )}
+                </div>
+              ))}
+            </div>
           ) : (
             <div className="w-full bg-cloude-gray flex flex-col items-center justify-center gap-3 px-12 py-8 rounded-xl mt-3">
               <img src="/logo.png" alt="logo" className="size-16" />

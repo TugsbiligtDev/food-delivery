@@ -1,23 +1,49 @@
 "use client";
+import { CldUploadWidget, CldImage } from "next-cloudinary";
 import { useState } from "react";
-import { Upload } from "lucide-react";
 
-const Page = () => {
-  const [uploadFile, setUploadFile] = useState<File | null>(null);
+export default function TestPage() {
+  const [imageId, setImageId] = useState("");
 
   return (
-    <div className="bg-white text-black h-screen ">
-      <div className="w-[500px] h-[300px] bg-blue-200 border rounded-3xl flex flex-col justify-center items-center gap-4">
-        <h1>Upload file</h1>
-        <input type="file" id="file-input" />
-        <label htmlFor="file-input" className="p-5 rounded-full bg-gray-300 ">
-          <Upload />
-        </label>
-      </div>
+    <div style={{ padding: "2rem", textAlign: "center" }}>
+      <h1>Cloudinary Test</h1>
+
+      <CldUploadWidget
+        uploadPreset="food-images"
+        onSuccess={(result: any) => {
+          setImageId(result.info.public_id);
+        }}
+      >
+        {({ open }) => (
+          <button
+            onClick={() => open()}
+            style={{
+              padding: "10px 20px",
+              backgroundColor: "#007bff",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            Upload Image
+          </button>
+        )}
+      </CldUploadWidget>
+
+      {imageId && (
+        <div style={{ marginTop: "2rem" }}>
+          <CldImage
+            src={imageId}
+            width={400}
+            height={300}
+            alt="Uploaded image"
+            crop="fill"
+          />
+          <p>Public ID: {imageId}</p>
+        </div>
+      )}
     </div>
   );
-};
-
-export default Page;
-
-//https://youtu.be/UklSza8rido?si=jw3KRUscQvyDWHIF (yt video link)
+}
