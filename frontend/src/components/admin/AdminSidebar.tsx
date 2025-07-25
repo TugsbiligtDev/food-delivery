@@ -1,5 +1,4 @@
 import { LayoutDashboard, Truck } from "lucide-react";
-import Link from "next/link";
 
 const AdminSidebar = () => {
   return (
@@ -15,20 +14,14 @@ const AdminSidebar = () => {
           </p>
         </div>
       </div>
-      <Link
-        href="/admin/menu"
-        className="w-full justify-center items-center gap-2.5 not-odd:rounded-full text-black flex border py-2 px-6"
-      >
+      <div className="w-full justify-center items-center gap-2.5 not-odd:rounded-full text-black flex border py-2 px-6">
         <LayoutDashboard />
         Menu
-      </Link>
-      <Link
-        href="/admin/orders"
-        className="w-full justify-center items-center gap-2.5 rounded-full text-black flex border py-2 px-6"
-      >
+      </div>
+      <div className="w-full justify-center items-center gap-2.5 rounded-full text-black flex border py-2 px-6">
         <Truck />
         Orders
-      </Link>
+      </div>
     </div>
   );
 };

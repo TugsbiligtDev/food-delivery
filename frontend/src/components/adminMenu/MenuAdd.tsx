@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -21,46 +22,48 @@ const MenuAdd = () => {
       </h4>
       <div className="grid grid-cols-3 gap-4">
         <Dialog>
-          <div className="bg-white rounded-[20px] border border-dashed border-cherry-red flex flex-col justify-center items-center p-10">
-            <DialogTrigger asChild>
-              <div>
-                <Button className="rounded-full size-11 bg-cherry-red text-white">
-                  <Plus />
-                </Button>
-                <p className="mt-3 text-sm font-medium leading-4 text-midnight-black">
-                  Add new Dish to Appetizers
-                </p>
-              </div>
-            </DialogTrigger>
-          </div>
+          <DialogTrigger asChild>
+            <div className="bg-white rounded-[20px] border border-dashed border-cherry-red flex flex-col justify-center items-center">
+              <Button className="rounded-full size-11 bg-cherry-red text-white">
+                <Plus />
+              </Button>
+              <p className="mt-3 text-sm font-medium leading-4 text-midnight-black">
+                Add new Dish to Appetizers
+              </p>
+            </div>
+          </DialogTrigger>
           <DialogContent className="bg-white text-midnight-black">
             <DialogHeader>
-              <DialogTitle>Add new Dish to Appetizers</DialogTitle>
+              <DialogTitle className="font-semibold text-lg leading-7">
+                Add new Dish to Appetizers
+              </DialogTitle>
             </DialogHeader>
             <div className="flex justify-between flex-1 gap-6">
               <div>
-                <Label>Food name</Label> <Input />
+                <Label className="form-label">Food name</Label> <Input />
               </div>
               <div>
-                <Label>Food price</Label> <Input />
+                <Label className="form-label">Food price</Label> <Input />
               </div>
             </div>
             <div>
-              <Label>Ingredients</Label> <Textarea />
+              <Label className="form-label">Ingredients</Label> <Textarea />
             </div>
             <div>
-              <Label>Category</Label> <Input />
+              <Label className="form-label">Category</Label> <Input />
             </div>
             <div>
-              <Label>Food Image</Label>
+              <Label className="form-label">Food Image</Label>
               <div className="w-full border border-dashed border-[#2563EB33] flex flex-col justify-center items-center bg-[#2563EB0D] px-4 py-10 gap-2 rounded-md  min-h-[200px]">
                 <Image />
                 <p>Choose a file or drag & drop it here</p>
               </div>
             </div>
-            <Button className="bg-midnight-black text-snow-white pointer">
-              Add
-            </Button>
+            <DialogClose asChild>
+              <Button className="bg-midnight-black text-snow-white pointer w-fit">
+                Add Dish
+              </Button>
+            </DialogClose>
           </DialogContent>
         </Dialog>
 

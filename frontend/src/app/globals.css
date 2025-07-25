@@ -59,3 +59,9 @@ section {
 .order-card-title {
   @apply text-slate-gray text-xl font-semibold;
 }
+.form-label {
+  @apply font-medium text-sm mb-2;
+}
+.flex-between {
+  @apply flex justify-between items-center gap-3;
+}

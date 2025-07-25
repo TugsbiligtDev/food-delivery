@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import authNavigation from "@/lib/authNavigation";
-import AuthLayout from "../../AuthLayout";
+import AuthLayout from "../../layout";
 
 const Page = () => {
   const { handleNavigate } = authNavigation();

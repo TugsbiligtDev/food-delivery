@@ -1,3 +1,17 @@
+// import AdminSidebar from "@/components/admin/AdminSidebar";
+
+// const AdminLayout = ({ children }: { children: React.ReactNode }) => {
+//   return (
+//     <div>
+//       <div>
+//         <AdminSidebar />
+//       </div>
+//       <div>{children}</div>
+//     </div>
+//   );
+// };
+
+// export default AdminLayout;
 //? Decide use shadcn Sidebar or not
 
 //TODO use shadcn Avatar at the right left side

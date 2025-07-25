@@ -1,5 +1,5 @@
 "use client";
-import AuthLayout from "../../AuthLayout";
+import AuthLayout from "../../layout";
 import PasswordCreate from "@/components/auth/PasswordCreate";
 import authNavigation from "@/lib/authNavigation";
 const Page = () => {

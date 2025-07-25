@@ -8,7 +8,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronLeft } from "lucide-react";
-import AuthLayout from "../AuthLayout";
+import AuthLayout from "../layout";
 import ValidationMsg from "@/components/auth/ValidationMsg";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { signinSchema, SigninFormData } from "@/lib/schemas/auth";

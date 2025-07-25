@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import AuthLayout from "../AuthLayout";
+import AuthLayout from "../layout";
 import authNavigation from "@/lib/authNavigation";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { signupSchema, SignupFormData } from "@/lib/schemas/auth";
