@@ -56,16 +56,19 @@ const PasswordStep = ({
           )}
         </div>
         <div
-          className="flex items-center cursor-pointer gap-2"
+          className="flex items-center gap-2 cursor-pointer"
           onClick={() => setShow(!show)}
         >
-          <Checkbox className="border border-black" />
-          <Label className="font-normal text-sm leading-3.5 text-[#71717A] cursor-pointer">
+          <Checkbox id="show-password" />
+          <Label
+            htmlFor="show-password"
+            className="font-normal text-sm leading-3.5 text-[#71717A] cursor-pointer"
+          >
             Show password
           </Label>
         </div>
 
-        <Button className="long-button" type="submit" disabled={isLoading}>
+        <Button className="long-button" type="submit">
           {isLoading ? "Creating Account..." : "Let's Go"}
         </Button>
       </form>

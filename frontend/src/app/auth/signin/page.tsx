@@ -2,31 +2,19 @@
 import authNavigation from "@/lib/authNavigation";
 import axios from "axios";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ChevronLeft } from "lucide-react";
-import AuthLayout from "../layout";
-import ValidationMsg from "@/components/auth/ValidationMsg";
 import { useAuth } from "@/app/contexts/AuthContext";
-import { signinSchema, SigninFormData } from "@/lib/schemas/auth";
+import SigninForm from "@/components/auth/SigninForm";
+import { SigninFormData } from "@/lib/schemas/auth";
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { handleNavigate } = authNavigation();
   const { login } = useAuth();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SigninFormData>({
-    resolver: zodResolver(signinSchema),
-  });
-
-  const onSubmit = async (data: SigninFormData) => {
+  const handleSubmit = async (data: SigninFormData) => {
     setIsLoading(true);
 
     try {
@@ -54,65 +42,34 @@ const Page = () => {
     }
   };
 
+  const handleBack = () => {
+    handleNavigate("/");
+  };
+
   return (
-    <AuthLayout>
-      <div className="form-container">
-        <Button variant="secondary" className="size-9 pointer">
-          <ChevronLeft />
-        </Button>
+    <div className="form-container">
+      <Button
+        onClick={handleBack}
+        variant="outline"
+        className="size-9 pointer text-obsidian"
+      >
+        <ChevronLeft />
+      </Button>
 
-        <div>
-          <h3 className="heading">Log in</h3>
-          <p className="paragraph">Log in to enjoy your favorite dishes.</p>
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-5">
-            <Input
-              placeholder="Enter your email address"
-              type="email"
-              {...register("email")}
-              disabled={isLoading}
-              className="text-black"
-            />
-            {errors.email && (
-              <ValidationMsg message={errors.email.message || ""} />
-            )}
-          </div>
-
-          <div className="mb-3">
-            <Input
-              placeholder="Enter your password"
-              type="password"
-              {...register("password")}
-              disabled={isLoading}
-              className="text-black"
-            />
-            {errors.password && (
-              <ValidationMsg message={errors.password.message || ""} />
-            )}
-          </div>
-
-          <Link
-            href="/auth/forget-password"
-            className="block mb-2 text-sm font-normal underline leading-5 text-black-20"
-          >
-            Forgot password ?
-          </Link>
-
-          <Button className="long-button" type="submit" disabled={isLoading}>
-            {isLoading ? "Logging in..." : "Let's Go"}
-          </Button>
-        </form>
-
-        <div className="bottom-container">
-          <p className="paragraph">Don't have an account?</p>
-          <Link href="/auth/signup" className="accent">
-            Sign up
-          </Link>
-        </div>
+      <div>
+        <h3 className="heading">Log in</h3>
+        <p className="paragraph">Log in to enjoy your favorite dishes.</p>
       </div>
-    </AuthLayout>
+
+      <SigninForm onSubmit={handleSubmit} isLoading={isLoading} />
+
+      <div className="bottom-container">
+        <p className="paragraph">Don't have an account?</p>
+        <Link href="/auth/signup" className="accent">
+          Sign up
+        </Link>
+      </div>
+    </div>
   );
 };
 

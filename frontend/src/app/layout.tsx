@@ -23,7 +23,7 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased`}>
         <AuthProvider>
           <CartProvider>
-            <main className="min-h-screen">{children}</main>
+            <main>{children}</main>
           </CartProvider>
         </AuthProvider>
       </body>

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import { Category } from "../models/index.js";
+import { Category, Food } from "../models/index.js";
 
 const { Types } = mongoose;
 
@@ -12,7 +12,18 @@ interface AuthRequest extends Request {
 export const getAllCategories = async (_req: Request, res: Response) => {
   try {
     const categories = await Category.find();
-    res.json({ success: true, data: categories });
+
+    const categoriesWithCount = await Promise.all(
+      categories.map(async (category) => {
+        const foodCount = await Food.countDocuments({ category: category._id });
+        return {
+          ...category.toObject(),
+          count: foodCount,
+        };
+      })
+    );
+
+    res.json({ success: true, data: categoriesWithCount });
   } catch (err) {
     console.error("Failed to fetch categories:", err);
     res
@@ -75,12 +86,10 @@ export const updateCategory = async (req: AuthRequest, res: Response) => {
       _id: { $ne: categoryId },
     });
     if (exists)
-      return res
-        .status(409)
-        .json({
-          success: false,
-          message: "Category with this name already exists",
-        });
+      return res.status(409).json({
+        success: false,
+        message: "Category with this name already exists",
+      });
 
     const updated = await Category.findByIdAndUpdate(
       categoryId,

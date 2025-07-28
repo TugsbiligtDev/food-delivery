@@ -14,7 +14,7 @@ interface JWTPayload {
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 const SALT_ROUNDS = 12;
-const TOKEN_EXPIRY = "1h";
+const TOKEN_EXPIRY = "24h";
 
 export const signUp = async (req: Request, res: Response) => {
   try {
@@ -125,4 +125,3 @@ export const verifyResetPasswordRequest = (req: Request, res: Response) => {
 export const resetPassword = (req: Request, res: Response) => {
   res.json({ success: true, message: "Token valid" });
 };
-

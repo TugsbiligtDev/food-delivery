@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import AuthLayout from "../layout";
 import authNavigation from "@/lib/authNavigation";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { signupSchema, SignupFormData } from "@/lib/schemas/auth";
@@ -51,54 +50,58 @@ const SignupPage = () => {
       }
     }
   };
-
+  const handleBack = () => {
+    if (step === 2) {
+      setStep(1);
+    } else {
+      handleNavigate("/");
+    }
+  };
   return (
-    <AuthLayout>
-      <div className="form-container">
-        <Button
-          variant="secondary"
-          className="size-9 pointer text-obsidian border border-light-gray"
-          onClick={() => step === 2 && setStep(1)}
-        >
-          <ChevronLeft />
-        </Button>
+    <div className="form-container">
+      <Button
+        variant="outline"
+        className="size-9 pointer text-obsidian"
+        onClick={handleBack}
+      >
+        <ChevronLeft />
+      </Button>
 
-        <div>
-          <h3 className="heading">
-            {step === 1 ? "Create your account" : "Create a strong password"}
-          </h3>
-          <p className="paragraph">
-            {step === 1
-              ? "Sign up to explore your favorite dishes."
-              : "Create a strong password with letters, numbers."}
-          </p>
-        </div>
-
-        {step === 1 ? (
-          <EmailStep
-            register={register}
-            errors={errors}
-            trigger={trigger}
-            onNext={() => setStep(2)}
-          />
-        ) : (
-          <PasswordStep
-            register={register}
-            errors={errors}
-            handleSubmit={handleSubmit}
-            onSubmit={onSubmit}
-            isLoading={isLoading}
-          />
-        )}
-
-        <div className="bottom-container">
-          <p className="paragraph">Already have an account?</p>
-          <Link href="/auth/signin" className="accent">
-            Log in
-          </Link>
-        </div>
+      <div>
+        <h3 className="heading">
+          {step === 1 ? "Create your account" : "Create a strong password"}
+        </h3>
+        <p className="paragraph">
+          {step === 1
+            ? "Sign up to explore your favorite dishes."
+            : "Create a strong password with letters, numbers."}
+        </p>
       </div>
-    </AuthLayout>
+
+      {step === 1 ? (
+        <EmailStep
+          register={register}
+          errors={errors}
+          trigger={trigger}
+          onNext={() => setStep(2)}
+        />
+      ) : (
+        <PasswordStep
+          register={register}
+          errors={errors}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          isLoading={isLoading}
+        />
+      )}
+
+      <div className="bottom-container">
+        <p className="paragraph">Already have an account?</p>
+        <Link href="/auth/signin" className="accent">
+          Log in
+        </Link>
+      </div>
+    </div>
   );
 };
 
