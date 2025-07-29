@@ -27,8 +27,8 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
 
 export const getAllOrders = async (req: AuthRequest, res: Response) => {
   try {
-    if (req.user?.role !== "ADMIN")
-      return res.status(403).json({ success: false, message: "Admin only" });
+    // if (req.user?.role !== "ADMIN")
+    //   return res.status(403).json({ success: false, message: "Admin only" });
 
     const orders = await Order.find()
       .populate("user", "-password")

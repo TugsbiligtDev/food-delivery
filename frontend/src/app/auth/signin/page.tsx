@@ -18,13 +18,10 @@ const Page = () => {
     setIsLoading(true);
 
     try {
-      const result = await axios.post(
-        "https://food-delivery-9lk5.onrender.com/api/auth/signin",
-        {
-          email: data.email,
-          password: data.password,
-        }
-      );
+      const result = await axios.post("http://localhost:8000/auth/signin", {
+        email: data.email,
+        password: data.password,
+      });
 
       if (result.status === 200) {
         login(result.data.user);

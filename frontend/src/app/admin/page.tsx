@@ -1,10 +1,9 @@
 "use client";
 import { useState } from "react";
 import AdminSidebar from "@/components/admin/sidebar/AdminSidebar";
-import OrdersTable from "@/components/admin/orders/OrdersTable";
 import CategoryFilter from "@/components/admin/menu/CategoryFilter";
 import AdminMenuGrid from "@/components/admin/menu/AdminMenuGrid";
-import OrdersHeader from "@/components/admin/orders/OrdersHeader";
+import { OrdersTable } from "@/components/admin/orders/OrdersTable";
 
 const AdminDashboard = () => {
   const [activeView, setActiveView] = useState<"orders" | "menu">("menu");
@@ -21,7 +20,7 @@ const AdminDashboard = () => {
         )}
         {activeView === "orders" && (
           <>
-            <OrdersHeader /> <OrdersTable />
+            <OrdersTable />
           </>
         )}
       </section>

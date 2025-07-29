@@ -13,10 +13,10 @@ const OrdersHeader = () => {
   const [date, setDate] = React.useState<Date | undefined>(undefined);
 
   return (
-    <div className="w-full flex justify-between items-center bg-white text-black">
+    <div className="w-full flex justify-between items-center bg-white p-4 rounded-md">
       <div>
-        <h3>Orders</h3>
-        <p>32 items</p>
+        <h3 className="font-bold text-midnight-black text-xl">Orders</h3>
+        <p className="text-slate-gray text-sm font-medium">32 items</p>
       </div>
       <div className="flex flex-col gap-3 ">
         <Popover open={open} onOpenChange={setOpen}>

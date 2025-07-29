@@ -40,8 +40,8 @@ export const createCategory = async (req: AuthRequest, res: Response) => {
         .status(400)
         .json({ success: false, message: "Category name is required" });
 
-    if (req.user?.role !== "ADMIN")
-      return res.status(403).json({ success: false, message: "Admin only" });
+    // if (req.user?.role !== "ADMIN")
+    //   return res.status(403).json({ success: false, message: "Admin only" });
 
     const exists = await Category.findOne({
       categoryName: { $regex: new RegExp(`^${categoryName.trim()}$`, "i") },

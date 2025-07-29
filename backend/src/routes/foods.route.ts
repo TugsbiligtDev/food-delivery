@@ -13,7 +13,9 @@ const router = express.Router();
 router.get("/", getAllFoods as RequestHandler);
 router.get("/:foodId", getFoodById as RequestHandler);
 
-router.post("/", verifyToken as RequestHandler, createFood as RequestHandler);
+router.post("/",
+  //  verifyToken as RequestHandler,
+    createFood as RequestHandler);
 router.patch(
   "/:foodId",
   verifyToken as RequestHandler,

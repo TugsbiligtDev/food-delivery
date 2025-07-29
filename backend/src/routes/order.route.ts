@@ -11,7 +11,11 @@ import verifyToken from "../middleware/auth.js";
 const router = express.Router();
 
 router.post("/", verifyToken as RequestHandler, createOrder as RequestHandler);
-router.get("/", verifyToken as RequestHandler, getAllOrders as RequestHandler);
+router.get(
+  "/",
+  // verifyToken as RequestHandler,
+  getAllOrders as RequestHandler
+);
 router.get(
   "/user/:userId",
   verifyToken as RequestHandler,

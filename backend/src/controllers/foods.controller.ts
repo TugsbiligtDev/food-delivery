@@ -42,11 +42,11 @@ export const getFoodById = async (req: Request, res: Response) => {
 
 export const createFood = async (req: AuthRequest, res: Response) => {
   try {
-    if (req.user?.role !== "ADMIN")
-      return res.status(403).json({
-        success: false,
-        message: "Access denied. Admin privileges required.",
-      });
+    // if (req.user?.role !== "ADMIN")
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: "Access denied. Admin privileges required.",
+    //   });
 
     const createdFood = await Food.create(req.body);
     const populatedFood = await Food.findById(createdFood._id).populate(

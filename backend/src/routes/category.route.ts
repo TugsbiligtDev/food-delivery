@@ -13,7 +13,7 @@ router.get("/", getAllCategories as RequestHandler);
 
 router.post(
   "/",
-  verifyToken as RequestHandler,
+  // verifyToken as RequestHandler,
   createCategory as RequestHandler
 );
 router.patch(
