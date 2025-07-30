@@ -18,13 +18,11 @@ const foodSchema = new Schema(
       required: [true, "Image is required"],
       trim: true,
     },
-    ingredients: [
-      {
-        type: String,
-        required: true,
-        trim: true,
-      },
-    ],
+    ingredients: {
+      type: String,
+      required: [true, "Ingredients are required"],
+      trim: true,
+    },
     category: {
       type: Types.ObjectId,
       ref: "Category",

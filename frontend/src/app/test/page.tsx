@@ -1,196 +1,360 @@
 "use client";
-import React, { useState } from "react";
-import { X, Upload } from "lucide-react";
+import axios from "axios";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Image, Upload, X, Check } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { useForm } from "react-hook-form";
+import { foodSchema, foodFormData } from "@/lib/schemas/food";
+import { zodResolver } from "@hookform/resolvers/zod";
+import ValidationMsg from "@/components/auth/ValidationMsg";
+import { useState, useEffect, useCallback } from "react";
+import { useDropzone } from "react-dropzone";
 
-export default function AddDishModal() {
-  const [isOpen, setIsOpen] = useState(true);
-  const [formData, setFormData] = useState({
-    name: "",
-    price: "",
-    ingredients: "",
-    image: null,
-  });
-  const [imagePreview, setImagePreview] = useState(null);
+interface Category {
+  _id: string;
+  categoryName: string;
+  count: number;
+}
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+const AddDishDialog = () => {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+    reset,
+  } = useForm<foodFormData>({ resolver: zodResolver(foodSchema) });
+
+  console.log("Form errors:", errors);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  // Image upload states
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/categories");
+      setCategories(response.data.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
     if (file) {
-      setFormData((prev) => ({
-        ...prev,
-        image: file,
-      }));
+      setSelectedImage(file);
 
-      // Create preview URL
+      // Create preview
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target.result);
+      reader.onload = () => {
+        setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
-  };
+  }, []);
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      "image/*": [".jpeg", ".jpg", ".png", ".gif", ".webp"],
+    },
+    multiple: false,
+  });
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith("image/")) {
-      setFormData((prev) => ({
-        ...prev,
-        image: file,
-      }));
+  const uploadImageToCloudinary = async () => {
+    if (!selectedImage) return null;
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target.result);
-      };
-      reader.readAsDataURL(file);
+    console.log("🖼️ Starting image upload to Cloudinary...");
+    console.log("📁 File:", selectedImage.name, selectedImage.size, "bytes");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedImage);
+
+      // Check if environment variables exist
+      const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+
+      console.log("🔧 Environment check:");
+      console.log("- Upload Preset:", uploadPreset ? "✅ Set" : "❌ Missing");
+      console.log("- Cloud Name:", cloudName ? "✅ Set" : "❌ Missing");
+
+      if (!uploadPreset || !cloudName) {
+        throw new Error(
+          "Missing Cloudinary environment variables. Please check your .env.local file."
+        );
+      }
+
+      formData.append("upload_preset", uploadPreset);
+
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      console.log("📡 Cloudinary response status:", response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("❌ Cloudinary error response:", errorText);
+        throw new Error(`Upload failed: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log("✅ Cloudinary upload successful:", data.secure_url);
+      return data.secure_url;
+    } catch (error) {
+      console.error("💥 Cloudinary upload failed:", error);
+      throw error;
     }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Here you would typically send the data to your backend
-    // For image upload to cloud storage, you'd handle that here too
   };
 
   const removeImage = () => {
+    setSelectedImage(null);
     setImagePreview(null);
-    setFormData((prev) => ({
-      ...prev,
-      image: null,
-    }));
   };
 
-  if (!isOpen) return null;
+  const onSubmit = async (data: foodFormData) => {
+    console.log("🚀 Form submission started");
+    console.log("📝 Form data:", data);
+    console.log("🖼️ Has image:", !!selectedImage);
+
+    setIsSubmitting(true);
+
+    try {
+      let imageUrl = null;
+
+      // Upload image if one is selected
+      if (selectedImage) {
+        console.log("⬆️ Uploading image...");
+        imageUrl = await uploadImageToCloudinary();
+        console.log("✅ Image uploaded:", imageUrl);
+      }
+
+      const payload = {
+        foodName: data.foodName,
+        price: parseFloat(data.price), // Convert to number
+        ingredients: data.ingredients.split(",").map((item) => item.trim()), // Convert to array
+        category: data.category,
+        image: imageUrl, // Use 'image' instead of 'imageUrl'
+      };
+
+      console.log("📦 Final payload:", payload);
+
+      const token = localStorage.getItem("token");
+      console.log("🔐 Token exists:", !!token);
+
+      if (!token) {
+        throw new Error("No authentication token found. Please login again.");
+      }
+
+      console.log("📡 Sending request to backend...");
+      const response = await axios.post(
+        "http://localhost:8000/api/foods",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("✅ Backend response:", response.data);
+
+      if (response.data.success) {
+        alert("Food added successfully!");
+        reset();
+        removeImage();
+      } else {
+        throw new Error(
+          response.data.message || "Backend returned success: false"
+        );
+      }
+    } catch (error) {
+      console.error("💥 Submission error:", error);
+
+      // More detailed error handling
+      if (axios.isAxiosError(error)) {
+        console.error("🌐 Backend error details:");
+        console.error("- Status:", error.response?.status);
+        console.error("- Data:", error.response?.data);
+        console.error("- Headers:", error.response?.headers);
+
+        if (error.response?.status === 401) {
+          alert("Authentication failed. Please login again.");
+        } else if (error.response?.status === 400) {
+          alert(
+            `Validation error: ${error.response.data.message || "Invalid data"}`
+          );
+        } else {
+          alert(
+            `Server error: ${error.response?.data?.message || error.message}`
+          );
+        }
+      } else if (error instanceof Error) {
+        alert(`Error: ${error.message}`);
+      } else {
+        alert("An unknown error occurred");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg w-full max-w-md mx-auto shadow-xl">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-lg font-semibold text-gray-900">
+    <Dialog>
+      <DialogTrigger>Click</DialogTrigger>
+
+      <DialogContent className="max-w-xl bg-white text-midnight-black">
+        <DialogHeader>
+          <DialogTitle className="text-lg font-semibold leading-7">
             Add new Dish to Appetizers
-          </h2>
-          <button
-            onClick={() => setIsOpen(false)}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        {/* Form */}
-        <div className="p-6 space-y-6">
-          {/* Food Name and Price Row */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Food name
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                placeholder="Type food name"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+          </DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="flex justify-between flex-1 gap-6">
+            <div className="flex-1">
+              <Label className="form-label">Food name</Label>
+              <Input type="text" {...register("foodName")} />
+              {errors.foodName && (
+                <ValidationMsg message={errors.foodName.message || ""} />
+              )}
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Food price
-              </label>
-              <input
-                type="text"
-                name="price"
-                value={formData.price}
-                onChange={handleInputChange}
-                placeholder="$ price..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+            <div className="flex-1">
+              <Label className="form-label">Food price</Label>
+              <Input type="number" step="0.01" {...register("price")} />
+              {errors.price && (
+                <ValidationMsg message={errors.price.message || ""} />
+              )}
             </div>
           </div>
 
-          {/* Ingredients */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Ingredients
-            </label>
-            <textarea
-              name="ingredients"
-              value={formData.ingredients}
-              onChange={handleInputChange}
-              placeholder="List ingredients..."
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-            />
+            <Label className="form-label">Ingredients</Label>
+            <Textarea {...register("ingredients")} />
+            {errors.ingredients && (
+              <ValidationMsg message={errors.ingredients.message || ""} />
+            )}
           </div>
 
-          {/* Food Image */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Food image
-            </label>
+            <Label className="form-label">Category</Label>
+            <Select onValueChange={(value) => setValue("category", value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories && categories.length > 0 ? (
+                  categories.map((category) => (
+                    <SelectItem key={category._id} value={category._id}>
+                      {category.categoryName}
+                    </SelectItem>
+                  ))
+                ) : (
+                  <SelectItem value="" disabled>
+                    No categories available
+                  </SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+            {errors.category && (
+              <ValidationMsg message={errors.category.message || ""} />
+            )}
+          </div>
 
-            {!imagePreview ? (
-              <div
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
-                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
-                onClick={() => document.getElementById("imageInput").click()}
-              >
-                <Upload className="mx-auto h-8 w-8 text-gray-400 mb-2" />
-                <p className="text-sm text-gray-600">
-                  Choose a file or drag & drop it here
-                </p>
-                <input
-                  id="imageInput"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
+          <div>
+            <Label className="form-label">Food Image</Label>
+            {imagePreview ? (
+              // Image preview with remove button
+              <div className="w-full border border-dashed border-[#2563EB33] bg-[#2563EB0D] rounded-md p-4">
+                <div className="relative">
+                  <img
+                    src={imagePreview}
+                    alt="Food preview"
+                    className="w-full h-48 object-cover rounded-md"
+                  />
+                  <button
+                    type="button"
+                    onClick={removeImage}
+                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 transition-colors"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
               </div>
             ) : (
-              <div className="relative">
-                <img
-                  src={imagePreview}
-                  alt="Food preview"
-                  className="w-full h-32 object-cover rounded-lg"
-                />
-                <button
-                  type="button"
-                  onClick={removeImage}
-                  className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-md hover:bg-gray-100 transition-colors"
-                >
-                  <X size={16} className="text-gray-600" />
-                </button>
+              // Dropzone
+              <div
+                {...getRootProps()}
+                className={`w-full border border-dashed border-[#2563EB33] flex flex-col justify-center items-center bg-[#2563EB0D] px-4 py-10 gap-2 rounded-md min-h-[200px] cursor-pointer transition-colors ${
+                  isDragActive
+                    ? "border-blue-500 bg-blue-50"
+                    : "hover:border-blue-400 hover:bg-blue-50"
+                }`}
+              >
+                <input {...getInputProps()} />
+                {isDragActive ? (
+                  <>
+                    <Upload className="text-blue-500" size={32} />
+                    <p className="text-blue-600 font-medium">
+                      Drop your image here!
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <Image className="text-gray-400" size={32} />
+                    <p className="text-gray-600">
+                      Choose a file or drag & drop it here
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      PNG, JPG, GIF up to 10MB
+                    </p>
+                  </>
+                )}
               </div>
             )}
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className="w-full bg-gray-900 text-white py-2 px-4 rounded-md hover:bg-gray-800 transition-colors font-medium"
+          <Button
+            disabled={isSubmitting}
+            type="submit"
+            className="bg-midnight-black text-snow-white pointer w-fit disabled:opacity-50"
           >
-            Add Dish
-          </button>
-        </div>
-      </div>
-    </div>
+            {isSubmitting ? "Adding..." : "Add Dish"}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
-}
+};
+
+export default AddDishDialog;

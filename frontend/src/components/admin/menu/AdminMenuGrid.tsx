@@ -36,6 +36,7 @@ const AdminMenuGrid = () => {
       console.log("API response received:", response.data.data.length, "items");
 
       setFood(response.data.data);
+      console.log("test", response.data.data);
     } catch (error) {
       console.error("Fetching error:", error);
     }
@@ -45,12 +46,24 @@ const AdminMenuGrid = () => {
     fetchOrders();
   }, []);
 
+  const groupedFood = food.reduce((acc, item) => {
+    const categoryId = item.category._id;
+    if (!acc[categoryId]) {
+      acc[categoryId] = {
+        category: item.category,
+        items: [],
+      };
+    }
+    acc[categoryId].items.push(item);
+    return acc;
+  }, {} as Record<string, { category: Category; items: FoodItem[] }>);
+
   return (
     <div>
-      {food.map((item) => (
-        <div key={item._id} className="p-5 mt-10 bg-white">
+      {Object.values(groupedFood).map(({ category, items }) => (
+        <div key={category._id} className="p-5 mt-10 bg-white">
           <h4 className="mb-4 text-xl font-semibold text-midnight-black">
-            {item.category.categoryName}
+            {category.categoryName}
           </h4>
           <div className="grid grid-cols-3 gap-4">
             <Dialog>
@@ -60,42 +73,47 @@ const AdminMenuGrid = () => {
                     <Plus />
                   </Button>
                   <p className="mt-3 text-sm font-medium leading-4 text-midnight-black">
-                    Add new Dish to Appetizers
+                    Add new Dish to {category.categoryName}
                   </p>
                 </div>
               </DialogTrigger>
               <AddDishDialog />
             </Dialog>
 
-            <div className="bg-white rounded-[20px] p-4 border border-[#E4E4E7]">
-              <div className="relative">
-                <img
-                  src={item.image}
-                  alt={item.foodName}
-                  className="object-cover w-full h-48 rounded-xl"
-                />
+            {items.map((item) => (
+              <div
+                key={item._id}
+                className="bg-white rounded-[20px] p-4 border border-[#E4E4E7]"
+              >
+                <div className="relative">
+                  <img
+                    src={item.image}
+                    alt={item.foodName}
+                    className="object-cover w-full h-48 rounded-xl"
+                  />
 
-                <Dialog>
-                  <DialogTrigger className="absolute flex items-center justify-center p-0 bg-white rounded-full cursor-pointer right-3 bottom-4 size-11 text-cherry-red">
-                    <Pen size={16} />
-                  </DialogTrigger>
-                  <EditDishDialog />
-                </Dialog>
+                  <Dialog>
+                    <DialogTrigger className="absolute flex items-center justify-center p-0 bg-white rounded-full cursor-pointer right-3 bottom-4 size-11 text-cherry-red">
+                      <Pen size={16} />
+                    </DialogTrigger>
+                    <EditDishDialog />
+                  </Dialog>
+                </div>
+
+                <div className="flex items-start justify-between mt-4">
+                  <h3 className="text-sm font-medium leading-5 text-cherry-red">
+                    {item.foodName}
+                  </h3>
+                  <h3 className="text-xs font-normal leading-4 text-midnight-black">
+                    ${item.price}
+                  </h3>
+                </div>
+
+                <p className="mt-1 text-xs font-normal leading-4 text-midnight-black">
+                  {item.ingredients}
+                </p>
               </div>
-
-              <div className="flex items-start justify-between mt-4">
-                <h3 className="text-sm font-medium leading-5 text-cherry-red">
-                  {item.foodName}
-                </h3>
-                <h3 className="text-xs font-normal leading-4 text-midnight-black">
-                  ${item.price}
-                </h3>
-              </div>
-
-              <p className="mt-1 text-xs font-normal leading-4 text-midnight-black">
-                {item.ingredients?.join(", ")}
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       ))}
