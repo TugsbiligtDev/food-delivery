@@ -11,11 +11,7 @@ import {
 import OrderTabs from "../order/NavTab";
 import NavTab from "../order/NavTab";
 
-interface CartSheetProps {
-  onCheckout: () => void;
-}
-
-const CartSheet = ({ onCheckout }: CartSheetProps) => {
+const CartSheet = () => {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -34,7 +30,7 @@ const CartSheet = ({ onCheckout }: CartSheetProps) => {
           </div>
         </div>
 
-        <NavTab onCheckout={onCheckout} />
+        <NavTab />
       </SheetContent>
     </Sheet>
   );

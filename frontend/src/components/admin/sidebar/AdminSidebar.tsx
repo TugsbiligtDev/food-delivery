@@ -1,12 +1,7 @@
 "use client";
 import { LayoutDashboard, Truck } from "lucide-react";
 
-interface AdminSidebarProps {
-  activeView: "orders" | "menu";
-  setActiveView: (view: "orders" | "menu") => void;
-}
-
-const AdminSidebar = ({ activeView, setActiveView }: AdminSidebarProps) => {
+const AdminSidebar = () => {
   return (
     <div className="flex flex-col items-center w-full h-screen max-w-xs gap-8 px-5 bg-white">
       <div className="flex gap-3 mt-6">
@@ -21,22 +16,12 @@ const AdminSidebar = ({ activeView, setActiveView }: AdminSidebarProps) => {
         </div>
       </div>
 
-      <button
-        onClick={() => setActiveView("menu")}
-        className={`w-full justify-center items-center gap-2.5 text-black flex border py-2.5 px-6 cursor-pointer rounded-full transition-colors ${
-          activeView === "menu" && "bg-midnight-black text-snow-white"
-        }`}
-      >
+      <button className="w-full justify-center items-center gap-2.5 text-black flex border py-2.5 px-6 cursor-pointer rounded-full transition-colors">
         <LayoutDashboard />
         Menu
       </button>
 
-      <button
-        onClick={() => setActiveView("orders")}
-        className={`w-full justify-center items-center gap-2.5 text-black flex border py-2.5 px-6 cursor-pointer rounded-full transition-colors ${
-          activeView === "orders" && "bg-midnight-black text-snow-white"
-        }`}
-      >
+      <button className="w-full justify-center items-center gap-2.5 flex border py-2.5 px-6 cursor-pointer rounded-full transition-colors bg-midnight-black text-snow-white">
         <Truck />
         Orders
       </button>

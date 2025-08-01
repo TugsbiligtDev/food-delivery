@@ -15,44 +15,9 @@ import {
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { Image, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
-import axios from "axios";
-
-interface Category {
-  _id: string;
-  categoryName: string;
-  count: number;
-}
-
-interface ApiResponse {
-  data: Category[];
-}
 
 const EditDishDialog = () => {
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchCategories = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get<ApiResponse>(
-        "http://localhost:8000/api/categories"
-      );
-      setCategories(response.data.data || []);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-      setCategories([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
   return (
     <DialogContent className="max-w-xl bg-white text-midnight-black">
       <DialogHeader>
@@ -66,28 +31,15 @@ const EditDishDialog = () => {
       </div>
       <div className="flex-between">
         <Label className="form-label">Dish category</Label>
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+        <Select>
           <SelectTrigger className="w-[200px]">
-            <SelectValue
-              placeholder={loading ? "Loading..." : "Select a category..."}
-            />
+            <SelectValue placeholder="Select a category..." />
           </SelectTrigger>
           <SelectContent>
-            {loading ? (
-              <SelectItem value="loading" disabled>
-                Loading categories...
-              </SelectItem>
-            ) : categories.length === 0 ? (
-              <SelectItem value="no-categories" disabled>
-                No categories found
-              </SelectItem>
-            ) : (
-              categories.map((category) => (
-                <SelectItem key={category._id} value={category._id}>
-                  {category.categoryName}
-                </SelectItem>
-              ))
-            )}
+            <SelectItem value="appetizers">Appetizers</SelectItem>
+            <SelectItem value="main-dishes">Main Dishes</SelectItem>
+            <SelectItem value="desserts">Desserts</SelectItem>
+            <SelectItem value="beverages">Beverages</SelectItem>
           </SelectContent>
         </Select>
       </div>

@@ -3,11 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CartTab from "../card/CartTab";
 import OrderTab from "./OrderTab";
 
-interface OrderTabsProps {
-  onCheckout: () => void;
-}
-
-const NavTab = ({ onCheckout }: OrderTabsProps) => {
+const NavTab = () => {
   return (
     <div className="w-full max-w-lg mx-auto">
       <Tabs defaultValue="Cart" className="w-full">
@@ -31,7 +27,7 @@ const NavTab = ({ onCheckout }: OrderTabsProps) => {
 
         <div className="mt-6">
           <TabsContent value="Cart" className="m-0 space-y-0">
-            <CartTab onCheckout={onCheckout} />
+            <CartTab />
           </TabsContent>
 
           <TabsContent value="Order" className="m-0 space-y-0">

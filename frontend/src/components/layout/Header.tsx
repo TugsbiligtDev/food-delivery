@@ -1,27 +1,10 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
-import { usePathname } from "next/navigation";
 import CartSheet from "../features/card/CartSheet";
 import UserDropdown from "../auth/UserDropDown";
 import SuccessDialog from "../features/card/SuccessDialog";
-import AuthButtons from "../auth/AuthButtons";
-import { useAuth } from "@/app/contexts/AuthContext";
-import { useCart } from "@/app/contexts/UseCart";
 
 const Header = () => {
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const { isLoggedIn } = useAuth();
-  const { cartCount } = useCart();
-
-  const handleCheckout = () => {
-    setShowSuccessDialog(true);
-  };
-
-  const handleCloseSuccessDialog = () => {
-    setShowSuccessDialog(false);
-  };
-
   return (
     <>
       <header className="flex justify-between px-5 py-5 bg-obsidian">
@@ -42,28 +25,17 @@ const Header = () => {
         </Link>
 
         <nav className="flex gap-2">
-          {isLoggedIn ? (
-            <>
-              <div className="relative">
-                <CartSheet onCheckout={handleCheckout} />
-                {cartCount > 0 && (
-                  <div className="absolute z-10 flex items-center justify-center text-xs font-medium rounded-full -top-2 -right-2 bg-cherry-red text-snow-white size-5">
-                    {cartCount > 10 ? "10+" : cartCount}
-                  </div>
-                )}
-              </div>
-              <UserDropdown />
-            </>
-          ) : (
-            <AuthButtons />
-          )}
+          <div className="relative">
+            <CartSheet />
+            <div className="absolute z-10 flex items-center justify-center text-xs font-medium rounded-full -top-2 -right-2 bg-cherry-red text-snow-white size-5">
+              3
+            </div>
+          </div>
+          <UserDropdown />
         </nav>
       </header>
 
-      <SuccessDialog
-        open={showSuccessDialog}
-        onOpenChange={handleCloseSuccessDialog}
-      />
+      <SuccessDialog />
     </>
   );
 };

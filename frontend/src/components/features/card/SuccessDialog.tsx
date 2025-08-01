@@ -8,18 +8,9 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
-interface SuccessDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-const SuccessDialog = ({ open, onOpenChange }: SuccessDialogProps) => {
-  const handleBackToHome = () => {
-    onOpenChange(false);
-  };
-
+const SuccessDialog = () => {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={false}>
       <DialogContent className="flex flex-col items-center max-w-md gap-6 p-8 text-black bg-white border-0 rounded-2xl">
         <DialogHeader className="space-y-4 text-center">
           <DialogTitle className="text-2xl font-bold leading-tight text-midnight-black">
@@ -33,10 +24,7 @@ const SuccessDialog = ({ open, onOpenChange }: SuccessDialogProps) => {
 
         <div className="flex justify-center">
           <DialogClose asChild>
-            <Button
-              onClick={handleBackToHome}
-              className="w-[180px] bg-cloude-gray hover:bg-gray-200 pointer text-midnight-black font-medium py-3 rounded-full"
-            >
+            <Button className="w-[180px] bg-cloude-gray hover:bg-gray-200 pointer text-midnight-black font-medium py-3 rounded-full">
               Back to Home
             </Button>
           </DialogClose>

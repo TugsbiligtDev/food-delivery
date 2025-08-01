@@ -1,18 +1,6 @@
 "use client";
 
 import * as React from "react";
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
-  useReactTable,
-  VisibilityState,
-} from "@tanstack/react-table";
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -48,355 +36,191 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const data = [
-  {
-    id: "1",
-    orderNumber: 1,
-    customer: "Test@gamail.com",
-    food: [
-      { name: "Sunshine Stackers", quantity: 1, image: true },
-      { name: "Sunshine Stackers", quantity: 1, image: true },
-    ],
-    foodSummary: "2 foods",
-    date: "2024/12/20",
-    total: 26.97,
-    deliveryAddress:
-      "2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...",
-    deliveryState: "Pending",
-  },
-  {
-    id: "2",
-    orderNumber: 1,
-    customer: "Test@gamail.com",
-    food: [{ name: "Sunshine Stackers", quantity: 1, image: true }],
-    foodSummary: "Sunshine Stackers",
-    date: "2024/12/20",
-    total: 26.97,
-    deliveryAddress:
-      "2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...",
-    deliveryState: "Pending",
-  },
-  {
-    id: "3",
-    orderNumber: 1,
-    customer: "Test@gamail.com",
-    food: [{ name: "Sunshine Stackers", quantity: 1, image: true }],
-    foodSummary: "Sunshine Stackers",
-    date: "2024/12/20",
-    total: 26.97,
-    deliveryAddress:
-      "2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...",
-    deliveryState: "Pending",
-  },
-  {
-    id: "4",
-    orderNumber: 1,
-    customer: "Test@gamail.com",
-    food: [
-      { name: "Sunshine Stackers", quantity: 1, image: true },
-      { name: "Caesar Salad", quantity: 1, image: true },
-    ],
-    foodSummary: "2 foods",
-    date: "2024/12/20",
-    total: 26.97,
-    deliveryAddress:
-      "2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...",
-    deliveryState: "Delivered",
-  },
-  {
-    id: "5",
-    orderNumber: 1,
-    customer: "Test@gamail.com",
-    food: [
-      { name: "Burger Deluxe", quantity: 2, image: true },
-      { name: "French Fries", quantity: 1, image: true },
-    ],
-    foodSummary: "2 foods",
-    date: "2024/12/20",
-    total: 26.97,
-    deliveryAddress:
-      "2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...",
-    deliveryState: "Delivered",
-  },
-  {
-    id: "6",
-    orderNumber: 1,
-    customer: "Test@gamail.com",
-    food: [
-      { name: "Pizza Margherita", quantity: 1, image: true },
-      { name: "Chicken Wings", quantity: 1, image: true },
-    ],
-    foodSummary: "2 foods",
-    date: "2024/12/20",
-    total: 26.97,
-    deliveryAddress:
-      "2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...",
-    deliveryState: "Cancelled",
-  },
-  {
-    id: "7",
-    orderNumber: 1,
-    customer: "Test@gamail.com",
-    food: [
-      { name: "Pasta Carbonara", quantity: 1, image: true },
-      { name: "Garlic Bread", quantity: 2, image: true },
-    ],
-    foodSummary: "2 foods",
-    date: "2024/12/20",
-    total: 26.97,
-    deliveryAddress:
-      "2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...",
-    deliveryState: "Cancelled",
-  },
-  {
-    id: "8",
-    orderNumber: 1,
-    customer: "Test@gamail.com",
-    food: [
-      { name: "Sushi Roll", quantity: 3, image: true },
-      { name: "Miso Soup", quantity: 1, image: true },
-    ],
-    foodSummary: "2 foods",
-    date: "2024/12/20",
-    total: 26.97,
-    deliveryAddress:
-      "2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...",
-    deliveryState: "Cancelled",
-  },
-];
-
-export type Orders = {
-  id: string;
-  orderNumber: number;
-  email: string;
-  food: { name: string; quantity: number; image: boolean };
-  foodSummary: string;
-  date: string;
-  total: number;
-  deliveryAddress: string;
-  status: "pending" | "processing" | "success" | "failed";
-};
-
-export const columns: ColumnDef<Orders>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "orderNumber",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          №
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div>{row.getValue("orderNumber")}</div>,
-  },
-  {
-    accessorKey: "customer",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Customer
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div>{row.getValue("customer")}</div>,
-  },
-  {
-    accessorKey: "foodSummary",
-    header: "Foods",
-    cell: ({ row }) => {
-      const food = row.original.food;
-      const totalItems = food.reduce((sum, item) => sum + item.quantity, 0);
-
-      return (
-        <div>
-          <div>{row.getValue("foodSummary")}</div>
-          <div>
-            {totalItems} item{totalItems !== 1 ? "s" : ""}
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "date",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Date
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const date = new Date(row.getValue("date"));
-      return <div>{date.toLocaleDateString()}</div>;
-    },
-  },
-  {
-    accessorKey: "total",
-    header: () => <div>Total</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("total"));
-
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-
-      return <div>{formatted}</div>;
-    },
-  },
-  {
-    accessorKey: "deliveryAddress",
-    header: "Delivery Address",
-    cell: ({ row }) => {
-      const address = row.getValue("deliveryAddress") as string;
-      const truncatedAddress =
-        address.length > 50 ? `${address.substring(0, 50)}...` : address;
-
-      return <div title={address}>{truncatedAddress}</div>;
-    },
-  },
-  {
-    accessorKey: "deliveryState",
-    header: "Delivery State",
-    cell: ({ row }) => {
-      const status = row.getValue("deliveryState") as string;
-
-      const statusVariant = {
-        Pending: "secondary",
-        Delivered: "default",
-        Cancelled: "destructive",
-      } as const;
-
-      return (
-        <Select>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Status</SelectLabel>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="delivered">Delivered</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      );
-    },
-  },
-];
-
 export function OrdersTable() {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
-
-  const table = useReactTable({
-    data,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
-  });
-
   return (
     <div className="w-full text-black">
       <OrdersHeader />
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
+            <TableRow>
+              <TableHead>
+                <Checkbox aria-label="Select all" />
+              </TableHead>
+              <TableHead>
+                <Button variant="ghost">№</Button>
+              </TableHead>
+              <TableHead>
+                <Button variant="ghost">Customer</Button>
+              </TableHead>
+              <TableHead>Foods</TableHead>
+              <TableHead>
+                <Button variant="ghost">
+                  Date
+                  <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+              </TableHead>
+              <TableHead>Total</TableHead>
+              <TableHead>Delivery Address</TableHead>
+              <TableHead>Delivery State</TableHead>
+            </TableRow>
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
+            <TableRow>
+              <TableCell>
+                <Checkbox aria-label="Select row" />
+              </TableCell>
+              <TableCell>1</TableCell>
+              <TableCell>Test@gmail.com</TableCell>
+              <TableCell>
+                <div>2 foods</div>
+                <div>2 items</div>
+              </TableCell>
+              <TableCell>12/20/2024</TableCell>
+              <TableCell>$26.97</TableCell>
+              <TableCell title="2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...">
+                2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd n...
+              </TableCell>
+              <TableCell>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Status</SelectLabel>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="delivered">Delivered</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                <Checkbox aria-label="Select row" />
+              </TableCell>
+              <TableCell>2</TableCell>
+              <TableCell>Test@gmail.com</TableCell>
+              <TableCell>
+                <div>Sunshine Stackers</div>
+                <div>1 item</div>
+              </TableCell>
+              <TableCell>12/20/2024</TableCell>
+              <TableCell>$26.97</TableCell>
+              <TableCell title="2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...">
+                2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd n...
+              </TableCell>
+              <TableCell>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Status</SelectLabel>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="delivered">Delivered</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                <Checkbox aria-label="Select row" />
+              </TableCell>
+              <TableCell>3</TableCell>
+              <TableCell>Test@gmail.com</TableCell>
+              <TableCell>
+                <div>2 foods</div>
+                <div>3 items</div>
+              </TableCell>
+              <TableCell>12/20/2024</TableCell>
+              <TableCell>$26.97</TableCell>
+              <TableCell title="2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...">
+                2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd n...
+              </TableCell>
+              <TableCell>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Status</SelectLabel>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="delivered">Delivered</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                <Checkbox aria-label="Select row" />
+              </TableCell>
+              <TableCell>4</TableCell>
+              <TableCell>Test@gmail.com</TableCell>
+              <TableCell>
+                <div>2 foods</div>
+                <div>2 items</div>
+              </TableCell>
+              <TableCell>12/20/2024</TableCell>
+              <TableCell>$26.97</TableCell>
+              <TableCell title="2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...">
+                2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd n...
+              </TableCell>
+              <TableCell>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Status</SelectLabel>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="delivered">Delivered</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                <Checkbox aria-label="Select row" />
+              </TableCell>
+              <TableCell>5</TableCell>
+              <TableCell>Test@gmail.com</TableCell>
+              <TableCell>
+                <div>2 foods</div>
+                <div>3 items</div>
+              </TableCell>
+              <TableCell>12/20/2024</TableCell>
+              <TableCell>$26.97</TableCell>
+              <TableCell title="2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...">
+                2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd n...
+              </TableCell>
+              <TableCell>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Status</SelectLabel>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="delivered">Delivered</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </div>

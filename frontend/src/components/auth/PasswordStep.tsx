@@ -1,64 +1,27 @@
-import { useState } from "react";
 import { Input } from "../ui/input";
 import ValidationMsg from "./ValidationMsg";
 import { Button } from "../ui/button";
-import {
-  UseFormRegister,
-  FieldErrors,
-  UseFormHandleSubmit,
-} from "react-hook-form";
-import { SignupFormData } from "@/lib/schemas/auth";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 
-interface PasswordStepProps {
-  register: UseFormRegister<SignupFormData>;
-  errors: FieldErrors<SignupFormData>;
-  handleSubmit: UseFormHandleSubmit<SignupFormData>;
-  onSubmit: (data: SignupFormData) => void;
-  isLoading: boolean;
-}
-const PasswordStep = ({
-  register,
-  errors,
-  handleSubmit,
-  onSubmit,
-  isLoading,
-}: PasswordStepProps) => {
-  const [show, setShow] = useState(false);
-
+const PasswordStep = () => {
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form>
         <div className="mb-5">
           <Input
             placeholder="Password"
-            type={show ? "text" : "password"}
-            {...register("password")}
+            type="password"
             className="text-black"
-            disabled={isLoading}
           />
-          {errors.password && (
-            <ValidationMsg message={errors.password.message || ""} />
-          )}
+          <ValidationMsg message="" />
         </div>
 
         <div className="mb-3">
-          <Input
-            placeholder="Confirm"
-            type={show ? "text" : "password"}
-            {...register("confirm")}
-            className="text-black"
-            disabled={isLoading}
-          />
-          {errors.confirm && (
-            <ValidationMsg message={errors.confirm.message || ""} />
-          )}
+          <Input placeholder="Confirm" type="password" className="text-black" />
+          <ValidationMsg message="" />
         </div>
-        <div
-          className="flex items-center gap-2 cursor-pointer"
-          onClick={() => setShow(!show)}
-        >
+        <div className="flex items-center gap-2 cursor-pointer">
           <Checkbox id="show-password" />
           <Label
             htmlFor="show-password"
@@ -69,7 +32,7 @@ const PasswordStep = ({
         </div>
 
         <Button className="long-button" type="submit">
-          {isLoading ? "Creating Account..." : "Let's Go"}
+          Let's Go
         </Button>
       </form>
     </div>
