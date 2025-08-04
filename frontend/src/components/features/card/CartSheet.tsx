@@ -8,7 +8,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import OrderTabs from "../order/NavTab";
 import NavTab from "../order/NavTab";
 
 const CartSheet = () => {

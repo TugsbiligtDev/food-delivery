@@ -10,7 +10,7 @@ import {
 
 const SuccessDialog = () => {
   return (
-    <Dialog open={false}>
+    <Dialog>
       <DialogContent className="flex flex-col items-center max-w-md gap-6 p-8 text-black bg-white border-0 rounded-2xl">
         <DialogHeader className="space-y-4 text-center">
           <DialogTitle className="text-2xl font-bold leading-tight text-midnight-black">

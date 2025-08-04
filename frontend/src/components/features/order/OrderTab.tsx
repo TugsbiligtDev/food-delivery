@@ -1,8 +1,6 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
-import { Package, Clock } from "lucide-react";
 import OrderItem from "./OrderItem";
-import { Button } from "../../ui/button";
 
 const OrderTab = () => {
   return (
