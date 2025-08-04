@@ -37,9 +37,13 @@ export const signUp = async (req: Request, res: Response) => {
     });
 
     const token = jwt.sign({ userId: newUser._id }, JWT_SECRET, {
-      expiresIn: "7d",
+      expiresIn: TOKEN_EXPIRY,
     });
-    const { password: _, ...userWithoutPassword } = newUser.toObject();
+
+    const userWithoutPassword = await User.findById(newUser._id).select(
+      "-password"
+    );
+
     res.status(201).json({
       success: true,
       message: "User created",
@@ -70,7 +74,10 @@ export const signIn = async (req: Request, res: Response) => {
     const token = jwt.sign({ userId: user._id.toString() }, JWT_SECRET, {
       expiresIn: TOKEN_EXPIRY,
     });
-    const { password: _, ...userWithoutPassword } = user.toObject();
+
+    const userWithoutPassword = await User.findById(user._id).select(
+      "-password"
+    );
 
     res.json({
       success: true,

@@ -6,29 +6,37 @@ import {
   updateOrder,
   deleteOrder,
 } from "../controllers/order.controller.js";
-import verifyToken from "../middleware/auth.js";
+import authMiddleware from "../middleware/auth.js";
+import adminMiddleware from "../middleware/admin.js";
 
 const router = express.Router();
 
-router.post("/", verifyToken as RequestHandler, createOrder as RequestHandler);
+router.post(
+  "/",
+  authMiddleware as RequestHandler,
+  createOrder as RequestHandler
+);
 router.get(
   "/",
-  // verifyToken as RequestHandler,
+  authMiddleware as RequestHandler,
+  adminMiddleware as RequestHandler,
   getAllOrders as RequestHandler
 );
 router.get(
   "/user/:userId",
-  verifyToken as RequestHandler,
+  authMiddleware as RequestHandler,
   getOrdersByUserId as RequestHandler
 );
 router.patch(
   "/:orderId",
-  verifyToken as RequestHandler,
+  authMiddleware as RequestHandler,
+  adminMiddleware as RequestHandler,
   updateOrder as RequestHandler
 );
 router.delete(
   "/:orderId",
-  verifyToken as RequestHandler,
+  authMiddleware as RequestHandler,
+  adminMiddleware as RequestHandler,
   deleteOrder as RequestHandler
 );
 

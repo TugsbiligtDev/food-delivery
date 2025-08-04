@@ -1,13 +1,9 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { Category, Food } from "../models/index.js";
+import { AuthRequest } from "../middleware/auth.js";
 
 const { Types } = mongoose;
-
-interface AuthRequest extends Request {
-  userId?: string;
-  user?: { role?: string };
-}
 
 export const getAllCategories = async (_req: Request, res: Response) => {
   try {
@@ -39,9 +35,6 @@ export const createCategory = async (req: AuthRequest, res: Response) => {
       return res
         .status(400)
         .json({ success: false, message: "Category name is required" });
-
-    // if (req.user?.role !== "ADMIN")
-    //   return res.status(403).json({ success: false, message: "Admin only" });
 
     const exists = await Category.findOne({
       categoryName: { $regex: new RegExp(`^${categoryName.trim()}$`, "i") },
@@ -77,9 +70,6 @@ export const updateCategory = async (req: AuthRequest, res: Response) => {
       return res
         .status(400)
         .json({ success: false, message: "Category name is required" });
-
-    if (req.user?.role !== "ADMIN")
-      return res.status(403).json({ success: false, message: "Admin only" });
 
     const exists = await Category.findOne({
       categoryName: { $regex: new RegExp(`^${categoryName.trim()}$`, "i") },
@@ -117,9 +107,6 @@ export const deleteCategory = async (req: AuthRequest, res: Response) => {
       return res
         .status(400)
         .json({ success: false, message: "Invalid category ID" });
-
-    if (req.user?.role !== "ADMIN")
-      return res.status(403).json({ success: false, message: "Admin only" });
 
     const deleted = await Category.findByIdAndDelete(categoryId);
     if (!deleted)

@@ -27,6 +27,16 @@ const orderSchema = new Schema(
         },
       },
     ],
+    deliveryAddress: {
+      type: String,
+      required: [true, "Delivery address is required"],
+      trim: true,
+    },
+    deliveryPhone: {
+      type: String,
+      required: [true, "Delivery phone is required"],
+      trim: true,
+    },
     status: {
       type: String,
       enum: {

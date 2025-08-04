@@ -7,7 +7,7 @@ import {
   verifyResetPasswordRequest,
   resetPassword,
 } from "../controllers/auth.controller.js";
-import verifyToken from "../middleware/auth.js";
+import authMiddleware from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -19,7 +19,7 @@ router.post("/reset-password", resetPassword as RequestHandler);
 
 router.post(
   "/refresh",
-  verifyToken as RequestHandler,
+  authMiddleware as RequestHandler,
   refresh as RequestHandler
 );
 

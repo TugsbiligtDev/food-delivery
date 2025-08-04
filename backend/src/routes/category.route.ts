@@ -5,7 +5,8 @@ import {
   updateCategory,
   deleteCategory,
 } from "../controllers/category.controller.js";
-import verifyToken from "../middleware/auth.js";
+import authMiddleware from "../middleware/auth.js";
+import adminMiddleware from "../middleware/admin.js";
 
 const router = express.Router();
 
@@ -13,17 +14,20 @@ router.get("/", getAllCategories as RequestHandler);
 
 router.post(
   "/",
-  // verifyToken as RequestHandler,
+  authMiddleware as RequestHandler,
+  adminMiddleware as RequestHandler,
   createCategory as RequestHandler
 );
 router.patch(
   "/:categoryId",
-  verifyToken as RequestHandler,
+  authMiddleware as RequestHandler,
+  adminMiddleware as RequestHandler,
   updateCategory as RequestHandler
 );
 router.delete(
   "/:categoryId",
-  verifyToken as RequestHandler,
+  authMiddleware as RequestHandler,
+  adminMiddleware as RequestHandler,
   deleteCategory as RequestHandler
 );
 

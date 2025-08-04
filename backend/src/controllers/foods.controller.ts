@@ -1,13 +1,9 @@
 import { Request, Response } from "express";
 import { Food } from "../models/index.js";
 import mongoose from "mongoose";
+import { AuthRequest } from "../middleware/auth.js";
 
 const { Types } = mongoose;
-
-interface AuthRequest extends Request {
-  userId?: string;
-  user?: { role?: string };
-}
 
 export const getAllFoods = async (req: Request, res: Response) => {
   try {
@@ -42,12 +38,6 @@ export const getFoodById = async (req: Request, res: Response) => {
 
 export const createFood = async (req: AuthRequest, res: Response) => {
   try {
-    // if (req.user?.role !== "ADMIN")
-    //   return res.status(403).json({
-    //     success: false,
-    //     message: "Access denied. Admin privileges required.",
-    //   });
-
     const createdFood = await Food.create(req.body);
     const populatedFood = await Food.findById(createdFood._id).populate(
       "category"
@@ -71,12 +61,6 @@ export const updateFood = async (req: AuthRequest, res: Response) => {
       return res
         .status(400)
         .json({ success: false, message: "Invalid food ID format" });
-
-    if (req.user?.role !== "ADMIN")
-      return res.status(403).json({
-        success: false,
-        message: "Access denied. Admin privileges required.",
-      });
 
     const updatedFood = await Food.findByIdAndUpdate(foodId, req.body, {
       new: true,
@@ -106,12 +90,6 @@ export const deleteFood = async (req: AuthRequest, res: Response) => {
       return res
         .status(400)
         .json({ success: false, message: "Invalid food ID format" });
-
-    if (req.user?.role !== "ADMIN")
-      return res.status(403).json({
-        success: false,
-        message: "Access denied. Admin privileges required.",
-      });
 
     const deletedFood = await Food.findByIdAndDelete(foodId);
     if (!deletedFood)
