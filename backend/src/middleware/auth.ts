@@ -1,24 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
-import { User } from "../models/index.js";
+import { User } from "../models/user.model.js";
+import dotenv from "dotenv";
 
-interface JWTPayload {
-  userId: string;
-  email: string;
-}
+dotenv.config();
 
 export interface AuthRequest extends Request {
-  user?: {
-    _id: mongoose.Types.ObjectId;
-    email: string;
-    role: "ADMIN" | "USER";
-    phoneNumber?: string | null;
-    address?: string | null;
-    isVerified: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-  };
+  user?: any;
 }
 
 const authMiddleware = async (
@@ -27,23 +15,41 @@ const authMiddleware = async (
   next: NextFunction
 ) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
+    const token = req.header("Authorization")?.replace("Bearer ", "");
+
     if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({
+        success: false,
+        message: "Access denied. No token provided.",
+      });
     }
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string
-    ) as JWTPayload;
-    const user = await User.findById(decoded.userId);
+
+    const JWT_SECRET = process.env.JWT_SECRET;
+    if (!JWT_SECRET) {
+      return res.status(500).json({
+        success: false,
+        message: "JWT secret not configured",
+      });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+    const user = await User.findById(decoded.userId).select("-password");
+
     if (!user) {
-      return res.status(401).json({ message: "User not found" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token. User not found.",
+      });
     }
-    req.user = user.toObject();
+
+    req.user = user;
     next();
   } catch (error) {
-    console.error("Token verification error:", error);
-    return res.status(401).json({ message: "Invalid token" });
+    res.status(401).json({
+      success: false,
+      message: "Invalid token",
+      error: error instanceof Error ? error.message : "Unknown error occurred",
+    });
   }
 };
 

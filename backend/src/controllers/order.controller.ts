@@ -1,6 +1,5 @@
 import { Response } from "express";
 import { AuthRequest } from "../middleware/auth.js";
-
 export const createOrder = async (req: AuthRequest, res: Response) => {
   // TODO: Implement create order logic
   res.status(201).json({
