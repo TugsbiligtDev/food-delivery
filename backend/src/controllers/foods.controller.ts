@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-// import { AuthRequest } from "../middleware/auth.js";
 import { Food } from "../models/foods.model.js";
 import { Category } from "../models/category.model.js";
 export const getAllFoods = async (req: Request, res: Response) => {
@@ -45,52 +44,21 @@ export const getFoodById = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error retrieving foods",
+      message: "Error retrieving food",
       error: error instanceof Error ? error.message : "Unknown error occurred",
     });
   }
 };
 
-export const createFood = async (req: AuthRequest, res: Response) => {
+export const createFood = async (req: Request, res: Response) => {
   try {
     const { foodName, price, ingredients, image, category } = req.body;
-    if (!foodName) {
-      return res.status(400).json({
-        success: false,
-        message: "Food name is required",
-      });
-    }
-    if (!price) {
-      return res.status(400).json({
-        success: false,
-        message: "Price is required",
-      });
-    }
-    if (!ingredients) {
-      return res.status(400).json({
-        success: false,
-        message: "Ingredients is required",
-      });
-    }
-    if (!image) {
-      return res.status(400).json({
-        success: false,
-        message: "Image is required",
-      });
-    }
-    if (!category) {
-      return res.status(400).json({
-        success: false,
-        message: "Category is required",
-      });
-    }
+    const categoryExists = await Category.findById(category);
 
-    const isExist = await Category.findById(category);
-
-    if (!isExist) {
+    if (!categoryExists) {
       return res.status(400).json({
         success: false,
-        message: "Category  not found",
+        message: "Category not found",
       });
     }
     const newFood = await Food.create({
@@ -115,9 +83,9 @@ export const createFood = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const updateFood = async (req: AuthRequest, res: Response) => {
+export const updateFood = async (req: Request, res: Response) => {
   try {
-    const food = req.body;
+    const updateData = req.body;
     const { foodId } = req.params;
 
     if (!foodId) {
@@ -127,7 +95,7 @@ export const updateFood = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    const updatedFood = await Food.findByIdAndUpdate(foodId, food, {
+    const updatedFood = await Food.findByIdAndUpdate(foodId, updateData, {
       new: true,
     });
 
@@ -152,7 +120,7 @@ export const updateFood = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const deleteFood = async (req: AuthRequest, res: Response) => {
+export const deleteFood = async (req: Request, res: Response) => {
   try {
     const { foodId } = req.params;
 

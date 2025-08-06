@@ -1,4 +1,4 @@
-import express, { RequestHandler } from "express";
+import express from "express";
 import {
   getAllCategories,
   createCategory,
@@ -7,28 +7,28 @@ import {
 } from "../controllers/category.controller.js";
 import authMiddleware from "../middleware/auth.js";
 import adminMiddleware from "../middleware/admin.js";
+import { validate, createCategorySchema } from "../schemas/validation.js";
 
 const router = express.Router();
 
-router.get("/", getAllCategories as RequestHandler);
+router.get("/", getAllCategories);
 
 router.post(
   "/",
-  authMiddleware as RequestHandler,
-  adminMiddleware as RequestHandler,
-  createCategory as RequestHandler
+  authMiddleware,
+  adminMiddleware,
+  validate(createCategorySchema),
+  createCategory
 );
+
 router.patch(
   "/:categoryId",
-  authMiddleware as RequestHandler,
-  adminMiddleware as RequestHandler,
-  updateCategory as RequestHandler
+  authMiddleware,
+  adminMiddleware,
+  validate(createCategorySchema),
+  updateCategory
 );
-router.delete(
-  "/:categoryId",
-  authMiddleware as RequestHandler,
-  adminMiddleware as RequestHandler,
-  deleteCategory as RequestHandler
-);
+
+router.delete("/:categoryId", authMiddleware, adminMiddleware, deleteCategory);
 
 export default router;

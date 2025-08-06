@@ -1,4 +1,4 @@
-import express, { RequestHandler } from "express";
+import express from "express";
 import {
   getAllFoods,
   getFoodById,
@@ -8,29 +8,33 @@ import {
 } from "../controllers/foods.controller.js";
 import authMiddleware from "../middleware/auth.js";
 import adminMiddleware from "../middleware/admin.js";
+import {
+  validate,
+  createFoodSchema,
+  updateFoodSchema,
+} from "../schemas/validation.js";
 
 const router = express.Router();
 
-router.get("/", getAllFoods as RequestHandler);
-router.get("/:foodId", getFoodById as RequestHandler);
+router.get("/", getAllFoods);
+router.get("/:foodId", getFoodById);
 
 router.post(
   "/",
-  authMiddleware as RequestHandler,
-  adminMiddleware as RequestHandler,
-  createFood as RequestHandler
+  authMiddleware,
+  adminMiddleware,
+  validate(createFoodSchema),
+  createFood
 );
+
 router.patch(
   "/:foodId",
-  authMiddleware as RequestHandler,
-  adminMiddleware as RequestHandler,
-  updateFood as RequestHandler
+  authMiddleware,
+  adminMiddleware,
+  validate(updateFoodSchema),
+  updateFood
 );
-router.delete(
-  "/:foodId",
-  authMiddleware as RequestHandler,
-  adminMiddleware as RequestHandler,
-  deleteFood as RequestHandler
-);
+
+router.delete("/:foodId", authMiddleware, adminMiddleware, deleteFood);
 
 export default router;

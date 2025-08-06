@@ -1,4 +1,4 @@
-import express, { RequestHandler } from "express";
+import express from "express";
 import {
   createOrder,
   getAllOrders,
@@ -8,36 +8,24 @@ import {
 } from "../controllers/order.controller.js";
 import authMiddleware from "../middleware/auth.js";
 import adminMiddleware from "../middleware/admin.js";
+import {
+  validate,
+  createOrderSchema,
+  updateOrderSchema,
+} from "../schemas/validation.js";
 
 const router = express.Router();
 
-router.post(
-  "/",
-  authMiddleware as RequestHandler,
-  createOrder as RequestHandler
-);
-router.get(
-  "/",
-  authMiddleware as RequestHandler,
-  adminMiddleware as RequestHandler,
-  getAllOrders as RequestHandler
-);
-router.get(
-  "/user/:userId",
-  authMiddleware as RequestHandler,
-  getOrdersByUserId as RequestHandler
-);
+router.post("/", authMiddleware, validate(createOrderSchema), createOrder);
+router.get("/", authMiddleware, adminMiddleware, getAllOrders);
+router.get("/user/:userId", authMiddleware, getOrdersByUserId);
 router.patch(
   "/:orderId",
-  authMiddleware as RequestHandler,
-  adminMiddleware as RequestHandler,
-  updateOrder as RequestHandler
+  authMiddleware,
+  adminMiddleware,
+  validate(updateOrderSchema),
+  updateOrder
 );
-router.delete(
-  "/:orderId",
-  authMiddleware as RequestHandler,
-  adminMiddleware as RequestHandler,
-  deleteOrder as RequestHandler
-);
+router.delete("/:orderId", authMiddleware, adminMiddleware, deleteOrder);
 
 export default router;

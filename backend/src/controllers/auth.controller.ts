@@ -15,22 +15,9 @@ if (!JWT_SECRET) {
 export const signUp = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    if (!password) {
-      return res.status(400).json({
-        success: false,
-        message: "Password is required",
-      });
-    }
+    const existingUser = await User.findOne({ email });
 
-    if (!email) {
-      return res.status(400).json({
-        success: false,
-        message: "Email is required",
-      });
-    }
-    const isExist = await User.findOne({ email });
-
-    if (isExist) {
+    if (existingUser) {
       return res.status(400).json({
         success: false,
         message: "Email already registered",
@@ -66,21 +53,6 @@ export const signUp = async (req: Request, res: Response) => {
 export const signIn = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-
-    if (!email) {
-      return res.status(400).json({
-        success: false,
-        message: "Email is required",
-      });
-    }
-
-    if (!password) {
-      return res.status(400).json({
-        success: false,
-        message: "Password is required",
-      });
-    }
-
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({
@@ -88,9 +60,9 @@ export const signIn = async (req: Request, res: Response) => {
         message: "Invalid email or password",
       });
     }
-    const comparePassword = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if (!comparePassword) {
+    if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
@@ -100,18 +72,18 @@ export const signIn = async (req: Request, res: Response) => {
       expiresIn: "7d",
     });
 
-    const signIn = await User.findById(user._id).select("-password");
+    const userProfile = await User.findById(user._id).select("-password");
 
     res.status(200).json({
       success: true,
       message: "User signed in successfully",
-      data: signIn,
+      data: userProfile,
       token: token,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error signing user",
+      message: "Error signing in user",
       error: error instanceof Error ? error.message : "Unknown error occurred",
     });
   }

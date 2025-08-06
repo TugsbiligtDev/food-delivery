@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { AuthRequest } from "../middleware/auth.js";
 import { Category } from "../models/category.model.js";
 import { Food } from "../models/foods.model.js";
 export const getAllCategories = async (_req: Request, res: Response) => {
@@ -19,9 +18,9 @@ export const getAllCategories = async (_req: Request, res: Response) => {
   }
 };
 
-export const createCategory = async (req: AuthRequest, res: Response) => {
+export const createCategory = async (req: Request, res: Response) => {
   try {
-    const categoryName = req.body.categoryName;
+    const { categoryName } = req.body;
 
     if (!categoryName) {
       return res.status(400).json({
@@ -46,9 +45,9 @@ export const createCategory = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const updateCategory = async (req: AuthRequest, res: Response) => {
+export const updateCategory = async (req: Request, res: Response) => {
   try {
-    const categoryName = req.body.categoryName;
+    const { categoryName } = req.body;
     const { categoryId } = req.params;
 
     if (!categoryName) {
@@ -64,14 +63,14 @@ export const updateCategory = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    const updatedCategoryName = await Category.findByIdAndUpdate(
+    const updatedCategory = await Category.findByIdAndUpdate(
       categoryId,
       {
         categoryName,
       },
       { new: true }
     );
-    if (updatedCategoryName === null) {
+    if (updatedCategory === null) {
       return res.status(404).json({
         success: false,
         message: "Category not found",
@@ -80,7 +79,7 @@ export const updateCategory = async (req: AuthRequest, res: Response) => {
     res.status(200).json({
       success: true,
       message: "Category updated successfully",
-      data: updatedCategoryName,
+      data: updatedCategory,
     });
   } catch (error) {
     res.status(500).json({
@@ -91,7 +90,7 @@ export const updateCategory = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const deleteCategory = async (req: AuthRequest, res: Response) => {
+export const deleteCategory = async (req: Request, res: Response) => {
   try {
     const { categoryId } = req.params;
 
@@ -100,9 +99,9 @@ export const deleteCategory = async (req: AuthRequest, res: Response) => {
         .status(400)
         .json({ success: false, message: "Category ID is required" });
 
-    const isUsed = await Food.findOne({ category: categoryId });
+    const categoryInUse = await Food.findOne({ category: categoryId });
 
-    if (isUsed) {
+    if (categoryInUse) {
       return res.status(400).json({
         success: false,
         message: "Cannot delete category. Foods are using this category",

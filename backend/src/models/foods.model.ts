@@ -32,4 +32,8 @@ const foodSchema = new Schema(
   { timestamps: true }
 );
 
+foodSchema.index({ category: 1 });
+foodSchema.index({ foodName: 1 });
+foodSchema.index({ createdAt: -1 });
+
 export const Food = model("Food", foodSchema);

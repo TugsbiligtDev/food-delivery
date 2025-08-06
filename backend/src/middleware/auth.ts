@@ -1,16 +1,18 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
+import { AuthenticatedUser } from "../types/index.js";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-export interface AuthRequest extends Request {
-  user?: any;
+// Inline interface - no separate file needed
+interface AuthRequest extends Request {
+  user: AuthenticatedUser;
 }
 
 const authMiddleware = async (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -42,7 +44,7 @@ const authMiddleware = async (
       });
     }
 
-    req.user = user;
+    (req as AuthRequest).user = user as unknown as AuthenticatedUser; // Add user to request
     next();
   } catch (error) {
     res.status(401).json({

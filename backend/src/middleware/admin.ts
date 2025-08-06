@@ -1,20 +1,23 @@
 import { Response, NextFunction } from "express";
-import { AuthRequest } from "./auth.js";
+import { Request } from "express";
+import { AuthenticatedUser } from "../types/index.js";
 
-const adminMiddleware = (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction
-) => {
+// Inline interface - no separate file needed
+interface AuthRequest extends Request {
+  user: AuthenticatedUser;
+}
+
+const adminMiddleware = (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (!req.user) {
+    const authReq = req as AuthRequest;
+    if (!authReq.user) {
       return res.status(401).json({
         success: false,
         message: "Authentication required",
       });
     }
 
-    if (req.user.role !== "ADMIN") {
+    if (authReq.user.role !== "ADMIN") {
       return res.status(403).json({
         success: false,
         message: "Access denied. Admin role required.",
