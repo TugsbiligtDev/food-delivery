@@ -2,7 +2,6 @@ import { Response, NextFunction } from "express";
 import { Request } from "express";
 import { AuthenticatedUser } from "../types/index.js";
 
-// Inline interface - no separate file needed
 interface AuthRequest extends Request {
   user: AuthenticatedUser;
 }

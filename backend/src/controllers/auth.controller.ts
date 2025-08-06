@@ -14,7 +14,7 @@ if (!JWT_SECRET) {
 
 export const signUp = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, phoneNumber, address, role } = req.body;
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -25,7 +25,13 @@ export const signUp = async (req: Request, res: Response) => {
     }
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const newUser = await User.create({ email, password: hashedPassword });
+    const newUser = await User.create({
+      email,
+      password: hashedPassword,
+      phoneNumber,
+      address,
+      role,
+    });
 
     const userWithoutPassword = await User.findById(newUser._id).select(
       "-password"

@@ -12,6 +12,4 @@ const categorySchema = new Schema(
   { timestamps: true }
 );
 
-categorySchema.index({ categoryName: 1 });
-
 export const Category = model("Category", categorySchema);

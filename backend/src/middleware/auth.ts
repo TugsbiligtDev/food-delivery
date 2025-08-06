@@ -6,7 +6,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Inline interface - no separate file needed
 interface AuthRequest extends Request {
   user: AuthenticatedUser;
 }
@@ -44,7 +43,7 @@ const authMiddleware = async (
       });
     }
 
-    (req as AuthRequest).user = user as unknown as AuthenticatedUser; // Add user to request
+    (req as AuthRequest).user = user as unknown as AuthenticatedUser;
     next();
   } catch (error) {
     res.status(401).json({

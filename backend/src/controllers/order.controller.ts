@@ -3,7 +3,6 @@ import { Request } from "express";
 import { Order } from "../models/order.model.js";
 import { AuthenticatedUser } from "../types/index.js";
 
-// Inline interface - no separate file needed
 interface AuthRequest extends Request {
   user: AuthenticatedUser;
 }
