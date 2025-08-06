@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { User } from "../models/user.model.js";
+import { User } from "../models/users.model.js";
 import { AuthenticatedUser } from "../types/index.js";
 import dotenv from "dotenv";
 

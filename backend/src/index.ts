@@ -7,10 +7,10 @@ import mongoose from "mongoose";
 
 dotenv.config();
 
-import foodRoutes from "./routes/foods.route.js";
-import authRoutes from "./routes/auth.route.js";
-import categoryRoutes from "./routes/category.route.js";
-import orderRoutes from "./routes/order.route.js";
+import foodRoutes from "./routes/foods.routes.js";
+import authRoutes from "./routes/auth.routes.js";
+import categoryRoutes from "./routes/categories.routes.js";
+import orderRoutes from "./routes/orders.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 7777;

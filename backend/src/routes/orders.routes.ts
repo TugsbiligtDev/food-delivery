@@ -5,14 +5,14 @@ import {
   getOrdersByUserId,
   updateOrder,
   deleteOrder,
-} from "../controllers/order.controller.js";
-import authMiddleware from "../middleware/auth.js";
-import adminMiddleware from "../middleware/admin.js";
+} from "../controllers/orders.controller.js";
+import authMiddleware from "../middleware/auth.middleware.js";
+import adminMiddleware from "../middleware/admin.middleware.js";
 import {
   validate,
   createOrderSchema,
   updateOrderSchema,
-} from "../schemas/validation.js";
+} from "../schemas/validation.schemas.js";
 
 const router = express.Router();
 

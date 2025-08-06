@@ -4,10 +4,13 @@ import {
   createCategory,
   updateCategory,
   deleteCategory,
-} from "../controllers/category.controller.js";
-import authMiddleware from "../middleware/auth.js";
-import adminMiddleware from "../middleware/admin.js";
-import { validate, createCategorySchema } from "../schemas/validation.js";
+} from "../controllers/categories.controller.js";
+import authMiddleware from "../middleware/auth.middleware.js";
+import adminMiddleware from "../middleware/admin.middleware.js";
+import {
+  validate,
+  createCategorySchema,
+} from "../schemas/validation.schemas.js";
 
 const router = express.Router();
 

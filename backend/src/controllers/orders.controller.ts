@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { Request } from "express";
-import { Order } from "../models/order.model.js";
+import { Order } from "../models/orders.model.js";
 import { AuthenticatedUser } from "../types/index.js";
 
 interface AuthRequest extends Request {

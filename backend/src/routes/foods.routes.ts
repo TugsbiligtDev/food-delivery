@@ -6,13 +6,13 @@ import {
   updateFood,
   deleteFood,
 } from "../controllers/foods.controller.js";
-import authMiddleware from "../middleware/auth.js";
-import adminMiddleware from "../middleware/admin.js";
+import authMiddleware from "../middleware/auth.middleware.js";
+import adminMiddleware from "../middleware/admin.middleware.js";
 import {
   validate,
   createFoodSchema,
   updateFoodSchema,
-} from "../schemas/validation.js";
+} from "../schemas/validation.schemas.js";
 
 const router = express.Router();
 
