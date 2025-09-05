@@ -1,17 +1,23 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import CartSheet from "../features/card/CartSheet";
 import UserDropdown from "../auth/UserDropDown";
 import SuccessDialog from "../features/card/SuccessDialog";
+import { useAuth } from "@/lib/contexts/AuthContext";
 
 const Header = () => {
+  const { user } = useAuth();
+
   return (
     <>
       <header className="flex justify-between px-5 py-5 bg-obsidian">
         <Link href="/" className="flex gap-3">
-          <img
+          <Image
             src="/logo.png"
             alt="Nom Nom food delivery logo"
+            width={46}
+            height={46}
             className="w-[46px]"
           />
           <div>
@@ -24,13 +30,8 @@ const Header = () => {
           </div>
         </Link>
 
-        <nav className="flex gap-2">
-          <div className="relative">
-            <CartSheet />
-            <div className="absolute z-10 flex items-center justify-center text-xs font-medium rounded-full -top-2 -right-2 bg-cherry-red text-snow-white size-5">
-              3
-            </div>
-          </div>
+        <nav className="flex items-center gap-2">
+          {user && <CartSheet />}
           <UserDropdown />
         </nav>
       </header>

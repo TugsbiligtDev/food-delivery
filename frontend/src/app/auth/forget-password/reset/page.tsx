@@ -1,14 +1,11 @@
 "use client";
-import AuthLayout from "../../layout";
-import PasswordCreate from "@/components/auth/PasswordCreate";
-import authNavigation from "@/lib/authNavigation";
+
+import PasswordStep from "@/components/auth/PasswordStep";
+import useAuthNavigation from "@/lib/authNavigation";
+
 const Page = () => {
-  const { handleNavigate } = authNavigation();
-  return (
-    <AuthLayout>
-      <PasswordCreate prev={() => handleNavigate("auth/login")} />
-    </AuthLayout>
-  );
+  const { handleNavigate } = useAuthNavigation();
+  return <PasswordStep prev={() => handleNavigate("auth/login")} />;
 };
 
 export default Page;

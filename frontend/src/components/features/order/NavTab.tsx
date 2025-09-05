@@ -1,12 +1,19 @@
 "use client";
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CartTab from "../card/CartTab";
 import OrderTab from "./OrderTab";
 
 const NavTab = () => {
+  const [activeTab, setActiveTab] = useState("Cart");
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+  };
+
   return (
     <div className="w-full max-w-lg mx-auto">
-      <Tabs defaultValue="Cart" className="w-full">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <div className="relative p-1 bg-gray-100 rounded-full">
           <TabsList className="relative grid w-full h-12 grid-cols-2 p-0 bg-transparent">
             <TabsTrigger
@@ -27,7 +34,7 @@ const NavTab = () => {
 
         <div className="mt-6">
           <TabsContent value="Cart" className="m-0 space-y-0">
-            <CartTab />
+            <CartTab onTabChange={handleTabChange} />
           </TabsContent>
 
           <TabsContent value="Order" className="m-0 space-y-0">

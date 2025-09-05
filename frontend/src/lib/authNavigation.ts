@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
-const authNavigation = () => {
+
+const useAuthNavigation = () => {
   const router = useRouter();
 
   const handleNavigate = (path: string) => {
@@ -10,4 +11,4 @@ const authNavigation = () => {
   return { handleNavigate };
 };
 
-export default authNavigation;
+export default useAuthNavigation;

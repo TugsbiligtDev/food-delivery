@@ -20,12 +20,6 @@ export const getAllFoods = async (req, res) => {
 export const getFoodById = async (req, res) => {
     try {
         const { foodId } = req.params;
-        if (!foodId) {
-            return res.status(400).json({
-                success: false,
-                message: "Food ID  is required",
-            });
-        }
         const food = await Food.findById(foodId).populate("category");
         if (!food) {
             return res.status(404).json({
@@ -57,17 +51,21 @@ export const createFood = async (req, res) => {
                 message: "Category not found",
             });
         }
+        const ingredientsString = Array.isArray(ingredients)
+            ? ingredients.join(", ")
+            : ingredients;
         const newFood = await Food.create({
             foodName,
             price,
-            ingredients,
+            ingredients: ingredientsString,
             image,
             category,
         });
+        const populatedFood = await Food.findById(newFood._id).populate("category");
         res.status(201).json({
             success: true,
             message: "Food created successfully",
-            data: newFood,
+            data: populatedFood,
         });
     }
     catch (error) {
@@ -82,15 +80,9 @@ export const updateFood = async (req, res) => {
     try {
         const updateData = req.body;
         const { foodId } = req.params;
-        if (!foodId) {
-            return res.status(400).json({
-                success: false,
-                message: "Food ID is required",
-            });
-        }
         const updatedFood = await Food.findByIdAndUpdate(foodId, updateData, {
             new: true,
-        });
+        }).populate("category");
         if (updatedFood === null) {
             return res.status(404).json({
                 success: false,
@@ -114,10 +106,6 @@ export const updateFood = async (req, res) => {
 export const deleteFood = async (req, res) => {
     try {
         const { foodId } = req.params;
-        if (!foodId)
-            return res
-                .status(400)
-                .json({ success: false, message: "Food ID is required" });
         const deletedFood = await Food.findByIdAndDelete(foodId);
         if (!deletedFood) {
             return res.status(404).json({

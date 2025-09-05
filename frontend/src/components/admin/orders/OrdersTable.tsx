@@ -1,12 +1,5 @@
 "use client";
-
-import * as React from "react";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-
-import { Input } from "@/components/ui/input";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -15,31 +8,149 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import OrdersHeader from "./OrdersHeader";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { Order } from "@/lib/types";
+import { getAllOrders, updateOrderStatus } from "@/lib/api/orders";
+import { toast } from "sonner";
 
 export function OrdersTable() {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setIsLoading(true);
+        setError("");
+        const ordersData = await getAllOrders();
+        setOrders(ordersData);
+      } catch (err: any) {
+        const errorMessage = err.message || "Failed to load orders";
+        setError(errorMessage);
+        toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  const filteredOrders = orders.filter((order) => {
+    const matchesSearch =
+      order.user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order._id.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" || order.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedOrders = filteredOrders.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
+    try {
+      await updateOrderStatus(
+        orderId,
+        newStatus as "PENDING" | "CANCELED" | "DELIVERED"
+      );
+      setOrders((prev) =>
+        prev.map((order) =>
+          order._id === orderId ? { ...order, status: newStatus as any } : order
+        )
+      );
+      toast.success("Order status updated successfully");
+    } catch (error) {
+      toast.error("Failed to update order status");
+    }
+  };
+
+  const refetchOrders = async () => {
+    try {
+      setIsLoading(true);
+      setError("");
+      const ordersData = await getAllOrders();
+      setOrders(ordersData);
+    } catch (err: any) {
+      const errorMessage = err.message || "Failed to load orders";
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter]);
+
+  if (isLoading) {
+    return (
+      <div className="w-full text-black">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-lg">Loading orders...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full text-black">
+        <div className="flex flex-col items-center justify-center h-64 space-y-4">
+          <div className="text-lg text-red-600">Error: {error}</div>
+          <Button onClick={refetchOrders}>Retry</Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full text-black">
-      <OrdersHeader />
+    <div className="w-full text-black space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Input
+            placeholder="Search orders..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-64"
+          />
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="All Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="PENDING">Pending</SelectItem>
+              <SelectItem value="DELIVERED">Delivered</SelectItem>
+              <SelectItem value="CANCELED">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="text-sm text-gray-600">
+          {filteredOrders.length} orders found
+        </div>
+      </div>
+
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
@@ -56,198 +167,98 @@ export function OrdersTable() {
               <TableHead>Foods</TableHead>
               <TableHead>
                 <Button variant="ghost">
-                  Date
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
+                  Date <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
               </TableHead>
               <TableHead>Total</TableHead>
               <TableHead>Delivery Address</TableHead>
-              <TableHead>Delivery State</TableHead>
+              <TableHead>Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell>
-                <Checkbox aria-label="Select row" />
-              </TableCell>
-              <TableCell>1</TableCell>
-              <TableCell>Test@gmail.com</TableCell>
-              <TableCell>
-                <div>2 foods</div>
-                <div>2 items</div>
-              </TableCell>
-              <TableCell>12/20/2024</TableCell>
-              <TableCell>$26.97</TableCell>
-              <TableCell title="2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...">
-                2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd n...
-              </TableCell>
-              <TableCell>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Status</SelectLabel>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="delivered">Delivered</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <Checkbox aria-label="Select row" />
-              </TableCell>
-              <TableCell>2</TableCell>
-              <TableCell>Test@gmail.com</TableCell>
-              <TableCell>
-                <div>Sunshine Stackers</div>
-                <div>1 item</div>
-              </TableCell>
-              <TableCell>12/20/2024</TableCell>
-              <TableCell>$26.97</TableCell>
-              <TableCell title="2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...">
-                2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd n...
-              </TableCell>
-              <TableCell>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Status</SelectLabel>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="delivered">Delivered</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <Checkbox aria-label="Select row" />
-              </TableCell>
-              <TableCell>3</TableCell>
-              <TableCell>Test@gmail.com</TableCell>
-              <TableCell>
-                <div>2 foods</div>
-                <div>3 items</div>
-              </TableCell>
-              <TableCell>12/20/2024</TableCell>
-              <TableCell>$26.97</TableCell>
-              <TableCell title="2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...">
-                2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd n...
-              </TableCell>
-              <TableCell>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Status</SelectLabel>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="delivered">Delivered</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <Checkbox aria-label="Select row" />
-              </TableCell>
-              <TableCell>4</TableCell>
-              <TableCell>Test@gmail.com</TableCell>
-              <TableCell>
-                <div>2 foods</div>
-                <div>2 items</div>
-              </TableCell>
-              <TableCell>12/20/2024</TableCell>
-              <TableCell>$26.97</TableCell>
-              <TableCell title="2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...">
-                2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd n...
-              </TableCell>
-              <TableCell>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Status</SelectLabel>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="delivered">Delivered</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <Checkbox aria-label="Select row" />
-              </TableCell>
-              <TableCell>5</TableCell>
-              <TableCell>Test@gmail.com</TableCell>
-              <TableCell>
-                <div>2 foods</div>
-                <div>3 items</div>
-              </TableCell>
-              <TableCell>12/20/2024</TableCell>
-              <TableCell>$26.97</TableCell>
-              <TableCell title="2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd negdse...">
-                2024/12/СБД, 12-р хороо, СБД нэгдсэн эмнэлэг Sbd n...
-              </TableCell>
-              <TableCell>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Status</SelectLabel>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="delivered">Delivered</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </TableCell>
-            </TableRow>
+            {paginatedOrders.map((order: Order, index: number) => {
+              const totalItems = order.foodOrderItems.reduce(
+                (sum, item) => sum + item.quantity,
+                0
+              );
+              const formattedDate = new Date(
+                order.createdAt
+              ).toLocaleDateString();
+              const truncatedAddress =
+                order.deliveryAddress.length > 50
+                  ? `${order.deliveryAddress.substring(0, 50)}...`
+                  : order.deliveryAddress;
+
+              return (
+                <TableRow key={order._id}>
+                  <TableCell>
+                    <Checkbox aria-label="Select row" />
+                  </TableCell>
+                  <TableCell>{startIndex + index + 1}</TableCell>
+                  <TableCell>{order.user?.email || "Unknown User"}</TableCell>
+                  <TableCell>
+                    <div>{order.foodOrderItems.length} foods</div>
+                    <div>{totalItems} items</div>
+                  </TableCell>
+                  <TableCell>{formattedDate}</TableCell>
+                  <TableCell>${order.totalPrice.toFixed(2)}</TableCell>
+                  <TableCell title={order.deliveryAddress}>
+                    {truncatedAddress}
+                  </TableCell>
+                  <TableCell>
+                    <Select
+                      value={order.status}
+                      onValueChange={(value) =>
+                        handleStatusChange(order._id, value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="PENDING">Pending</SelectItem>
+                        <SelectItem value="DELIVERED">Delivered</SelectItem>
+                        <SelectItem value="CANCELED">Cancelled</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
-      <Pagination className="flex items-center justify-end space-x-2 py-4">
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious href="#" />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#" isActive>
-              1
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">2</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">3</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext href="#" />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-gray-600">
+          Showing {startIndex + 1} to{" "}
+          {Math.min(startIndex + paginatedOrders.length, filteredOrders.length)}{" "}
+          of {filteredOrders.length} orders
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Previous
+          </Button>
+          <span className="text-sm">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

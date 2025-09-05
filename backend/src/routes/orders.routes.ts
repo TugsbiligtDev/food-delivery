@@ -10,22 +10,37 @@ import authMiddleware from "../middleware/auth.middleware.js";
 import adminMiddleware from "../middleware/admin.middleware.js";
 import {
   validate,
+  validateParams,
   createOrderSchema,
   updateOrderSchema,
+  mongoIdSchema,
 } from "../schemas/validation.schemas.js";
+import { z } from "zod";
 
 const router = express.Router();
 
 router.post("/", authMiddleware, validate(createOrderSchema), createOrder);
 router.get("/", authMiddleware, adminMiddleware, getAllOrders);
-router.get("/user/:userId", authMiddleware, getOrdersByUserId);
+router.get(
+  "/user/:userId",
+  validateParams(z.object({ userId: mongoIdSchema })),
+  authMiddleware,
+  getOrdersByUserId
+);
 router.patch(
   "/:orderId",
+  validateParams(z.object({ orderId: mongoIdSchema })),
   authMiddleware,
   adminMiddleware,
   validate(updateOrderSchema),
   updateOrder
 );
-router.delete("/:orderId", authMiddleware, adminMiddleware, deleteOrder);
+router.delete(
+  "/:orderId",
+  validateParams(z.object({ orderId: mongoIdSchema })),
+  authMiddleware,
+  adminMiddleware,
+  deleteOrder
+);
 
 export default router;

@@ -1,4 +1,5 @@
 import express from "express";
+import { z } from "zod";
 import {
   getAllFoods,
   getFoodById,
@@ -10,14 +11,20 @@ import authMiddleware from "../middleware/auth.middleware.js";
 import adminMiddleware from "../middleware/admin.middleware.js";
 import {
   validate,
+  validateParams,
   createFoodSchema,
   updateFoodSchema,
+  mongoIdSchema,
 } from "../schemas/validation.schemas.js";
 
 const router = express.Router();
 
 router.get("/", getAllFoods);
-router.get("/:foodId", getFoodById);
+router.get(
+  "/:foodId",
+  validateParams(z.object({ foodId: mongoIdSchema })),
+  getFoodById
+);
 
 router.post(
   "/",
@@ -29,12 +36,19 @@ router.post(
 
 router.patch(
   "/:foodId",
+  validateParams(z.object({ foodId: mongoIdSchema })),
   authMiddleware,
   adminMiddleware,
   validate(updateFoodSchema),
   updateFood
 );
 
-router.delete("/:foodId", authMiddleware, adminMiddleware, deleteFood);
+router.delete(
+  "/:foodId",
+  validateParams(z.object({ foodId: mongoIdSchema })),
+  authMiddleware,
+  adminMiddleware,
+  deleteFood
+);
 
 export default router;

@@ -7,26 +7,24 @@ import AuthLayout from "../../layout";
 const Page = () => {
   const { handleNavigate } = authNavigation();
   return (
-    <AuthLayout>
-      <div className="form-container">
-        <Button
-          variant="secondary"
-          className="size-9 pointer"
-          onClick={() => handleNavigate("/auth/forget-password")}
-        >
-          <ChevronLeft />
-        </Button>
-        <div>
-          <h3 className="heading">Please verify Your Email</h3>
-          <p className="paragraph">
-            We just sent an email to
-            <span className="text-[#18181B] px-1">test@gmail.com</span> Click
-            the link in the email to verify your account.
-          </p>
-        </div>
-        <Button className="long-button">Send link</Button>
+    <div className="form-container">
+      <Button
+        variant="secondary"
+        className="size-9 pointer"
+        onClick={() => handleNavigate("/auth/forget-password")}
+      >
+        <ChevronLeft />
+      </Button>
+      <div>
+        <h3 className="heading">Please verify Your Email</h3>
+        <p className="paragraph">
+          We just sent an email to
+          <span className="text-[#18181B] px-1">test@gmail.com</span> Click the
+          link in the email to verify your account.
+        </p>
       </div>
-    </AuthLayout>
+      <Button className="long-button">Send link</Button>
+    </div>
   );
 };
 

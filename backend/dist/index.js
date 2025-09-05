@@ -4,7 +4,15 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import { globalErrorHandler } from "./utils/errorHandler.js";
 dotenv.config();
+const requiredEnvVars = ["MONGO_URI", "JWT_SECRET"];
+for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar]) {
+        console.error(`❌ Missing required environment variable: ${envVar}`);
+        process.exit(1);
+    }
+}
 import foodRoutes from "./routes/foods.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import categoryRoutes from "./routes/categories.routes.js";
@@ -14,13 +22,18 @@ const PORT = process.env.PORT || 7777;
 const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI);
-        console.log("MongoDB connected successfully!");
+        console.log("✅ MongoDB connected successfully!");
     }
     catch (error) {
-        console.error("Database connection error:", error);
+        console.error("❌ Database connection error:", error);
         process.exit(1);
     }
 };
+process.on("SIGINT", async () => {
+    console.log("🛑 Shutting down gracefully...");
+    await mongoose.connection.close();
+    process.exit(0);
+});
 app.use(helmet());
 app.use(rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -52,6 +65,7 @@ app.use((_req, res) => {
         message: "Route not found",
     });
 });
+app.use(globalErrorHandler);
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
 });

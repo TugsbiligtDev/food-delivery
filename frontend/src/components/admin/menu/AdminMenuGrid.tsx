@@ -1,144 +1,239 @@
 "use client";
+import { useState, useEffect } from "react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Pen, Plus } from "lucide-react";
+import { Pen, Plus, Image as ImageIcon } from "lucide-react";
 import AddDishDialog from "./AddDishDialog";
 import EditDishDialog from "./EditDishDialog";
+import CategoryFilter from "./CategoryFilter";
+import { Food, Category } from "@/lib/types";
+import { getAllFoods, getAllCategories } from "@/lib/api/foods";
+import { deleteFood } from "@/lib/api/admin";
+import { toast } from "sonner";
+import NextImage from "next/image";
 
 const AdminMenuGrid = () => {
+  const [foods, setFoods] = useState<Food[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedFood, setSelectedFood] = useState<Food | null>(null);
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
+  const [openDialogs, setOpenDialogs] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const [foodsData, categoriesData] = await Promise.all([
+          getAllFoods(),
+          getAllCategories(),
+        ]);
+        setFoods(foodsData);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+        toast.error("Failed to load menu data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleFoodAdded = (newFood: Food) => {
+    console.log("Adding new food:", newFood);
+    console.log("Current foods:", foods);
+    setFoods((prev) => {
+      const updatedFoods = [...prev, newFood];
+      console.log("Updated foods:", updatedFoods);
+      return updatedFoods;
+    });
+    toast.success("Food item added successfully");
+  };
+
+  const handleCategoryAdded = (newCategory: Category) => {
+    setCategories((prev) => [...prev, newCategory]);
+    toast.success("Category added successfully");
+  };
+
+  const handleCategoryDeleted = (categoryId: string) => {
+    setCategories((prev) => prev.filter((cat) => cat._id !== categoryId));
+  };
+
+  const handleFoodUpdated = (updatedFood: Food) => {
+    setFoods((prev) =>
+      prev.map((food) => (food._id === updatedFood._id ? updatedFood : food))
+    );
+    toast.success("Food item updated successfully");
+  };
+
+  const handleFoodDeleted = async (foodId: string) => {
+    try {
+      await deleteFood(foodId);
+      setFoods((prev) => prev.filter((food) => food._id !== foodId));
+      toast.success("Food item deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete food item");
+    }
+  };
+
+  const handleImageError = (foodId: string) => {
+    setImageErrors((prev) => new Set(prev).add(foodId));
+  };
+
+  const openDialog = (categoryId: string) => {
+    setOpenDialogs((prev) => new Set(prev).add(categoryId));
+  };
+
+  const closeDialog = (categoryId: string) => {
+    setOpenDialogs((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(categoryId);
+      return newSet;
+    });
+  };
+
+  const groupFoodsByCategory = () => {
+    const grouped: { [key: string]: Food[] } = {};
+
+    foods.forEach((food) => {
+      const categoryName = food.category.categoryName;
+      if (!grouped[categoryName]) {
+        grouped[categoryName] = [];
+      }
+      grouped[categoryName].push(food);
+    });
+
+    return grouped;
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-64">
+        <div className="text-lg">Loading menu...</div>
+      </div>
+    );
+  }
+
+  const groupedFoods = groupFoodsByCategory();
+
   return (
     <div>
-      <div className="p-5 mt-10 bg-white">
-        <h4 className="mb-4 text-xl font-semibold text-midnight-black">
-          Appetizers
-        </h4>
-        <div className="grid grid-cols-3 gap-4">
-          <Dialog>
-            <DialogTrigger asChild>
-              <div className="bg-white rounded-[20px] border border-dashed border-cherry-red flex flex-col justify-center items-center cursor-pointer">
-                <Button className="text-white rounded-full size-11 bg-cherry-red">
-                  <Plus />
-                </Button>
-                <p className="mt-3 text-sm font-medium leading-4 text-midnight-black">
-                  Add new Dish to Appetizers
-                </p>
-              </div>
-            </DialogTrigger>
-            <AddDishDialog />
-          </Dialog>
+      <CategoryFilter
+        onCategoryAdded={handleCategoryAdded}
+        onCategoryDeleted={handleCategoryDeleted}
+        foods={foods}
+      />
+      {categories.map((category) => {
+        const categoryFoods = groupedFoods[category.categoryName] || [];
+        const isDialogOpen = openDialogs.has(category._id);
 
-          <div className="bg-white rounded-[20px] p-4 border border-[#E4E4E7]">
-            <div className="relative">
-              <img
-                src="/sample-food.jpg"
-                alt="Sample Dish"
-                className="object-cover w-full h-48 rounded-xl"
-              />
-
-              <Dialog>
-                <DialogTrigger className="absolute flex items-center justify-center p-0 bg-white rounded-full cursor-pointer right-3 bottom-4 size-11 text-cherry-red">
-                  <Pen size={16} />
+        return (
+          <div key={category._id} className="p-5 mt-10 bg-white min-h-[300px]">
+            <h4 className="mb-4 text-xl font-semibold text-midnight-black">
+              {category.categoryName}
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+              <Dialog
+                open={isDialogOpen}
+                onOpenChange={(open) => {
+                  if (open) {
+                    openDialog(category._id);
+                  } else {
+                    closeDialog(category._id);
+                  }
+                }}
+              >
+                <DialogTrigger asChild>
+                  <div className="bg-white rounded-[20px] border border-dashed border-cherry-red flex flex-col justify-center items-center cursor-pointer min-h-[200px]">
+                    <Button className="text-white rounded-full size-11 bg-cherry-red">
+                      <Plus />
+                    </Button>
+                    <p className="mt-3 text-sm font-medium leading-4 text-midnight-black text-center px-4">
+                      Add new Dish to {category.categoryName}
+                    </p>
+                  </div>
                 </DialogTrigger>
-                <EditDishDialog />
+                <AddDishDialog
+                  category={category}
+                  onFoodAdded={(newFood) => {
+                    handleFoodAdded(newFood);
+                    closeDialog(category._id);
+                  }}
+                />
               </Dialog>
-            </div>
 
-            <div className="flex items-start justify-between mt-4">
-              <h3 className="text-sm font-medium leading-5 text-cherry-red">
-                Sample Appetizer
-              </h3>
-              <h3 className="text-xs font-normal leading-4 text-midnight-black">
-                $12.99
-              </h3>
-            </div>
+              {categoryFoods.map((food) => (
+                <div
+                  key={food._id}
+                  className="bg-white rounded-[20px] p-4 border border-[#E4E4E7] relative"
+                >
+                  <div className="relative">
+                    {imageErrors.has(food._id) || !food.image ? (
+                      <div className="w-full h-48 bg-gray-100 rounded-xl flex items-center justify-center">
+                        <div className="text-center">
+                          <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                          <p className="text-sm text-gray-500">No image</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <img
+                        src={food.image}
+                        alt={food.foodName}
+                        className="object-cover w-full h-48 rounded-xl"
+                        onError={() => handleImageError(food._id)}
+                      />
+                    )}
 
-            <p className="mt-1 text-xs font-normal leading-4 text-midnight-black">
-              Fresh ingredients with herbs and spices
-            </p>
+                    {/* Pen button moved to image's bottom-right */}
+                    <div className="absolute bottom-3 right-3">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            size="sm"
+                            className="bg-white text-cherry-red hover:bg-gray-50 rounded-full w-8 h-8 p-0 shadow-sm"
+                            onClick={() => setSelectedFood(food)}
+                          >
+                            <Pen size={16} />
+                          </Button>
+                        </DialogTrigger>
+                        <EditDishDialog
+                          food={selectedFood!}
+                          categories={categories}
+                          onFoodUpdated={handleFoodUpdated}
+                          onFoodDeleted={handleFoodDeleted}
+                        />
+                      </Dialog>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start justify-between mt-4">
+                    <h3 className="text-sm font-medium leading-5 text-cherry-red">
+                      {food.foodName}
+                    </h3>
+                    <h3 className="text-xs font-normal leading-4 text-midnight-black">
+                      ${food.price.toFixed(2)}
+                    </h3>
+                  </div>
+
+                  <p className="mt-1 text-xs font-normal leading-4 text-midnight-black">
+                    {food.ingredients}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
+        );
+      })}
 
-          <div className="bg-white rounded-[20px] p-4 border border-[#E4E4E7]">
-            <div className="relative">
-              <img
-                src="/sample-food2.jpg"
-                alt="Another Dish"
-                className="object-cover w-full h-48 rounded-xl"
-              />
-
-              <Dialog>
-                <DialogTrigger className="absolute flex items-center justify-center p-0 bg-white rounded-full cursor-pointer right-3 bottom-4 size-11 text-cherry-red">
-                  <Pen size={16} />
-                </DialogTrigger>
-                <EditDishDialog />
-              </Dialog>
-            </div>
-
-            <div className="flex items-start justify-between mt-4">
-              <h3 className="text-sm font-medium leading-5 text-cherry-red">
-                Buffalo Wings
-              </h3>
-              <h3 className="text-xs font-normal leading-4 text-midnight-black">
-                $15.99
-              </h3>
-            </div>
-
-            <p className="mt-1 text-xs font-normal leading-4 text-midnight-black">
-              Spicy chicken wings with celery and blue cheese
-            </p>
-          </div>
+      {categories.length === 0 && (
+        <div className="p-5 mt-10 bg-white text-center">
+          <p className="text-gray-600">
+            No categories found. Add some categories to get started!
+          </p>
         </div>
-      </div>
-
-      <div className="p-5 mt-10 bg-white">
-        <h4 className="mb-4 text-xl font-semibold text-midnight-black">
-          Main Dishes
-        </h4>
-        <div className="grid grid-cols-3 gap-4">
-          <Dialog>
-            <DialogTrigger asChild>
-              <div className="bg-white rounded-[20px] border border-dashed border-cherry-red flex flex-col justify-center items-center cursor-pointer">
-                <Button className="text-white rounded-full size-11 bg-cherry-red">
-                  <Plus />
-                </Button>
-                <p className="mt-3 text-sm font-medium leading-4 text-midnight-black">
-                  Add new Dish to Main Dishes
-                </p>
-              </div>
-            </DialogTrigger>
-            <AddDishDialog />
-          </Dialog>
-
-          <div className="bg-white rounded-[20px] p-4 border border-[#E4E4E7]">
-            <div className="relative">
-              <img
-                src="/sample-main.jpg"
-                alt="Sample Main"
-                className="object-cover w-full h-48 rounded-xl"
-              />
-
-              <Dialog>
-                <DialogTrigger className="absolute flex items-center justify-center p-0 bg-white rounded-full cursor-pointer right-3 bottom-4 size-11 text-cherry-red">
-                  <Pen size={16} />
-                </DialogTrigger>
-                <EditDishDialog />
-              </Dialog>
-            </div>
-
-            <div className="flex items-start justify-between mt-4">
-              <h3 className="text-sm font-medium leading-5 text-cherry-red">
-                Grilled Salmon
-              </h3>
-              <h3 className="text-xs font-normal leading-4 text-midnight-black">
-                $24.99
-              </h3>
-            </div>
-
-            <p className="mt-1 text-xs font-normal leading-4 text-midnight-black">
-              Fresh salmon with seasonal vegetables
-            </p>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

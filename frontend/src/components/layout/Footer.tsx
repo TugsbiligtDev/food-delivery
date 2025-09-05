@@ -1,5 +1,6 @@
 import { Facebook, Instagram } from "lucide-react";
 import React from "react";
+import Image from "next/image";
 
 const Footer = () => {
   return (
@@ -14,7 +15,13 @@ const Footer = () => {
         <div className="flex justify-between my-13">
           {/* first */}
           <div className="flex flex-col items-center">
-            <img src="/logo.png" alt="logo" className="w-[46px]" />
+            <Image
+              src="/logo.png"
+              alt="logo"
+              width={46}
+              height={46}
+              className="w-[46px]"
+            />
             <h4 className="text-xl font-semibold text-snow-white">
               Nom <span className="text-cherry-red">Nom</span>
             </h4>

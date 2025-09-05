@@ -9,8 +9,12 @@ import authMiddleware from "../middleware/auth.middleware.js";
 import adminMiddleware from "../middleware/admin.middleware.js";
 import {
   validate,
+  validateParams,
   createCategorySchema,
+  updateCategorySchema,
+  mongoIdSchema,
 } from "../schemas/validation.schemas.js";
+import { z } from "zod";
 
 const router = express.Router();
 
@@ -26,12 +30,19 @@ router.post(
 
 router.patch(
   "/:categoryId",
+  validateParams(z.object({ categoryId: mongoIdSchema })),
   authMiddleware,
   adminMiddleware,
-  validate(createCategorySchema),
+  validate(updateCategorySchema),
   updateCategory
 );
 
-router.delete("/:categoryId", authMiddleware, adminMiddleware, deleteCategory);
+router.delete(
+  "/:categoryId",
+  validateParams(z.object({ categoryId: mongoIdSchema })),
+  authMiddleware,
+  adminMiddleware,
+  deleteCategory
+);
 
 export default router;

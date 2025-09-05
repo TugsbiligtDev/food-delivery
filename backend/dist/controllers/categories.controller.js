@@ -20,12 +20,6 @@ export const getAllCategories = async (_req, res) => {
 export const createCategory = async (req, res) => {
     try {
         const { categoryName } = req.body;
-        if (!categoryName) {
-            return res.status(400).json({
-                success: false,
-                message: "Category name is required",
-            });
-        }
         const newCategory = await Category.create({ categoryName });
         return res.status(201).json({
             success: true,
@@ -45,18 +39,6 @@ export const updateCategory = async (req, res) => {
     try {
         const { categoryName } = req.body;
         const { categoryId } = req.params;
-        if (!categoryName) {
-            return res.status(400).json({
-                success: false,
-                message: "Category name is required",
-            });
-        }
-        if (!categoryId) {
-            return res.status(400).json({
-                success: false,
-                message: "Category ID is required",
-            });
-        }
         const updatedCategory = await Category.findByIdAndUpdate(categoryId, {
             categoryName,
         }, { new: true });
@@ -83,10 +65,6 @@ export const updateCategory = async (req, res) => {
 export const deleteCategory = async (req, res) => {
     try {
         const { categoryId } = req.params;
-        if (!categoryId)
-            return res
-                .status(400)
-                .json({ success: false, message: "Category ID is required" });
         const categoryInUse = await Food.findOne({ category: categoryId });
         if (categoryInUse) {
             return res.status(400).json({

@@ -8,18 +8,10 @@ export default function HomePage() {
     <>
       <Header />
       <Hero />
-      <div className="w-[90%] mx-auto flex justify-center">
+      <div className="w-[90%] mx-auto flex justify-center my-10">
         <MenuGrid />
       </div>
       <Footer />
     </>
   );
 }
-
-//todo understand login and signup
-//todo complete UI of Homepage
-//todo style footer
-//todo add categories
-//todo complete backend
-//todo In weekend, complete all Homepage etc
-//todo In next week complete project and use motion

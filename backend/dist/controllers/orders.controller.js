@@ -1,26 +1,27 @@
 import { Order } from "../models/orders.model.js";
+import { Food } from "../models/foods.model.js";
 export const createOrder = async (req, res) => {
     try {
         const { foodOrderItems, totalPrice, deliveryAddress, deliveryPhone } = req.body;
         const userId = req.user._id;
-        if (!foodOrderItems ||
-            !Array.isArray(foodOrderItems) ||
-            foodOrderItems.length === 0) {
+        const foodIds = foodOrderItems.map((item) => item.food);
+        const foods = await Food.find({ _id: { $in: foodIds } });
+        if (foods.length !== foodOrderItems.length) {
             return res.status(400).json({
                 success: false,
-                message: "Food order items are required",
+                message: "One or more food items not found",
             });
         }
-        if (!totalPrice || totalPrice <= 0) {
+        const calculatedTotal = foodOrderItems.reduce((sum, item) => {
+            const food = foods.find((f) => f._id.toString() === item.food);
+            return sum + (food?.price || 0) * item.quantity;
+        }, 0);
+        if (Math.abs(calculatedTotal - totalPrice) > 0.01) {
             return res.status(400).json({
                 success: false,
-                message: "Total price is required and must be greater than 0",
-            });
-        }
-        if (!deliveryAddress || !deliveryPhone) {
-            return res.status(400).json({
-                success: false,
-                message: "Delivery address and phone are required",
+                message: "Total price mismatch",
+                expected: calculatedTotal,
+                received: totalPrice,
             });
         }
         const newOrder = new Order({
@@ -72,12 +73,6 @@ export const getAllOrders = async (req, res) => {
 export const getOrdersByUserId = async (req, res) => {
     try {
         const { userId } = req.params;
-        if (!userId) {
-            return res.status(400).json({
-                success: false,
-                message: "User ID is required",
-            });
-        }
         const authReq = req;
         const currentUserId = authReq.user._id.toString();
         if (userId !== currentUserId && authReq.user.role !== "ADMIN") {
@@ -108,12 +103,6 @@ export const updateOrder = async (req, res) => {
     try {
         const { orderId } = req.params;
         const updateData = req.body;
-        if (!orderId) {
-            return res.status(400).json({
-                success: false,
-                message: "Order ID is required",
-            });
-        }
         const currentOrder = await Order.findById(orderId);
         if (!currentOrder) {
             return res.status(404).json({
@@ -143,12 +132,6 @@ export const updateOrder = async (req, res) => {
 export const deleteOrder = async (req, res) => {
     try {
         const { orderId } = req.params;
-        if (!orderId) {
-            return res.status(400).json({
-                success: false,
-                message: "Order ID is required",
-            });
-        }
         const deletedOrder = await Order.findByIdAndDelete(orderId);
         if (!deletedOrder) {
             return res.status(404).json({

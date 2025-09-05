@@ -21,12 +21,6 @@ export const getAllFoods = async (req: Request, res: Response) => {
 export const getFoodById = async (req: Request, res: Response) => {
   try {
     const { foodId } = req.params;
-    if (!foodId) {
-      return res.status(400).json({
-        success: false,
-        message: "Food ID  is required",
-      });
-    }
     const food = await Food.findById(foodId).populate("category");
 
     if (!food) {
@@ -61,18 +55,25 @@ export const createFood = async (req: Request, res: Response) => {
         message: "Category not found",
       });
     }
+
+    const ingredientsString = Array.isArray(ingredients)
+      ? ingredients.join(", ")
+      : ingredients;
+
     const newFood = await Food.create({
       foodName,
       price,
-      ingredients,
+      ingredients: ingredientsString,
       image,
       category,
     });
 
+    const populatedFood = await Food.findById(newFood._id).populate("category");
+
     res.status(201).json({
       success: true,
       message: "Food created successfully",
-      data: newFood,
+      data: populatedFood,
     });
   } catch (error) {
     res.status(500).json({
@@ -88,16 +89,9 @@ export const updateFood = async (req: Request, res: Response) => {
     const updateData = req.body;
     const { foodId } = req.params;
 
-    if (!foodId) {
-      return res.status(400).json({
-        success: false,
-        message: "Food ID is required",
-      });
-    }
-
     const updatedFood = await Food.findByIdAndUpdate(foodId, updateData, {
       new: true,
-    });
+    }).populate("category");
 
     if (updatedFood === null) {
       return res.status(404).json({
@@ -123,11 +117,6 @@ export const updateFood = async (req: Request, res: Response) => {
 export const deleteFood = async (req: Request, res: Response) => {
   try {
     const { foodId } = req.params;
-
-    if (!foodId)
-      return res
-        .status(400)
-        .json({ success: false, message: "Food ID is required" });
 
     const deletedFood = await Food.findByIdAndDelete(foodId);
     if (!deletedFood) {
