@@ -3,6 +3,7 @@ import { Truck, LogOut, Utensils } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface AdminSidebarProps {
   activeSection: "dashboard" | "menu" | "orders";
@@ -23,7 +24,13 @@ const AdminSidebar = ({
   return (
     <div className="flex flex-col items-center w-full h-screen max-w-xs gap-8 px-5 bg-white">
       <div className="flex gap-3 mt-6">
-        <img src="/logo.png" alt="logo" className="w-[46px]" />
+        <Image
+          src="/logo.png"
+          alt="NomNom Logo"
+          width={46}
+          height={46}
+          className="w-[46px]"
+        />
         <div>
           <h4 className="text-xl font-semibold leading-7 text-midnight-black">
             Nom Nom

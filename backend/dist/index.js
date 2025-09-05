@@ -4,12 +4,10 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import { globalErrorHandler } from "./utils/errorHandler.js";
 dotenv.config();
 const requiredEnvVars = ["MONGO_URI", "JWT_SECRET"];
 for (const envVar of requiredEnvVars) {
     if (!process.env[envVar]) {
-        console.error(`❌ Missing required environment variable: ${envVar}`);
         process.exit(1);
     }
 }
@@ -22,15 +20,12 @@ const PORT = process.env.PORT || 7777;
 const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI);
-        console.log("✅ MongoDB connected successfully!");
     }
-    catch (error) {
-        console.error("❌ Database connection error:", error);
+    catch {
         process.exit(1);
     }
 };
 process.on("SIGINT", async () => {
-    console.log("🛑 Shutting down gracefully...");
     await mongoose.connection.close();
     process.exit(0);
 });
@@ -44,7 +39,11 @@ app.use(rateLimit({
     },
 }));
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: [
+        process.env.FRONTEND_URL || "http://localhost:3000",
+        process.env.PRODUCTION_FRONTEND_URL ||
+            "https://food-delivery-ochre-ten.vercel.app",
+    ],
     credentials: true,
 }));
 app.use(express.json({ limit: "10mb" }));
@@ -65,7 +64,4 @@ app.use((_req, res) => {
         message: "Route not found",
     });
 });
-app.use(globalErrorHandler);
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-});
+app.listen(PORT, () => { });

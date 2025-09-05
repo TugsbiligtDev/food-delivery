@@ -43,8 +43,8 @@ const SigninForm = () => {
           router.push("/");
         }
       }
-    } catch (err: any) {
-      setError(err.message || "Signin failed");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Signin failed");
     } finally {
       setIsLoading(false);
     }

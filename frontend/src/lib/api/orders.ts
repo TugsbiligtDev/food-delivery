@@ -13,8 +13,11 @@ export const createOrder = async (
       orderData
     );
     return response.data.data!;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Failed to create order");
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Failed to create order";
+    throw new Error(errorMessage);
   }
 };
 
@@ -24,8 +27,11 @@ export const getAllOrders = async (): Promise<Order[]> => {
       `${API_BASE_URL}/orders`
     );
     return response.data.data || [];
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Failed to fetch orders");
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Failed to fetch orders";
+    throw new Error(errorMessage);
   }
 };
 
@@ -35,10 +41,11 @@ export const getUserOrders = async (userId: string): Promise<Order[]> => {
       `${API_BASE_URL}/orders/user/${userId}`
     );
     return response.data.data || [];
-  } catch (error: any) {
-    throw new Error(
-      error.response?.data?.message || "Failed to fetch user orders"
-    );
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Failed to fetch user orders";
+    throw new Error(errorMessage);
   }
 };
 
@@ -52,7 +59,10 @@ export const updateOrderStatus = async (
       { status }
     );
     return response.data.data!;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Failed to update order");
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Failed to update order";
+    throw new Error(errorMessage);
   }
 };

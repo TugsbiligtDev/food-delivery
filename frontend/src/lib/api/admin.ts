@@ -17,8 +17,11 @@ export const createFood = async (foodData: {
       foodData
     );
     return response.data.data!;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Failed to create food");
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Failed to create food";
+    throw new Error(errorMessage);
   }
 };
 
@@ -38,16 +41,22 @@ export const updateFood = async (
       foodData
     );
     return response.data.data!;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Failed to update food");
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Failed to update food";
+    throw new Error(errorMessage);
   }
 };
 
 export const deleteFood = async (foodId: string): Promise<void> => {
   try {
     await axios.delete(`${API_BASE_URL}/foods/${foodId}`);
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Failed to delete food");
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Failed to delete food";
+    throw new Error(errorMessage);
   }
 };
 
@@ -57,10 +66,11 @@ export const getAllCategories = async (): Promise<Category[]> => {
       `${API_BASE_URL}/categories`
     );
     return response.data.data!;
-  } catch (error: any) {
-    throw new Error(
-      error.response?.data?.message || "Failed to fetch categories"
-    );
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Failed to fetch categories";
+    throw new Error(errorMessage);
   }
 };
 
@@ -73,10 +83,11 @@ export const createCategory = async (categoryData: {
       categoryData
     );
     return response.data.data!;
-  } catch (error: any) {
-    throw new Error(
-      error.response?.data?.message || "Failed to create category"
-    );
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Failed to create category";
+    throw new Error(errorMessage);
   }
 };
 
@@ -92,19 +103,21 @@ export const updateCategory = async (
       categoryData
     );
     return response.data.data!;
-  } catch (error: any) {
-    throw new Error(
-      error.response?.data?.message || "Failed to update category"
-    );
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Failed to update category";
+    throw new Error(errorMessage);
   }
 };
 
 export const deleteCategory = async (categoryId: string): Promise<void> => {
   try {
     await axios.delete(`${API_BASE_URL}/categories/${categoryId}`);
-  } catch (error: any) {
-    throw new Error(
-      error.response?.data?.message || "Failed to delete category"
-    );
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Failed to delete category";
+    throw new Error(errorMessage);
   }
 };

@@ -2,14 +2,17 @@
 import { Pen } from "lucide-react";
 import { Dialog, DialogTrigger } from "../../ui/dialog";
 import EditDishDialog from "./EditDishDialog";
+import Image from "next/image";
 
 const AddDishCard = () => {
   return (
     <div className="bg-white rounded-[20px] p-4 border border-[#E4E4E7]">
       <div className="relative">
-        <img
+        <Image
           src="/cardImage.png"
-          alt="image"
+          alt="Dish preview image"
+          width={300}
+          height={192}
           className="object-cover w-full h-48 rounded-xl"
         />
 

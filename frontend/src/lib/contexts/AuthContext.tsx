@@ -35,16 +35,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Set up axios interceptors for authentication
     setupAuthInterceptor();
 
-    // Initialize user state from localStorage
     const initializeAuth = () => {
       try {
         const storedUser = getUser();
         setUser(storedUser);
-      } catch (error) {
-        console.error("Error initializing auth:", error);
+      } catch {
         setUser(null);
       } finally {
         setIsLoading(false);
@@ -59,11 +56,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
       authLogout();
       setUser(null);
-      // Force a hard refresh to clear any cached state
       window.location.href = "/";
-    } catch (error) {
-      console.error("Logout failed:", error);
-      // Fallback: try to clear storage and redirect anyway
+    } catch {
       localStorage.clear();
       window.location.href = "/";
     } finally {

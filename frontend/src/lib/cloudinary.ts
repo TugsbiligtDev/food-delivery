@@ -22,8 +22,7 @@ export const uploadImage = async (file: File): Promise<string> => {
     } else {
       throw new Error("Failed to upload image");
     }
-  } catch (error) {
-    console.error("Error uploading image:", error);
+  } catch {
     throw new Error("Failed to upload image to Cloudinary");
   }
 };

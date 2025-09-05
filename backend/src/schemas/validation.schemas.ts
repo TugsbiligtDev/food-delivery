@@ -96,7 +96,6 @@ export const updateOrderSchema = z.object({
   status: z.enum(["PENDING", "CANCELED", "DELIVERED"]).optional(),
 });
 
-// Parameter validation schemas
 export const mongoIdSchema = z
   .string()
   .regex(/^[0-9a-fA-F]{24}$/, "Invalid ID format");

@@ -1,7 +1,6 @@
 "use client";
 import * as React from "react";
-import { ChevronDownIcon, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -19,22 +18,23 @@ interface OrdersHeaderProps {
   totalOrders?: number;
 }
 
-const OrdersHeader = ({ 
-  searchTerm, 
-  onSearchChange, 
-  statusFilter, 
+const OrdersHeader = ({
+  searchTerm,
+  onSearchChange,
+  statusFilter,
   onStatusFilterChange,
-  totalOrders = 0 
+  totalOrders = 0,
 }: OrdersHeaderProps) => {
   return (
     <div className="w-full flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-4 rounded-md gap-4">
       <div>
         <h3 className="font-bold text-midnight-black text-xl">Orders</h3>
-        <p className="text-slate-gray text-sm font-medium">{totalOrders} items</p>
+        <p className="text-slate-gray text-sm font-medium">
+          {totalOrders} items
+        </p>
       </div>
-      
+
       <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
-        {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
@@ -45,7 +45,6 @@ const OrdersHeader = ({
           />
         </div>
 
-        {/* Status Filter */}
         <Select value={statusFilter} onValueChange={onStatusFilterChange}>
           <SelectTrigger className="w-full md:w-48">
             <SelectValue placeholder="Filter by status" />

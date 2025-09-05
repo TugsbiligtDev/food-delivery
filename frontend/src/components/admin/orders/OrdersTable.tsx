@@ -39,8 +39,9 @@ export function OrdersTable() {
         setError("");
         const ordersData = await getAllOrders();
         setOrders(ordersData);
-      } catch (err: any) {
-        const errorMessage = err.message || "Failed to load orders";
+      } catch (err: unknown) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to load orders";
         setError(errorMessage);
         toast.error(errorMessage);
       } finally {
@@ -75,11 +76,16 @@ export function OrdersTable() {
       );
       setOrders((prev) =>
         prev.map((order) =>
-          order._id === orderId ? { ...order, status: newStatus as any } : order
+          order._id === orderId
+            ? {
+                ...order,
+                status: newStatus as "PENDING" | "CANCELED" | "DELIVERED",
+              }
+            : order
         )
       );
       toast.success("Order status updated successfully");
-    } catch (error) {
+    } catch {
       toast.error("Failed to update order status");
     }
   };
@@ -90,8 +96,9 @@ export function OrdersTable() {
       setError("");
       const ordersData = await getAllOrders();
       setOrders(ordersData);
-    } catch (err: any) {
-      const errorMessage = err.message || "Failed to load orders";
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load orders";
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {

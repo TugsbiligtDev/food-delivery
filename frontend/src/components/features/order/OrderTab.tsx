@@ -23,8 +23,8 @@ const OrderTab = () => {
       try {
         const userOrders = await getUserOrders(user._id);
         setOrders(userOrders);
-      } catch (err: any) {
-        setError(err.message || "Failed to fetch orders");
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Failed to fetch orders");
       } finally {
         setLoading(false);
       }

@@ -10,7 +10,7 @@ import { Food, Category } from "@/lib/types";
 import { getAllFoods, getAllCategories } from "@/lib/api/foods";
 import { deleteFood } from "@/lib/api/admin";
 import { toast } from "sonner";
-import NextImage from "next/image";
+import Image from "next/image";
 
 const AdminMenuGrid = () => {
   const [foods, setFoods] = useState<Food[]>([]);
@@ -30,8 +30,7 @@ const AdminMenuGrid = () => {
         ]);
         setFoods(foodsData);
         setCategories(categoriesData);
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
+      } catch {
         toast.error("Failed to load menu data");
       } finally {
         setIsLoading(false);
@@ -42,13 +41,7 @@ const AdminMenuGrid = () => {
   }, []);
 
   const handleFoodAdded = (newFood: Food) => {
-    console.log("Adding new food:", newFood);
-    console.log("Current foods:", foods);
-    setFoods((prev) => {
-      const updatedFoods = [...prev, newFood];
-      console.log("Updated foods:", updatedFoods);
-      return updatedFoods;
-    });
+    setFoods((prev) => [...prev, newFood]);
     toast.success("Food item added successfully");
   };
 
@@ -73,7 +66,7 @@ const AdminMenuGrid = () => {
       await deleteFood(foodId);
       setFoods((prev) => prev.filter((food) => food._id !== foodId));
       toast.success("Food item deleted successfully");
-    } catch (error) {
+    } catch {
       toast.error("Failed to delete food item");
     }
   };
@@ -178,15 +171,16 @@ const AdminMenuGrid = () => {
                         </div>
                       </div>
                     ) : (
-                      <img
+                      <Image
                         src={food.image}
                         alt={food.foodName}
+                        width={300}
+                        height={192}
                         className="object-cover w-full h-48 rounded-xl"
                         onError={() => handleImageError(food._id)}
                       />
                     )}
 
-                    {/* Pen button moved to image's bottom-right */}
                     <div className="absolute bottom-3 right-3">
                       <Dialog>
                         <DialogTrigger asChild>

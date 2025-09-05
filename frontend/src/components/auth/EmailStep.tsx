@@ -31,10 +31,8 @@ const EmailStep = ({ onNext }: EmailStepProps) => {
   const onSubmit = async (data: EmailFormData) => {
     setIsLoading(true);
     try {
-      // Store email and move to next step
       onNext(data.email);
-    } catch (error) {
-      console.error("Email step error:", error);
+    } catch {
     } finally {
       setIsLoading(false);
     }

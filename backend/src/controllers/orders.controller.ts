@@ -1,5 +1,4 @@
-import { Response } from "express";
-import { Request } from "express";
+import { Request, Response } from "express";
 import { Order } from "../models/orders.model.js";
 import { AuthenticatedUser } from "../types/index.js";
 import { Food } from "../models/foods.model.js";

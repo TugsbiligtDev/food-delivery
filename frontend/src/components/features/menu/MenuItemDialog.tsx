@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DialogClose,
@@ -21,8 +21,7 @@ interface MenuItemDialogProps {
 const MenuItemDialog = ({ food }: MenuItemDialogProps) => {
   const [quantity, setQuantity] = useState(1);
   const { user } = useAuth();
-  const { addItem, getItemQuantity } = useCart();
-  const cartQuantity = getItemQuantity(food._id);
+  const { addItem } = useCart();
 
   const handleAddToCart = () => {
     if (!user) {
@@ -55,7 +54,6 @@ const MenuItemDialog = ({ food }: MenuItemDialogProps) => {
           />
         </div>
         <div className="flex flex-col justify-between w-1/2">
-          {/* top */}
           <div>
             <DialogTitle className="mb-2 text-3xl font-semibold text-cherry-red">
               {food.foodName}
@@ -64,7 +62,6 @@ const MenuItemDialog = ({ food }: MenuItemDialogProps) => {
               {food.ingredients}
             </DialogDescription>
           </div>
-          {/* bottom */}
           <div>
             <div className="flex items-center justify-between text-midnight-black">
               <div>

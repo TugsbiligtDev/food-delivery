@@ -10,8 +10,11 @@ export const getAllFoods = async (): Promise<Food[]> => {
       `${API_BASE_URL}/foods`
     );
     return response.data.data || [];
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Failed to fetch foods");
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Failed to fetch foods";
+    throw new Error(errorMessage);
   }
 };
 
@@ -21,8 +24,11 @@ export const getFoodById = async (foodId: string): Promise<Food> => {
       `${API_BASE_URL}/foods/${foodId}`
     );
     return response.data.data!;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Failed to fetch food");
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Failed to fetch food";
+    throw new Error(errorMessage);
   }
 };
 
@@ -32,9 +38,10 @@ export const getAllCategories = async (): Promise<Category[]> => {
       `${API_BASE_URL}/categories`
     );
     return response.data.data || [];
-  } catch (error: any) {
-    throw new Error(
-      error.response?.data?.message || "Failed to fetch categories"
-    );
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Failed to fetch categories";
+    throw new Error(errorMessage);
   }
 };

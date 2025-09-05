@@ -14,10 +14,9 @@ import { useAuth } from "@/lib/contexts/AuthContext";
 
 interface PasswordStepProps {
   email: string;
-  onBack: () => void;
 }
 
-const PasswordStep = ({ email, onBack }: PasswordStepProps) => {
+const PasswordStep = ({ email }: PasswordStepProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -51,8 +50,8 @@ const PasswordStep = ({ email, onBack }: PasswordStepProps) => {
         updateUser(response.data);
         router.push("/"); // Redirect to home page
       }
-    } catch (err: any) {
-      setError(err.message || "Signup failed");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Signup failed");
     } finally {
       setIsLoading(false);
     }

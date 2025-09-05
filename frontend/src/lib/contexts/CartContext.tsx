@@ -141,14 +141,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         try {
           const cartItems = JSON.parse(savedCart);
           dispatch({ type: "LOAD_CART", payload: cartItems });
-        } catch (error) {
-          console.error("Failed to load cart from localStorage:", error);
-        }
+        } catch {}
       }
     }
   }, []);
 
-  // Save cart to localStorage whenever it changes
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("cart", JSON.stringify(state.items));

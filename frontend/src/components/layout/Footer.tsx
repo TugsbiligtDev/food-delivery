@@ -13,7 +13,6 @@ const Footer = () => {
       </div>
       <div className="px-24">
         <div className="flex justify-between my-13">
-          {/* first */}
           <div className="flex flex-col items-center">
             <Image
               src="/logo.png"

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import MenuCard from "./MenuCard";
 import { Food, Category } from "@/lib/types";
 import { getAllFoods, getAllCategories } from "@/lib/api/foods";
+import { SkeletonGrid } from "@/components/ui/loading";
 
 const MenuGrid = () => {
   const [foods, setFoods] = useState<Food[]>([]);
@@ -21,8 +22,8 @@ const MenuGrid = () => {
         ]);
         setFoods(foodsData);
         setCategories(categoriesData);
-      } catch (err: any) {
-        setError(err.message || "Failed to fetch menu");
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Failed to fetch menu");
       } finally {
         setIsLoading(false);
       }
@@ -62,16 +63,32 @@ const MenuGrid = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-64">
-        <div className="text-lg">Loading menu...</div>
+      <div className="space-y-8">
+        <div className="space-y-4">
+          <div className="h-6 bg-gray-300 rounded w-48 animate-pulse" />
+          <SkeletonGrid count={8} />
+        </div>
+        <div className="space-y-4">
+          <div className="h-6 bg-gray-300 rounded w-40 animate-pulse" />
+          <SkeletonGrid count={6} />
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-64">
-        <div className="text-red-600">Error: {error}</div>
+      <div className="flex flex-col items-center justify-center min-h-64 space-y-4">
+        <div className="text-red-600 text-center">
+          <p className="text-lg font-semibold">Failed to load menu</p>
+          <p className="text-sm">{error}</p>
+        </div>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Try Again
+        </button>
       </div>
     );
   }

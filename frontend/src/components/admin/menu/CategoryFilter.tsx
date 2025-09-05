@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, X } from "lucide-react";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -17,7 +16,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import ValidationMsg from "@/components/auth/ValidationMsg";
-import { Category } from "@/lib/types";
+import { Category, Food } from "@/lib/types";
 import {
   createCategory,
   getAllCategories,
@@ -37,7 +36,7 @@ type CategoryFormData = z.infer<typeof categorySchema>;
 interface CategoryFilterProps {
   onCategoryAdded?: (newCategory: Category) => void;
   onCategoryDeleted?: (categoryId: string) => void;
-  foods?: any[]; // Add foods prop to calculate counts
+  foods?: Food[]; // Add foods prop to calculate counts
 }
 
 const CategoryFilter = ({
@@ -66,25 +65,24 @@ const CategoryFilter = ({
     try {
       const categoriesData = await getAllCategories();
       setCategories(categoriesData);
-    } catch (error) {
-      console.error("Failed to fetch categories:", error);
+    } catch {
+      // Error handling - categories will remain empty if fetch fails
     }
   };
 
   const onSubmit = async (data: CategoryFormData) => {
     setIsLoading(true);
     try {
-      console.log("Creating category:", data);
       const newCategory = await createCategory(data);
-      console.log("Category created:", newCategory);
       setCategories((prev) => [...prev, newCategory]);
       onCategoryAdded?.(newCategory);
       reset();
       setIsDialogOpen(false);
       toast.success("Category added successfully!");
-    } catch (error: any) {
-      console.error("Error creating category:", error);
-      toast.error(error.message || "Failed to add category");
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to add category"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -119,9 +117,10 @@ const CategoryFilter = ({
       setCategories((prev) => prev.filter((cat) => cat._id !== categoryId));
       onCategoryDeleted?.(categoryId);
       toast.success(`Category "${categoryName}" deleted successfully!`);
-    } catch (error: any) {
-      console.error("Error deleting category:", error);
-      toast.error(error.message || "Failed to delete category");
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to delete category"
+      );
     }
   };
 

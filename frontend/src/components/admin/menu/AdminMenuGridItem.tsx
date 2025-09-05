@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import EditDishDialog from "./EditDishDialog";
 import { Food, Category } from "@/lib/types";
+import Image from "next/image";
 
 interface AdminMenuGridItemProps {
   food: Food;
@@ -36,15 +37,16 @@ const AdminMenuGridItem = ({
             </div>
           </div>
         ) : (
-          <img
+          <Image
             src={food.image}
             alt={food.foodName}
+            width={300}
+            height={192}
             className="object-cover w-full h-48 rounded-xl"
             onError={() => onImageError(food._id)}
           />
         )}
 
-        {/* Pen button moved to image's bottom-right */}
         <div className="absolute bottom-3 right-3">
           <Dialog>
             <DialogTrigger asChild>

@@ -3,12 +3,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "../../ui/dialog";
+import { DialogContent, DialogHeader, DialogTitle } from "../../ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -84,7 +79,7 @@ const EditDishDialog = ({
       const updatedFood = await updateFood(food._id, data);
       onFoodUpdated(updatedFood);
       toast.success("Food item updated successfully!");
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(error.message || "Failed to update food item");
     } finally {
       setIsLoading(false);
@@ -99,14 +94,13 @@ const EditDishDialog = ({
       await deleteFood(food._id);
       onFoodDeleted(food._id);
       toast.success("Food item deleted successfully!");
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(error.message || "Failed to delete food item");
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Clean up preview URL when component unmounts
   useEffect(() => {
     return () => {
       if (
@@ -214,7 +208,7 @@ const EditDishDialog = ({
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
               <div className="w-full border border-dashed border-blue-200 flex flex-col justify-center items-center bg-blue-50 px-4 py-10 gap-2 rounded-md min-h-[200px] cursor-pointer transition-colors hover:border-blue-400">
-                <Image className="text-gray-400" size={32} />
+                <Image className="text-gray-400" size={32} alt="Upload icon" />
                 <p className="text-gray-600">
                   Choose a file or drag & drop it here
                 </p>

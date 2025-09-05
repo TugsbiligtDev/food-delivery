@@ -54,16 +54,11 @@ const CartTab = ({ onTabChange }: { onTabChange?: (tab: string) => void }) => {
         deliveryPhone: data.phone.trim(),
       };
 
-      console.log("Creating order with data:", orderData);
-      const result = await createOrder(orderData);
-      console.log("Order created successfully:", result);
-
-      console.log("Order completed successfully");
+      await createOrder(orderData);
       clearCart();
       reset();
       onTabChange?.("Order");
-    } catch (err: any) {
-      console.error("Error creating order:", err);
+    } catch {
       // Error will be handled by the form validation
     } finally {
       setIsLoading(false);

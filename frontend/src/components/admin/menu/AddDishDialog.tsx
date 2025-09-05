@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Image, Upload, X } from "lucide-react";
+import { Image as ImageIcon, X } from "lucide-react";
+import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import ValidationMsg from "@/components/auth/ValidationMsg";
-import { Category } from "@/lib/types";
+import { Category, Food } from "@/lib/types";
 import { createFood } from "@/lib/api/admin";
 import { uploadImage } from "@/lib/cloudinary";
 import { toast } from "sonner";
@@ -30,7 +31,7 @@ type FoodFormData = z.infer<typeof foodSchema>;
 
 interface AddDishDialogProps {
   category: Category;
-  onFoodAdded: (food: any) => void;
+  onFoodAdded: (food: Food) => void;
 }
 
 const AddDishDialog = ({ category, onFoodAdded }: AddDishDialogProps) => {
@@ -54,22 +55,21 @@ const AddDishDialog = ({ category, onFoodAdded }: AddDishDialogProps) => {
 
     setUploadingImage(true);
     try {
-      // Upload to Cloudinary
       const cloudinaryUrl = await uploadImage(file);
       setImageUrl(cloudinaryUrl);
       setValue("image", cloudinaryUrl);
       toast.success("Image uploaded successfully!");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to upload image");
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to upload image"
+      );
     } finally {
       setUploadingImage(false);
     }
   };
 
   useEffect(() => {
-    return () => {
-      // No need to revoke blob URLs since we're using Cloudinary URLs
-    };
+    return () => {};
   }, []);
 
   const onSubmit = async (data: FoodFormData) => {
@@ -83,8 +83,10 @@ const AddDishDialog = ({ category, onFoodAdded }: AddDishDialogProps) => {
       onFoodAdded(newFood);
       reset();
       setImageUrl("");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to add food item");
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to add food item"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -134,9 +136,11 @@ const AddDishDialog = ({ category, onFoodAdded }: AddDishDialogProps) => {
           <Label className="form-label">Food Image</Label>
           {imageUrl ? (
             <div className="relative">
-              <img
+              <Image
                 src={imageUrl}
                 alt="Food preview"
+                width={400}
+                height={192}
                 className="w-full h-48 object-cover rounded-md"
               />
               <Button
@@ -169,7 +173,7 @@ const AddDishDialog = ({ category, onFoodAdded }: AddDishDialogProps) => {
                   </div>
                 ) : (
                   <>
-                    <Image className="text-gray-400" size={32} />
+                    <ImageIcon className="text-gray-400" size={32} />
                     <p className="text-gray-600">
                       Choose a file or drag & drop it here
                     </p>

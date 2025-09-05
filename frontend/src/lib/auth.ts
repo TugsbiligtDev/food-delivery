@@ -3,7 +3,6 @@ import axios from "axios";
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:7777/api";
 
-// Types
 export interface User {
   _id: string;
   email: string;
@@ -35,7 +34,6 @@ export interface SigninData {
   password: string;
 }
 
-// Token management
 export const getToken = (): string | null => {
   if (typeof window !== "undefined") {
     return localStorage.getItem("token");
@@ -75,13 +73,15 @@ export const removeUser = (): void => {
   }
 };
 
-// API calls
 export const signup = async (data: SignupData): Promise<AuthResponse> => {
   try {
     const response = await axios.post(`${API_BASE_URL}/auth/signup`, data);
     return response.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Signup failed");
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Signup failed";
+    throw new Error(errorMessage);
   }
 };
 
@@ -89,8 +89,11 @@ export const signin = async (data: SigninData): Promise<AuthResponse> => {
   try {
     const response = await axios.post(`${API_BASE_URL}/auth/signin`, data);
     return response.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Signin failed");
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Signin failed";
+    throw new Error(errorMessage);
   }
 };
 
@@ -98,11 +101,8 @@ export const logout = (): void => {
   try {
     removeToken();
     removeUser();
-    // Clear any other auth-related data
     if (typeof window !== "undefined") {
-      // Clear any session storage if used
       sessionStorage.clear();
-      // Clear any auth-related cookies
       document.cookie.split(";").forEach((c) => {
         const eqPos = c.indexOf("=");
         const name = eqPos > -1 ? c.substr(0, eqPos) : c;
@@ -110,9 +110,7 @@ export const logout = (): void => {
           name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
       });
     }
-  } catch (error) {
-    console.error("Error during logout:", error);
-    // Fallback: clear everything
+  } catch {
     if (typeof window !== "undefined") {
       localStorage.clear();
       sessionStorage.clear();
@@ -120,7 +118,6 @@ export const logout = (): void => {
   }
 };
 
-// Auth state management
 export const isAuthenticated = (): boolean => {
   return !!getToken();
 };
@@ -130,7 +127,6 @@ export const isAdmin = (): boolean => {
   return user?.role === "ADMIN";
 };
 
-// Axios interceptor for auth headers
 export const setupAuthInterceptor = () => {
   axios.interceptors.request.use(
     (config) => {

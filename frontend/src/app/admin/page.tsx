@@ -11,7 +11,6 @@ import {
 import { Utensils, Truck } from "lucide-react";
 import AdminMenuGrid from "@/components/admin/menu/AdminMenuGrid";
 import { OrdersTable } from "@/components/admin/orders/OrdersTable";
-import { Category } from "@/lib/types";
 
 const AdminDashboard = () => {
   const [activeSection, setActiveSection] = useState<
