@@ -59,7 +59,6 @@ const CartTab = ({ onTabChange }: { onTabChange?: (tab: string) => void }) => {
       reset();
       onTabChange?.("Order");
     } catch {
-      // Error will be handled by the form validation
     } finally {
       setIsLoading(false);
     }

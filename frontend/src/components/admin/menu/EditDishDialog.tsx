@@ -52,6 +52,7 @@ const EditDishDialog = ({
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<FoodFormData>({
     resolver: zodResolver(foodSchema),
@@ -80,7 +81,7 @@ const EditDishDialog = ({
       onFoodUpdated(updatedFood);
       toast.success("Food item updated successfully!");
     } catch (error: unknown) {
-      toast.error(error.message || "Failed to update food item");
+      toast.error((error as Error).message || "Failed to update food item");
     } finally {
       setIsLoading(false);
     }
@@ -95,11 +96,24 @@ const EditDishDialog = ({
       onFoodDeleted(food._id);
       toast.success("Food item deleted successfully!");
     } catch (error: unknown) {
-      toast.error(error.message || "Failed to delete food item");
+      toast.error((error as Error).message || "Failed to delete food item");
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (food) {
+      reset({
+        foodName: food.foodName || "",
+        price: food.price || 0,
+        ingredients: food.ingredients || "",
+        category: food.category?._id || "",
+        image: food.image || "",
+      });
+      setImageUrl(food.image || "");
+    }
+  }, [food, reset]);
 
   useEffect(() => {
     return () => {
@@ -208,7 +222,11 @@ const EditDishDialog = ({
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
               <div className="w-full border border-dashed border-blue-200 flex flex-col justify-center items-center bg-blue-50 px-4 py-10 gap-2 rounded-md min-h-[200px] cursor-pointer transition-colors hover:border-blue-400">
-                <Image className="text-gray-400" size={32} alt="Upload icon" />
+                <Image
+                  className="text-gray-400"
+                  size={32}
+                  aria-label="Upload icon"
+                />
                 <p className="text-gray-600">
                   Choose a file or drag & drop it here
                 </p>

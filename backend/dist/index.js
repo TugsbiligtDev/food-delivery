@@ -38,12 +38,12 @@ app.use(rateLimit({
         message: "Too many requests from this IP, please try again later.",
     },
 }));
+const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    process.env.PRODUCTION_FRONTEND_URL,
+].filter(Boolean);
 app.use(cors({
-    origin: [
-        process.env.FRONTEND_URL || "http://localhost:3000",
-        process.env.PRODUCTION_FRONTEND_URL ||
-            "https://food-delivery-ochre-ten.vercel.app",
-    ],
+    origin: allowedOrigins,
     credentials: true,
 }));
 app.use(express.json({ limit: "10mb" }));

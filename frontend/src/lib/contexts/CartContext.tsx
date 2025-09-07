@@ -133,7 +133,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     totalPrice: 0,
   });
 
-  // Load cart from localStorage on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const savedCart = localStorage.getItem("cart");

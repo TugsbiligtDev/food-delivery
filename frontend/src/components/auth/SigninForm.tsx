@@ -36,7 +36,6 @@ const SigninForm = () => {
         setToken(response.token);
         updateUser(response.data);
 
-        // Redirect based on user role
         if (response.data.role === "ADMIN") {
           router.push("/admin");
         } else {

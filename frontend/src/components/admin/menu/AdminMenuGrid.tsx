@@ -75,30 +75,27 @@ const AdminMenuGrid = () => {
     setImageErrors((prev) => new Set(prev).add(foodId));
   };
 
-  const openDialog = (categoryId: string) => {
-    setOpenDialogs((prev) => new Set(prev).add(categoryId));
-  };
-
-  const closeDialog = (categoryId: string) => {
+  const toggleDialog = (categoryId: string, isOpen: boolean) => {
     setOpenDialogs((prev) => {
       const newSet = new Set(prev);
-      newSet.delete(categoryId);
+      if (isOpen) {
+        newSet.add(categoryId);
+      } else {
+        newSet.delete(categoryId);
+      }
       return newSet;
     });
   };
 
   const groupFoodsByCategory = () => {
-    const grouped: { [key: string]: Food[] } = {};
-
-    foods.forEach((food) => {
+    return foods.reduce((grouped, food) => {
       const categoryName = food.category.categoryName;
       if (!grouped[categoryName]) {
         grouped[categoryName] = [];
       }
       grouped[categoryName].push(food);
-    });
-
-    return grouped;
+      return grouped;
+    }, {} as { [key: string]: Food[] });
   };
 
   if (isLoading) {
@@ -130,13 +127,7 @@ const AdminMenuGrid = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
               <Dialog
                 open={isDialogOpen}
-                onOpenChange={(open) => {
-                  if (open) {
-                    openDialog(category._id);
-                  } else {
-                    closeDialog(category._id);
-                  }
-                }}
+                onOpenChange={(open) => toggleDialog(category._id, open)}
               >
                 <DialogTrigger asChild>
                   <div className="bg-white rounded-[20px] border border-dashed border-cherry-red flex flex-col justify-center items-center cursor-pointer min-h-[200px]">
@@ -152,7 +143,7 @@ const AdminMenuGrid = () => {
                   category={category}
                   onFoodAdded={(newFood) => {
                     handleFoodAdded(newFood);
-                    closeDialog(category._id);
+                    toggleDialog(category._id, false);
                   }}
                 />
               </Dialog>

@@ -3,12 +3,13 @@ import React, { useState, useEffect } from "react";
 import MenuCard from "./MenuCard";
 import { Food, Category } from "@/lib/types";
 import { getAllFoods, getAllCategories } from "@/lib/api/foods";
-import { SkeletonGrid } from "@/components/ui/loading";
+import { LoadingPage } from "../../ui/loading";
 
 const MenuGrid = () => {
   const [foods, setFoods] = useState<Food[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -16,10 +17,30 @@ const MenuGrid = () => {
       try {
         setIsLoading(true);
         setError("");
+        setLoadingProgress(0);
+
+        const progressInterval = setInterval(() => {
+          setLoadingProgress((prev) => {
+            if (prev >= 90) {
+              clearInterval(progressInterval);
+              return 90;
+            }
+            return prev + Math.random() * 15 + 5;
+          });
+        }, 200);
+
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
         const [foodsData, categoriesData] = await Promise.all([
           getAllFoods(),
           getAllCategories(),
         ]);
+
+        clearInterval(progressInterval);
+        setLoadingProgress(100);
+
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
         setFoods(foodsData);
         setCategories(categoriesData);
       } catch (err: unknown) {
@@ -62,18 +83,7 @@ const MenuGrid = () => {
   });
 
   if (isLoading) {
-    return (
-      <div className="space-y-8">
-        <div className="space-y-4">
-          <div className="h-6 bg-gray-300 rounded w-48 animate-pulse" />
-          <SkeletonGrid count={8} />
-        </div>
-        <div className="space-y-4">
-          <div className="h-6 bg-gray-300 rounded w-40 animate-pulse" />
-          <SkeletonGrid count={6} />
-        </div>
-      </div>
-    );
+    return <LoadingPage progress={loadingProgress} />;
   }
 
   if (error) {

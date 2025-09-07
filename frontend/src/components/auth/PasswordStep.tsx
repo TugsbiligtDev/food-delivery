@@ -14,6 +14,7 @@ import { useAuth } from "@/lib/contexts/AuthContext";
 
 interface PasswordStepProps {
   email: string;
+  onBack?: () => void;
 }
 
 const PasswordStep = ({ email }: PasswordStepProps) => {
@@ -42,13 +43,13 @@ const PasswordStep = ({ email }: PasswordStepProps) => {
       const response = await signup({
         email: data.email,
         password: data.password,
-        role: "USER", // Default role for signup
+        role: "USER",
       });
 
       if (response.success) {
         setToken(response.token);
         updateUser(response.data);
-        router.push("/"); // Redirect to home page
+        router.push("/");
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Signup failed");

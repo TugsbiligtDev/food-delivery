@@ -4,7 +4,7 @@ import Header from "@/components/layout/Header";
 import Hero from "@/components/layout/Hero";
 import MenuGrid from "@/components/features/menu/MenuGrid";
 import Footer from "@/components/layout/Footer";
-import { LoadingPage } from "@/components/ui/loading";
+import { LoadingPage } from "../components/ui/loading";
 
 export default function HomePage() {
   return (

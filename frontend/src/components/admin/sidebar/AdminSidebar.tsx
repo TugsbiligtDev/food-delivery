@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 interface AdminSidebarProps {
-  activeSection: "dashboard" | "menu" | "orders";
-  onSectionChange: (section: "dashboard" | "menu" | "orders") => void;
+  activeSection: "menu" | "orders";
+  onSectionChange: (section: "menu" | "orders") => void;
 }
 
 const AdminSidebar = ({

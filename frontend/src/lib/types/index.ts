@@ -1,4 +1,3 @@
-// Food and Order Types
 export interface Food {
   _id: string;
   foodName: string;
@@ -26,7 +25,7 @@ export interface CartItem {
 }
 
 export interface OrderItem {
-  food: string; // Food ID
+  food: string;
   quantity: number;
 }
 

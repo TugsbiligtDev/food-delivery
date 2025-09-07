@@ -13,6 +13,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
           width={800}
           height={600}
           className="object-cover w-full h-full rounded-2xl"
+          priority
         />
       </aside>
     </div>

@@ -3,7 +3,6 @@ import Link from "next/link";
 import Image from "next/image";
 import CartSheet from "../features/card/CartSheet";
 import UserDropdown from "../auth/UserDropDown";
-import SuccessDialog from "../features/card/SuccessDialog";
 import { useAuth } from "@/lib/contexts/AuthContext";
 
 const Header = () => {
@@ -35,8 +34,6 @@ const Header = () => {
           <UserDropdown />
         </nav>
       </header>
-
-      <SuccessDialog />
     </>
   );
 };

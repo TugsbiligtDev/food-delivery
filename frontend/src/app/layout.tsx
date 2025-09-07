@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: "Food Delivery",
   description: "Order your favorite meals",
   icons: {
-    icon: "/fast-delivery.png",
+    icon: "/delivery-bike.png",
   },
 };
 

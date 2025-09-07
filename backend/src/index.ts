@@ -47,13 +47,14 @@ app.use(
   })
 );
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.PRODUCTION_FRONTEND_URL,
+].filter(Boolean) as string[];
+
 app.use(
   cors({
-    origin: [
-      process.env.FRONTEND_URL || "http://localhost:3000",
-      process.env.PRODUCTION_FRONTEND_URL ||
-        "https://food-delivery-ochre-ten.vercel.app",
-    ],
+    origin: allowedOrigins,
     credentials: true,
   })
 );

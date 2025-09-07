@@ -43,7 +43,16 @@ const authMiddleware = async (
       });
     }
 
-    (req as AuthRequest).user = user as unknown as AuthenticatedUser;
+    (req as AuthRequest).user = {
+      _id: user._id.toString(),
+      email: user.email,
+      phoneNumber: user.phoneNumber || undefined,
+      address: user.address || undefined,
+      role: user.role,
+      isVerified: user.isVerified,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
     next();
   } catch (error) {
     res.status(401).json({

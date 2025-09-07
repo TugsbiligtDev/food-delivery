@@ -28,6 +28,3 @@ const Page = () => {
 };
 
 export default Page;
-
-//? If a user click Resend, what will happen
-//* In my opinion, Page will reload and nothing will happen. Only send email again.

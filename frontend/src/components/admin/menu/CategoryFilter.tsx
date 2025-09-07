@@ -36,7 +36,7 @@ type CategoryFormData = z.infer<typeof categorySchema>;
 interface CategoryFilterProps {
   onCategoryAdded?: (newCategory: Category) => void;
   onCategoryDeleted?: (categoryId: string) => void;
-  foods?: Food[]; // Add foods prop to calculate counts
+  foods?: Food[];
 }
 
 const CategoryFilter = ({
@@ -65,9 +65,7 @@ const CategoryFilter = ({
     try {
       const categoriesData = await getAllCategories();
       setCategories(categoriesData);
-    } catch {
-      // Error handling - categories will remain empty if fetch fails
-    }
+    } catch {}
   };
 
   const onSubmit = async (data: CategoryFormData) => {
@@ -92,7 +90,6 @@ const CategoryFilter = ({
     categoryId: string,
     categoryName: string
   ) => {
-    // Check if category has foods
     const foodsInCategory = foods.filter(
       (food) => food.category._id === categoryId
     );
@@ -131,7 +128,6 @@ const CategoryFilter = ({
       </h4>
       <div className="space-x-3">
         {categories.map((category) => {
-          // Calculate count of foods in this category
           const foodCount = foods.filter(
             (food) => food.category._id === category._id
           ).length;
