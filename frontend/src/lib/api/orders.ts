@@ -1,8 +1,7 @@
 import axios from "axios";
 import { Order, CreateOrderData, ApiResponse } from "@/lib/types";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:7777/api";
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "") + "/api";
 
 export const createOrder = async (
   orderData: CreateOrderData

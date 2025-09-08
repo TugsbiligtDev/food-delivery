@@ -1,8 +1,7 @@
 import axios from "axios";
 import { Food, Category, ApiResponse } from "@/lib/types";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:7777/api";
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "") + "/api";
 
 export const getAllFoods = async (): Promise<Food[]> => {
   try {
