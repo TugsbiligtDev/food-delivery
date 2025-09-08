@@ -41,6 +41,7 @@ app.use(rateLimit({
 const allowedOrigins = [
     process.env.FRONTEND_URL,
     process.env.PRODUCTION_FRONTEND_URL,
+    "http://localhost:3000", // For local development
 ].filter(Boolean);
 app.use(cors({
     origin: allowedOrigins,

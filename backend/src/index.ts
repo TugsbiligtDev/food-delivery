@@ -47,10 +47,9 @@ app.use(
   })
 );
 
-const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  process.env.PRODUCTION_FRONTEND_URL,
-].filter(Boolean) as string[];
+const allowedOrigins = [process.env.PRODUCTION_FRONTEND_URL].filter(
+  Boolean
+) as string[];
 
 app.use(
   cors({
