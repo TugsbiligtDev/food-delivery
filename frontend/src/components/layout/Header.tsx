@@ -18,6 +18,7 @@ const Header = () => {
             width={46}
             height={46}
             className="w-[46px]"
+            priority
           />
           <div>
             <h1 className="text-xl font-semibold leading-7 text-snow-white">

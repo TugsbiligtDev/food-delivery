@@ -1,12 +1,18 @@
-import express from "express";
-import { getAllCategories, createCategory, updateCategory, deleteCategory, } from "../controllers/categories.controller.js";
-import authMiddleware from "../middleware/auth.middleware.js";
-import adminMiddleware from "../middleware/admin.middleware.js";
-import { validate, validateParams, createCategorySchema, updateCategorySchema, mongoIdSchema, } from "../schemas/validation.schemas.js";
-import { z } from "zod";
-const router = express.Router();
-router.get("/", getAllCategories);
-router.post("/", authMiddleware, adminMiddleware, validate(createCategorySchema), createCategory);
-router.patch("/:categoryId", validateParams(z.object({ categoryId: mongoIdSchema })), authMiddleware, adminMiddleware, validate(updateCategorySchema), updateCategory);
-router.delete("/:categoryId", validateParams(z.object({ categoryId: mongoIdSchema })), authMiddleware, adminMiddleware, deleteCategory);
-export default router;
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const categories_controller_js_1 = require("../controllers/categories.controller.js");
+const auth_middleware_js_1 = __importDefault(require("../middleware/auth.middleware.js"));
+const admin_middleware_js_1 = __importDefault(require("../middleware/admin.middleware.js"));
+const validation_schemas_js_1 = require("../schemas/validation.schemas.js");
+const zod_1 = require("zod");
+const router = express_1.default.Router();
+router.get("/", categories_controller_js_1.getAllCategories);
+router.post("/", auth_middleware_js_1.default, admin_middleware_js_1.default, (0, validation_schemas_js_1.validate)(validation_schemas_js_1.createCategorySchema), categories_controller_js_1.createCategory);
+router.patch("/:categoryId", (0, validation_schemas_js_1.validateParams)(zod_1.z.object({ categoryId: validation_schemas_js_1.mongoIdSchema })), auth_middleware_js_1.default, admin_middleware_js_1.default, (0, validation_schemas_js_1.validate)(validation_schemas_js_1.updateCategorySchema), categories_controller_js_1.updateCategory);
+router.delete("/:categoryId", (0, validation_schemas_js_1.validateParams)(zod_1.z.object({ categoryId: validation_schemas_js_1.mongoIdSchema })), auth_middleware_js_1.default, admin_middleware_js_1.default, categories_controller_js_1.deleteCategory);
+exports.default = router;
+//# sourceMappingURL=categories.routes.js.map

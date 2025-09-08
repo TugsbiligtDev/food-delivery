@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Router } from "express";
 import {
   getAllCategories,
   createCategory,
@@ -16,7 +16,7 @@ import {
 } from "../schemas/validation.schemas.js";
 import { z } from "zod";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.get("/", getAllCategories);
 

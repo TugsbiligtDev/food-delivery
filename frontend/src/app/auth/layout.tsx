@@ -8,7 +8,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
       </div>
       <aside className="items-center justify-center hidden w-3/5 p-8 lg:flex">
         <Image
-          src="/deliveryman.jpg"
+          src="/deliveryman.webp"
           alt="Delivery man"
           width={800}
           height={600}

@@ -31,7 +31,7 @@ const Page = () => {
           Send link
         </Button>
         <div className="bottom-container">
-          <p className="paragraph">Don&apos;t have an account?</p>
+          <p className="paragraph">Don't have an account?</p>
           <Link href="/auth/signup" className="accent">
             Sign up
           </Link>

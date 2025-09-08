@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Router } from "express";
 import { z } from "zod";
 import {
   getAllFoods,
@@ -17,7 +17,7 @@ import {
   mongoIdSchema,
 } from "../schemas/validation.schemas.js";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.get("/", getAllFoods);
 router.get(

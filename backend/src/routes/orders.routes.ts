@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Router } from "express";
 import {
   createOrder,
   getAllOrders,
@@ -17,7 +17,7 @@ import {
 } from "../schemas/validation.schemas.js";
 import { z } from "zod";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.post("/", authMiddleware, validate(createOrderSchema), createOrder);
 router.get("/", authMiddleware, adminMiddleware, getAllOrders);

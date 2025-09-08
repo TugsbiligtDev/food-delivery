@@ -5,7 +5,7 @@ const Hero = () => {
   return (
     <div className="relative w-full">
       <Image
-        src="/BG.png"
+        src="/BG.webp"
         alt="hero"
         width={1920}
         height={1080}

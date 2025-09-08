@@ -1,5 +1,11 @@
-import mongoose from "mongoose";
-const { Schema, model } = mongoose;
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.User = void 0;
+const mongoose_1 = __importDefault(require("mongoose"));
+const { Schema, model } = mongoose_1.default;
 const userSchema = new Schema({
     email: {
         type: String,
@@ -41,4 +47,5 @@ const userSchema = new Schema({
     },
 }, { timestamps: true });
 userSchema.index({ role: 1 });
-export const User = model("User", userSchema);
+exports.User = model("User", userSchema);
+//# sourceMappingURL=users.model.js.map

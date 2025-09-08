@@ -20,7 +20,7 @@ import categoryRoutes from "./routes/categories.routes.js";
 import orderRoutes from "./routes/orders.routes.js";
 
 const app = express();
-const PORT = process.env.PORT || 7777;
+const PORT = process.env.PORT || "";
 
 const connectDB = async () => {
   try {

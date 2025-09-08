@@ -1,13 +1,19 @@
-import express from "express";
-import { z } from "zod";
-import { getAllFoods, getFoodById, createFood, updateFood, deleteFood, } from "../controllers/foods.controller.js";
-import authMiddleware from "../middleware/auth.middleware.js";
-import adminMiddleware from "../middleware/admin.middleware.js";
-import { validate, validateParams, createFoodSchema, updateFoodSchema, mongoIdSchema, } from "../schemas/validation.schemas.js";
-const router = express.Router();
-router.get("/", getAllFoods);
-router.get("/:foodId", validateParams(z.object({ foodId: mongoIdSchema })), getFoodById);
-router.post("/", authMiddleware, adminMiddleware, validate(createFoodSchema), createFood);
-router.patch("/:foodId", validateParams(z.object({ foodId: mongoIdSchema })), authMiddleware, adminMiddleware, validate(updateFoodSchema), updateFood);
-router.delete("/:foodId", validateParams(z.object({ foodId: mongoIdSchema })), authMiddleware, adminMiddleware, deleteFood);
-export default router;
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const zod_1 = require("zod");
+const foods_controller_js_1 = require("../controllers/foods.controller.js");
+const auth_middleware_js_1 = __importDefault(require("../middleware/auth.middleware.js"));
+const admin_middleware_js_1 = __importDefault(require("../middleware/admin.middleware.js"));
+const validation_schemas_js_1 = require("../schemas/validation.schemas.js");
+const router = express_1.default.Router();
+router.get("/", foods_controller_js_1.getAllFoods);
+router.get("/:foodId", (0, validation_schemas_js_1.validateParams)(zod_1.z.object({ foodId: validation_schemas_js_1.mongoIdSchema })), foods_controller_js_1.getFoodById);
+router.post("/", auth_middleware_js_1.default, admin_middleware_js_1.default, (0, validation_schemas_js_1.validate)(validation_schemas_js_1.createFoodSchema), foods_controller_js_1.createFood);
+router.patch("/:foodId", (0, validation_schemas_js_1.validateParams)(zod_1.z.object({ foodId: validation_schemas_js_1.mongoIdSchema })), auth_middleware_js_1.default, admin_middleware_js_1.default, (0, validation_schemas_js_1.validate)(validation_schemas_js_1.updateFoodSchema), foods_controller_js_1.updateFood);
+router.delete("/:foodId", (0, validation_schemas_js_1.validateParams)(zod_1.z.object({ foodId: validation_schemas_js_1.mongoIdSchema })), auth_middleware_js_1.default, admin_middleware_js_1.default, foods_controller_js_1.deleteFood);
+exports.default = router;
+//# sourceMappingURL=foods.routes.js.map

@@ -40,6 +40,7 @@ const MenuCard = ({ food }: MenuCardProps) => {
             width={400}
             height={192}
             className="object-cover w-full h-48 rounded-xl"
+            loading="lazy"
           />
           <Dialog>
             <DialogTrigger

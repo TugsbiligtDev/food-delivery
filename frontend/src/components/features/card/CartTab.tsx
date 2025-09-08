@@ -75,6 +75,7 @@ const CartTab = ({ onTabChange }: { onTabChange?: (tab: string) => void }) => {
               width={61}
               height={50}
               className="mx-auto mb-4"
+              loading="lazy"
             />
           </div>
           <h4 className="text-xl font-semibold text-midnight-black mb-2">

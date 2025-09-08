@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const adminMiddleware = (req, res, next) => {
     try {
         const authReq = req;
@@ -23,4 +25,5 @@ const adminMiddleware = (req, res, next) => {
         });
     }
 };
-export default adminMiddleware;
+exports.default = adminMiddleware;
+//# sourceMappingURL=admin.middleware.js.map

@@ -168,6 +168,7 @@ const AdminMenuGrid = () => {
                         width={300}
                         height={192}
                         className="object-cover w-full h-48 rounded-xl"
+                        loading="lazy"
                         onError={() => handleImageError(food._id)}
                       />
                     )}

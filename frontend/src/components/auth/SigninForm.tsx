@@ -84,7 +84,7 @@ const SigninForm = () => {
         </Link>
 
         <Button className="long-button" type="submit" disabled={isLoading}>
-          {isLoading ? "Signing in..." : "Let&apos;s Go"}
+          {isLoading ? "Signing in..." : "Let's Go"}
         </Button>
       </form>
     </div>
