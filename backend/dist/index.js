@@ -21,7 +21,7 @@ const auth_routes_js_1 = __importDefault(require("./routes/auth.routes.js"));
 const categories_routes_js_1 = __importDefault(require("./routes/categories.routes.js"));
 const orders_routes_js_1 = __importDefault(require("./routes/orders.routes.js"));
 const app = (0, express_1.default)();
-const PORT = process.env.PORT || 7777;
+const PORT = process.env.PORT || "";
 const connectDB = async () => {
     try {
         await mongoose_1.default.connect(process.env.MONGO_URI);
