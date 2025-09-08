@@ -37,4 +37,3 @@ foodSchema.index({ category: 1 });
 foodSchema.index({ foodName: 1 });
 foodSchema.index({ createdAt: -1 });
 exports.Food = model("Food", foodSchema);
-//# sourceMappingURL=foods.model.js.map

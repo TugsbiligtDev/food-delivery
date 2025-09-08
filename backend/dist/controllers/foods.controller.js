@@ -135,4 +135,3 @@ const deleteFood = async (req, res) => {
     }
 };
 exports.deleteFood = deleteFood;
-//# sourceMappingURL=foods.controller.js.map

@@ -88,4 +88,3 @@ const signIn = async (req, res) => {
     }
 };
 exports.signIn = signIn;
-//# sourceMappingURL=auth.controller.js.map

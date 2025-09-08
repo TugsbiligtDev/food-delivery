@@ -15,4 +15,3 @@ const categorySchema = new Schema({
     },
 }, { timestamps: true });
 exports.Category = model("Category", categorySchema);
-//# sourceMappingURL=categories.model.js.map

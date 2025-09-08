@@ -48,4 +48,3 @@ const userSchema = new Schema({
 }, { timestamps: true });
 userSchema.index({ role: 1 });
 exports.User = model("User", userSchema);
-//# sourceMappingURL=users.model.js.map

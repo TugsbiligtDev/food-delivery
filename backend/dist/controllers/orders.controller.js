@@ -161,4 +161,3 @@ const deleteOrder = async (req, res) => {
     }
 };
 exports.deleteOrder = deleteOrder;
-//# sourceMappingURL=orders.controller.js.map

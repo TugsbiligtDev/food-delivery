@@ -70,4 +70,3 @@ app.use((_req, res) => {
     });
 });
 app.listen(PORT, () => { });
-//# sourceMappingURL=index.js.map

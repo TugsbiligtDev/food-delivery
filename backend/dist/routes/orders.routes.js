@@ -16,4 +16,3 @@ router.get("/user/:userId", (0, validation_schemas_js_1.validateParams)(zod_1.z.
 router.patch("/:orderId", (0, validation_schemas_js_1.validateParams)(zod_1.z.object({ orderId: validation_schemas_js_1.mongoIdSchema })), auth_middleware_js_1.default, admin_middleware_js_1.default, (0, validation_schemas_js_1.validate)(validation_schemas_js_1.updateOrderSchema), orders_controller_js_1.updateOrder);
 router.delete("/:orderId", (0, validation_schemas_js_1.validateParams)(zod_1.z.object({ orderId: validation_schemas_js_1.mongoIdSchema })), auth_middleware_js_1.default, admin_middleware_js_1.default, orders_controller_js_1.deleteOrder);
 exports.default = router;
-//# sourceMappingURL=orders.routes.js.map

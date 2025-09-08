@@ -26,4 +26,3 @@ const adminMiddleware = (req, res, next) => {
     }
 };
 exports.default = adminMiddleware;
-//# sourceMappingURL=admin.middleware.js.map

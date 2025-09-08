@@ -15,4 +15,3 @@ router.post("/", auth_middleware_js_1.default, admin_middleware_js_1.default, (0
 router.patch("/:categoryId", (0, validation_schemas_js_1.validateParams)(zod_1.z.object({ categoryId: validation_schemas_js_1.mongoIdSchema })), auth_middleware_js_1.default, admin_middleware_js_1.default, (0, validation_schemas_js_1.validate)(validation_schemas_js_1.updateCategorySchema), categories_controller_js_1.updateCategory);
 router.delete("/:categoryId", (0, validation_schemas_js_1.validateParams)(zod_1.z.object({ categoryId: validation_schemas_js_1.mongoIdSchema })), auth_middleware_js_1.default, admin_middleware_js_1.default, categories_controller_js_1.deleteCategory);
 exports.default = router;
-//# sourceMappingURL=categories.routes.js.map

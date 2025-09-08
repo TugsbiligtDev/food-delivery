@@ -10,4 +10,3 @@ const router = express_1.default.Router();
 router.post("/signin", (0, validation_schemas_js_1.validate)(validation_schemas_js_1.signInSchema), auth_controller_js_1.signIn);
 router.post("/signup", (0, validation_schemas_js_1.validate)(validation_schemas_js_1.signUpSchema), auth_controller_js_1.signUp);
 exports.default = router;
-//# sourceMappingURL=auth.routes.js.map

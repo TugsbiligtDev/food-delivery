@@ -18,4 +18,3 @@ __exportStar(require("./foods.model.js"), exports);
 __exportStar(require("./users.model.js"), exports);
 __exportStar(require("./categories.model.js"), exports);
 __exportStar(require("./orders.model.js"), exports);
-//# sourceMappingURL=index.js.map

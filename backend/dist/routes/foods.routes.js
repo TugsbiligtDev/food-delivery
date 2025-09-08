@@ -16,4 +16,3 @@ router.post("/", auth_middleware_js_1.default, admin_middleware_js_1.default, (0
 router.patch("/:foodId", (0, validation_schemas_js_1.validateParams)(zod_1.z.object({ foodId: validation_schemas_js_1.mongoIdSchema })), auth_middleware_js_1.default, admin_middleware_js_1.default, (0, validation_schemas_js_1.validate)(validation_schemas_js_1.updateFoodSchema), foods_controller_js_1.updateFood);
 router.delete("/:foodId", (0, validation_schemas_js_1.validateParams)(zod_1.z.object({ foodId: validation_schemas_js_1.mongoIdSchema })), auth_middleware_js_1.default, admin_middleware_js_1.default, foods_controller_js_1.deleteFood);
 exports.default = router;
-//# sourceMappingURL=foods.routes.js.map

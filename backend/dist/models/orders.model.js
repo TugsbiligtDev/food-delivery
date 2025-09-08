@@ -54,4 +54,3 @@ orderSchema.index({ user: 1, createdAt: -1 });
 orderSchema.index({ status: 1 });
 orderSchema.index({ createdAt: -1 });
 exports.Order = model("Order", orderSchema);
-//# sourceMappingURL=orders.model.js.map

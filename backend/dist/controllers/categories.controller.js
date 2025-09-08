@@ -100,4 +100,3 @@ const deleteCategory = async (req, res) => {
     }
 };
 exports.deleteCategory = deleteCategory;
-//# sourceMappingURL=categories.controller.js.map
