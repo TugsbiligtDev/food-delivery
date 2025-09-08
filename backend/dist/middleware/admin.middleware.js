@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const adminMiddleware = (req, res, next) => {
     try {
         const authReq = req;
@@ -25,4 +23,4 @@ const adminMiddleware = (req, res, next) => {
         });
     }
 };
-exports.default = adminMiddleware;
+export default adminMiddleware;

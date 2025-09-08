@@ -1,11 +1,5 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Food = void 0;
-const mongoose_1 = __importDefault(require("mongoose"));
-const { Schema, Types, model } = mongoose_1.default;
+import mongoose from "mongoose";
+const { Schema, Types, model } = mongoose;
 const foodSchema = new Schema({
     foodName: {
         type: String,
@@ -36,4 +30,4 @@ const foodSchema = new Schema({
 foodSchema.index({ category: 1 });
 foodSchema.index({ foodName: 1 });
 foodSchema.index({ createdAt: -1 });
-exports.Food = model("Food", foodSchema);
+export const Food = model("Food", foodSchema);

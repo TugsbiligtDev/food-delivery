@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteFood = exports.updateFood = exports.createFood = exports.getFoodById = exports.getAllFoods = void 0;
-const foods_model_js_1 = require("../models/foods.model.js");
-const categories_model_js_1 = require("../models/categories.model.js");
-const getAllFoods = async (req, res) => {
+import { Food } from "../models/foods.model.js";
+import { Category } from "../models/categories.model.js";
+export const getAllFoods = async (req, res) => {
     try {
-        const foods = await foods_model_js_1.Food.find().populate("category");
+        const foods = await Food.find().populate("category");
         res.status(200).json({
             success: true,
             message: "Foods retrieved successfully",
@@ -20,11 +17,10 @@ const getAllFoods = async (req, res) => {
         });
     }
 };
-exports.getAllFoods = getAllFoods;
-const getFoodById = async (req, res) => {
+export const getFoodById = async (req, res) => {
     try {
         const { foodId } = req.params;
-        const food = await foods_model_js_1.Food.findById(foodId).populate("category");
+        const food = await Food.findById(foodId).populate("category");
         if (!food) {
             return res.status(404).json({
                 success: false,
@@ -45,11 +41,10 @@ const getFoodById = async (req, res) => {
         });
     }
 };
-exports.getFoodById = getFoodById;
-const createFood = async (req, res) => {
+export const createFood = async (req, res) => {
     try {
         const { foodName, price, ingredients, image, category } = req.body;
-        const categoryExists = await categories_model_js_1.Category.findById(category);
+        const categoryExists = await Category.findById(category);
         if (!categoryExists) {
             return res.status(400).json({
                 success: false,
@@ -59,14 +54,14 @@ const createFood = async (req, res) => {
         const ingredientsString = Array.isArray(ingredients)
             ? ingredients.join(", ")
             : ingredients;
-        const newFood = await foods_model_js_1.Food.create({
+        const newFood = await Food.create({
             foodName,
             price,
             ingredients: ingredientsString,
             image,
             category,
         });
-        const populatedFood = await foods_model_js_1.Food.findById(newFood._id).populate("category");
+        const populatedFood = await Food.findById(newFood._id).populate("category");
         res.status(201).json({
             success: true,
             message: "Food created successfully",
@@ -81,12 +76,11 @@ const createFood = async (req, res) => {
         });
     }
 };
-exports.createFood = createFood;
-const updateFood = async (req, res) => {
+export const updateFood = async (req, res) => {
     try {
         const updateData = req.body;
         const { foodId } = req.params;
-        const updatedFood = await foods_model_js_1.Food.findByIdAndUpdate(foodId, updateData, {
+        const updatedFood = await Food.findByIdAndUpdate(foodId, updateData, {
             new: true,
         }).populate("category");
         if (updatedFood === null) {
@@ -109,11 +103,10 @@ const updateFood = async (req, res) => {
         });
     }
 };
-exports.updateFood = updateFood;
-const deleteFood = async (req, res) => {
+export const deleteFood = async (req, res) => {
     try {
         const { foodId } = req.params;
-        const deletedFood = await foods_model_js_1.Food.findByIdAndDelete(foodId);
+        const deletedFood = await Food.findByIdAndDelete(foodId);
         if (!deletedFood) {
             return res.status(404).json({
                 success: false,
@@ -134,4 +127,3 @@ const deleteFood = async (req, res) => {
         });
     }
 };
-exports.deleteFood = deleteFood;

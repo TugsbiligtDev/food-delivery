@@ -1,11 +1,5 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Order = void 0;
-const mongoose_1 = __importDefault(require("mongoose"));
-const { Schema, Types, model } = mongoose_1.default;
+import mongoose from "mongoose";
+const { Schema, Types, model } = mongoose;
 const orderSchema = new Schema({
     user: {
         type: Types.ObjectId,
@@ -53,4 +47,4 @@ const orderSchema = new Schema({
 orderSchema.index({ user: 1, createdAt: -1 });
 orderSchema.index({ status: 1 });
 orderSchema.index({ createdAt: -1 });
-exports.Order = model("Order", orderSchema);
+export const Order = model("Order", orderSchema);

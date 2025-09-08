@@ -1,12 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const users_model_js_1 = require("../models/users.model.js");
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
+import jwt from "jsonwebtoken";
+import { User } from "../models/users.model.js";
+import dotenv from "dotenv";
+dotenv.config();
 const authMiddleware = async (req, res, next) => {
     try {
         const token = req.header("Authorization")?.replace("Bearer ", "");
@@ -23,8 +18,8 @@ const authMiddleware = async (req, res, next) => {
                 message: "JWT secret not configured",
             });
         }
-        const decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
-        const user = await users_model_js_1.User.findById(decoded.userId).select("-password");
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const user = await User.findById(decoded.userId).select("-password");
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -51,4 +46,4 @@ const authMiddleware = async (req, res, next) => {
         });
     }
 };
-exports.default = authMiddleware;
+export default authMiddleware;
