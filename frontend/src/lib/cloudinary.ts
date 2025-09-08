@@ -4,7 +4,7 @@ export const uploadImage = async (file: File): Promise<string> => {
     formData.append("file", file);
     formData.append(
       "upload_preset",
-      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default"
+      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || ""
     );
 
     const response = await fetch(
